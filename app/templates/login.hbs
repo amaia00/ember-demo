@@ -1,0 +1,21 @@
+<p>Entrez votre identifiant et votre mot de passe..</p>
+
+<div class="form-horizontal form-group form-group-lg row">
+  <div class="col-xs-10 col-xs-offset-1 col-sm-6 col-sm-offset-3 col-md-6 col-md-offset-3 connect_horizental">
+    {{ input type="text" class="form-control" value=identifiant placeholder="Entrer votre identifiant." autofocus="autofocus" }}
+  </div>
+  <div class="col-xs-10 col-xs-offset-1 col-sm-6 col-sm-offset-3 col-md-6 col-md-offset-3 connect_horizental">
+    {{input type="password" class="form-control"  value=password placeholder="Entrer votre mot de passe." autofocus="autofocus"}}
+  </div>
+
+  <div class="col-xs-10 col-xs-offset-1 col-sm-offset-4 col-sm-4 col-md-6 col-md-5 col-lg-2 col-lg-offset-5">
+    <button class="btn btn-primary btn-lg btn-block" disabled={{isDisabled}} {{action 'verifyUser'}}>Se connecter</button>
+  </div>
+</div>
+
+
+{{#if responseMessage}}
+  <div class="alert alert-danger">{{responseMessage}}</div>
+{{/if}}
+
+{{outlet}}
