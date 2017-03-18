@@ -2,4 +2,81 @@
 
 body {
   padding-top: 20px;
+  background: #efedef;
+}
+ .navbar.navbar-inverse {
+   background: #57585a;
+   border: 0;
+   border-radius: 0;
+   width: 370px;
+   margin-bottom: 40px;
+ }
+
+ .login_page {
+   width: 45%;
+   margin: 0 auto;
+   padding: 50px 20px;
+   background: #fff;
+   box-shadow: 1px 1px 10px #57585a;
+   border-radius: 10px;
+ }
+ .login_page input {
+   margin: 10px 0;
+   height: 34px !important;
+   font-size: 15px !important;
+   border: 1px solid #57585a;
+ }
+.message_login {
+  font-size: 0.8em;
+  color: #d81565;
+  margin-top: 12px;
+  margin-bottom: 12px;
+  font-style: italic;
+}
+
+.btn-block {
+  background: #f27e16;
+  height: 35px;
+  line-height: 3px;
+  border: 0;
+  margin: 20px 0;
+}
+.btn.disabled, .btn[disabled], fieldset[disabled] .btn {
+  opacity: 0.5;
+}
+.image_login {
+  display: block;
+  margin: 0 auto;
+}
+.login_page h3 {
+  border-bottom: 2px solid #57585a;
+  padding: 0 0 15px 0;
+  text-align: center;
+  margin: 0 auto;
+  color: #f27e16;
+  font-size: 25px;
+  text-shadow: 1px 2px 2px #57585a;
+  text-transform: uppercase;
+  width: 75%;
+}
+
+.form-horizontal  {
+  margin-top: 20px;
+}
+.container_nav {
+  float: right;
+}
+.navbar-inverse .navbar-nav > .active > a, .navbar-inverse .navbar-nav > .active > a:hover, .navbar-inverse .navbar-nav > .active > a:focus {
+  color: #fff;
+  background-color: #f27e16;
+}
+
+
+.navbar-inverse .navbar-nav > li > a {
+  padding: 20px 15px;
+  color:#fff;
+}
+
+.navbar-inverse .navbar-nav > li > a span {
+  margin-right: 5px;
 }
