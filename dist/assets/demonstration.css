@@ -5825,7 +5825,7 @@ body {
   width: 370px;
   margin-bottom: 40px; }
 
-.login_page {
+.login_page, .contact_page {
   width: 45%;
   margin: 0 auto;
   padding: 50px 20px;
@@ -5833,11 +5833,17 @@ body {
   box-shadow: 1px 1px 10px #57585a;
   border-radius: 10px; }
 
-.login_page input {
+.login_page input, .contact_page input {
   margin: 10px 0;
   height: 34px !important;
   font-size: 15px !important;
   border: 1px solid #57585a; }
+
+.contact_page textarea {
+  height: 200px !important;
+  font-size: 15px !important;
+  border: 1px solid #57585a;
+  margin: 10px 0; }
 
 .message_login {
   font-size: 0.8em;
@@ -5860,7 +5866,7 @@ body {
   display: block;
   margin: 0 auto; }
 
-.login_page h3 {
+.login_page h3, .contact_page h3 {
   border-bottom: 2px solid #57585a;
   padding: 0 0 15px 0;
   text-align: center;
