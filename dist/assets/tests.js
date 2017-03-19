@@ -18,6 +18,24 @@ define('demonstration/tests/app.jshint.lint-test', ['exports'], function (export
     assert.ok(true, 'app.js should pass jshint.');
   });
 });
+define('demonstration/tests/components/if-equal.jshint.lint-test', ['exports'], function (exports) {
+  'use strict';
+
+  QUnit.module('JSHint | components/if-equal.js');
+  QUnit.test('should pass jshint', function (assert) {
+    assert.expect(1);
+    assert.ok(true, 'components/if-equal.js should pass jshint.');
+  });
+});
+define('demonstration/tests/components/if-greater.jshint.lint-test', ['exports'], function (exports) {
+  'use strict';
+
+  QUnit.module('JSHint | components/if-greater.js');
+  QUnit.test('should pass jshint', function (assert) {
+    assert.expect(1);
+    assert.ok(true, 'components/if-greater.js should pass jshint.');
+  });
+});
 define('demonstration/tests/controllers/index.jshint.lint-test', ['exports'], function (exports) {
   'use strict';
 
@@ -34,6 +52,15 @@ define('demonstration/tests/controllers/login.jshint.lint-test', ['exports'], fu
   QUnit.test('should pass jshint', function (assert) {
     assert.expect(1);
     assert.ok(true, 'controllers/login.js should pass jshint.');
+  });
+});
+define('demonstration/tests/controllers/users.jshint.lint-test', ['exports'], function (exports) {
+  'use strict';
+
+  QUnit.module('JSHint | controllers/users.js');
+  QUnit.test('should pass jshint', function (assert) {
+    assert.expect(1);
+    assert.ok(true, 'controllers/users.js should pass jshint.');
   });
 });
 define('demonstration/tests/helpers/create-offline-ref', ['exports', 'firebase'], function (exports, _firebase) {
@@ -119,6 +146,15 @@ define('demonstration/tests/helpers/destroy-firebase-apps', ['exports', 'ember',
     });
   }
 });
+define('demonstration/tests/helpers/get-color.jshint.lint-test', ['exports'], function (exports) {
+  'use strict';
+
+  QUnit.module('JSHint | helpers/get-color.js');
+  QUnit.test('should pass jshint', function (assert) {
+    assert.expect(1);
+    assert.ok(true, 'helpers/get-color.js should pass jshint.');
+  });
+});
 define('demonstration/tests/helpers/module-for-acceptance', ['exports', 'qunit', 'ember', 'demonstration/tests/helpers/start-app', 'demonstration/tests/helpers/destroy-app'], function (exports, _qunit, _ember, _demonstrationTestsHelpersStartApp, _demonstrationTestsHelpersDestroyApp) {
   var Promise = _ember['default'].RSVP.Promise;
 
@@ -152,6 +188,24 @@ define('demonstration/tests/helpers/module-for-acceptance.jshint.lint-test', ['e
   QUnit.test('should pass jshint', function (assert) {
     assert.expect(1);
     assert.ok(true, 'helpers/module-for-acceptance.js should pass jshint.');
+  });
+});
+define('demonstration/tests/helpers/moyene-annee.jshint.lint-test', ['exports'], function (exports) {
+  'use strict';
+
+  QUnit.module('JSHint | helpers/moyene-annee.js');
+  QUnit.test('should pass jshint', function (assert) {
+    assert.expect(1);
+    assert.ok(true, 'helpers/moyene-annee.js should pass jshint.');
+  });
+});
+define('demonstration/tests/helpers/moyenne-note.jshint.lint-test', ['exports'], function (exports) {
+  'use strict';
+
+  QUnit.module('JSHint | helpers/moyenne-note.js');
+  QUnit.test('should pass jshint', function (assert) {
+    assert.expect(1);
+    assert.ok(true, 'helpers/moyenne-note.js should pass jshint.');
   });
 });
 define('demonstration/tests/helpers/replace-app-ref', ['exports'], function (exports) {
@@ -294,13 +348,230 @@ define('demonstration/tests/helpers/unstub-firebase', ['exports', 'firebase'], f
     }
   }
 });
-define('demonstration/tests/models/login.jshint.lint-test', ['exports'], function (exports) {
+define('demonstration/tests/integration/components/get-color-test', ['exports', 'ember-qunit'], function (exports, _emberQunit) {
+
+  (0, _emberQunit.moduleForComponent)('get-color', 'Integration | Component | get color', {
+    integration: true
+  });
+
+  (0, _emberQunit.test)('it renders', function (assert) {
+
+    // Set any properties with this.set('myProperty', 'value');
+    // Handle any actions with this.on('myAction', function(val) { ... });
+
+    this.render(Ember.HTMLBars.template({
+      'id': 'SKIt/WoK',
+      'block': '{"statements":[["append",["unknown",["get-color"]],false]],"locals":[],"named":[],"yields":[],"blocks":[],"hasPartials":false}',
+      'meta': {}
+    }));
+
+    assert.equal(this.$().text().trim(), '');
+
+    // Template block usage:
+    this.render(Ember.HTMLBars.template({
+      'id': 'utDBN3nV',
+      'block': '{"statements":[["text","\\n"],["block",["get-color"],null,null,0],["text","  "]],"locals":[],"named":[],"yields":[],"blocks":[{"statements":[["text","      template block text\\n"]],"locals":[]}],"hasPartials":false}',
+      'meta': {}
+    }));
+
+    assert.equal(this.$().text().trim(), 'template block text');
+  });
+});
+define('demonstration/tests/integration/components/get-color-test.jshint.lint-test', ['exports'], function (exports) {
   'use strict';
 
-  QUnit.module('JSHint | models/login.js');
+  QUnit.module('JSHint | integration/components/get-color-test.js');
   QUnit.test('should pass jshint', function (assert) {
     assert.expect(1);
-    assert.ok(true, 'models/login.js should pass jshint.');
+    assert.ok(true, 'integration/components/get-color-test.js should pass jshint.');
+  });
+});
+define('demonstration/tests/integration/components/if-equal-test', ['exports', 'ember-qunit'], function (exports, _emberQunit) {
+
+  (0, _emberQunit.moduleForComponent)('if-equal', 'Integration | Component | if equal', {
+    integration: true
+  });
+
+  (0, _emberQunit.test)('it renders', function (assert) {
+
+    // Set any properties with this.set('myProperty', 'value');
+    // Handle any actions with this.on('myAction', function(val) { ... });
+
+    this.render(Ember.HTMLBars.template({
+      'id': 'sUk/bsdo',
+      'block': '{"statements":[["append",["unknown",["if-equal"]],false]],"locals":[],"named":[],"yields":[],"blocks":[],"hasPartials":false}',
+      'meta': {}
+    }));
+
+    assert.equal(this.$().text().trim(), '');
+
+    // Template block usage:
+    this.render(Ember.HTMLBars.template({
+      'id': 'sO4eDHu2',
+      'block': '{"statements":[["text","\\n"],["block",["if-equal"],null,null,0],["text","  "]],"locals":[],"named":[],"yields":[],"blocks":[{"statements":[["text","      template block text\\n"]],"locals":[]}],"hasPartials":false}',
+      'meta': {}
+    }));
+
+    assert.equal(this.$().text().trim(), 'template block text');
+  });
+});
+define('demonstration/tests/integration/components/if-equal-test.jshint.lint-test', ['exports'], function (exports) {
+  'use strict';
+
+  QUnit.module('JSHint | integration/components/if-equal-test.js');
+  QUnit.test('should pass jshint', function (assert) {
+    assert.expect(1);
+    assert.ok(true, 'integration/components/if-equal-test.js should pass jshint.');
+  });
+});
+define('demonstration/tests/integration/components/if-greater-test', ['exports', 'ember-qunit'], function (exports, _emberQunit) {
+
+  (0, _emberQunit.moduleForComponent)('if-greater', 'Integration | Component | if greater', {
+    integration: true
+  });
+
+  (0, _emberQunit.test)('it renders', function (assert) {
+
+    // Set any properties with this.set('myProperty', 'value');
+    // Handle any actions with this.on('myAction', function(val) { ... });
+
+    this.render(Ember.HTMLBars.template({
+      'id': 'inLHMR2P',
+      'block': '{"statements":[["append",["unknown",["if-greater"]],false]],"locals":[],"named":[],"yields":[],"blocks":[],"hasPartials":false}',
+      'meta': {}
+    }));
+
+    assert.equal(this.$().text().trim(), '');
+
+    // Template block usage:
+    this.render(Ember.HTMLBars.template({
+      'id': 'CKcTDMv6',
+      'block': '{"statements":[["text","\\n"],["block",["if-greater"],null,null,0],["text","  "]],"locals":[],"named":[],"yields":[],"blocks":[{"statements":[["text","      template block text\\n"]],"locals":[]}],"hasPartials":false}',
+      'meta': {}
+    }));
+
+    assert.equal(this.$().text().trim(), 'template block text');
+  });
+});
+define('demonstration/tests/integration/components/if-greater-test.jshint.lint-test', ['exports'], function (exports) {
+  'use strict';
+
+  QUnit.module('JSHint | integration/components/if-greater-test.js');
+  QUnit.test('should pass jshint', function (assert) {
+    assert.expect(1);
+    assert.ok(true, 'integration/components/if-greater-test.js should pass jshint.');
+  });
+});
+define('demonstration/tests/integration/components/is-coulour-test', ['exports', 'ember-qunit'], function (exports, _emberQunit) {
+
+  (0, _emberQunit.moduleForComponent)('is-coulour', 'Integration | Component | is coulour', {
+    integration: true
+  });
+
+  (0, _emberQunit.test)('it renders', function (assert) {
+
+    // Set any properties with this.set('myProperty', 'value');
+    // Handle any actions with this.on('myAction', function(val) { ... });
+
+    this.render(Ember.HTMLBars.template({
+      'id': '3s+wcRXj',
+      'block': '{"statements":[["append",["unknown",["is-coulour"]],false]],"locals":[],"named":[],"yields":[],"blocks":[],"hasPartials":false}',
+      'meta': {}
+    }));
+
+    assert.equal(this.$().text().trim(), '');
+
+    // Template block usage:
+    this.render(Ember.HTMLBars.template({
+      'id': '1NvCPoWB',
+      'block': '{"statements":[["text","\\n"],["block",["is-coulour"],null,null,0],["text","  "]],"locals":[],"named":[],"yields":[],"blocks":[{"statements":[["text","      template block text\\n"]],"locals":[]}],"hasPartials":false}',
+      'meta': {}
+    }));
+
+    assert.equal(this.$().text().trim(), 'template block text');
+  });
+});
+define('demonstration/tests/integration/components/is-coulour-test.jshint.lint-test', ['exports'], function (exports) {
+  'use strict';
+
+  QUnit.module('JSHint | integration/components/is-coulour-test.js');
+  QUnit.test('should pass jshint', function (assert) {
+    assert.expect(1);
+    assert.ok(true, 'integration/components/is-coulour-test.js should pass jshint.');
+  });
+});
+define('demonstration/tests/integration/components/moyenne-note-test', ['exports', 'ember-qunit'], function (exports, _emberQunit) {
+
+  (0, _emberQunit.moduleForComponent)('moyenne-note', 'Integration | Component | moyenne note', {
+    integration: true
+  });
+
+  (0, _emberQunit.test)('it renders', function (assert) {
+
+    // Set any properties with this.set('myProperty', 'value');
+    // Handle any actions with this.on('myAction', function(val) { ... });
+
+    this.render(Ember.HTMLBars.template({
+      'id': 'S/Ha5T14',
+      'block': '{"statements":[["append",["unknown",["moyenne-note"]],false]],"locals":[],"named":[],"yields":[],"blocks":[],"hasPartials":false}',
+      'meta': {}
+    }));
+
+    assert.equal(this.$().text().trim(), '');
+
+    // Template block usage:
+    this.render(Ember.HTMLBars.template({
+      'id': 'WHIDuruP',
+      'block': '{"statements":[["text","\\n"],["block",["moyenne-note"],null,null,0],["text","  "]],"locals":[],"named":[],"yields":[],"blocks":[{"statements":[["text","      template block text\\n"]],"locals":[]}],"hasPartials":false}',
+      'meta': {}
+    }));
+
+    assert.equal(this.$().text().trim(), 'template block text');
+  });
+});
+define('demonstration/tests/integration/components/moyenne-note-test.jshint.lint-test', ['exports'], function (exports) {
+  'use strict';
+
+  QUnit.module('JSHint | integration/components/moyenne-note-test.js');
+  QUnit.test('should pass jshint', function (assert) {
+    assert.expect(1);
+    assert.ok(true, 'integration/components/moyenne-note-test.js should pass jshint.');
+  });
+});
+define('demonstration/tests/models/enseignant.jshint.lint-test', ['exports'], function (exports) {
+  'use strict';
+
+  QUnit.module('JSHint | models/enseignant.js');
+  QUnit.test('should pass jshint', function (assert) {
+    assert.expect(1);
+    assert.ok(true, 'models/enseignant.js should pass jshint.');
+  });
+});
+define('demonstration/tests/models/etudiant.jshint.lint-test', ['exports'], function (exports) {
+  'use strict';
+
+  QUnit.module('JSHint | models/etudiant.js');
+  QUnit.test('should pass jshint', function (assert) {
+    assert.expect(1);
+    assert.ok(true, 'models/etudiant.js should pass jshint.');
+  });
+});
+define('demonstration/tests/models/note.jshint.lint-test', ['exports'], function (exports) {
+  'use strict';
+
+  QUnit.module('JSHint | models/note.js');
+  QUnit.test('should pass jshint', function (assert) {
+    assert.expect(1);
+    assert.ok(true, 'models/note.js should pass jshint.');
+  });
+});
+define('demonstration/tests/models/ue.jshint.lint-test', ['exports'], function (exports) {
+  'use strict';
+
+  QUnit.module('JSHint | models/ue.js');
+  QUnit.test('should pass jshint', function (assert) {
+    assert.expect(1);
+    assert.ok(true, 'models/ue.js should pass jshint.');
   });
 });
 define('demonstration/tests/models/user.jshint.lint-test', ['exports'], function (exports) {
@@ -346,6 +617,24 @@ define('demonstration/tests/routes/login.jshint.lint-test', ['exports'], functio
   QUnit.test('should pass jshint', function (assert) {
     assert.expect(1);
     assert.ok(true, 'routes/login.js should pass jshint.');
+  });
+});
+define('demonstration/tests/routes/users.jshint.lint-test', ['exports'], function (exports) {
+  'use strict';
+
+  QUnit.module('JSHint | routes/users.js');
+  QUnit.test('should pass jshint', function (assert) {
+    assert.expect(1);
+    assert.ok(true, 'routes/users.js should pass jshint.');
+  });
+});
+define('demonstration/tests/routes/users/profil.jshint.lint-test', ['exports'], function (exports) {
+  'use strict';
+
+  QUnit.module('JSHint | routes/users/profil.js');
+  QUnit.test('should pass jshint', function (assert) {
+    assert.expect(1);
+    assert.ok(true, 'routes/users/profil.js should pass jshint.');
   });
 });
 define('demonstration/tests/test-helper', ['exports', 'demonstration/tests/helpers/resolver', 'ember-qunit'], function (exports, _demonstrationTestsHelpersResolver, _emberQunit) {
@@ -414,6 +703,173 @@ define('demonstration/tests/unit/controllers/login-test.jshint.lint-test', ['exp
     assert.ok(true, 'unit/controllers/login-test.js should pass jshint.');
   });
 });
+define('demonstration/tests/unit/controllers/users-test', ['exports', 'ember-qunit'], function (exports, _emberQunit) {
+
+  (0, _emberQunit.moduleFor)('controller:users', 'Unit | Controller | users', {
+    // Specify the other units that are required for this test.
+    // needs: ['controller:foo']
+  });
+
+  // Replace this with your real tests.
+  (0, _emberQunit.test)('it exists', function (assert) {
+    var controller = this.subject();
+    assert.ok(controller);
+  });
+});
+define('demonstration/tests/unit/controllers/users-test.jshint.lint-test', ['exports'], function (exports) {
+  'use strict';
+
+  QUnit.module('JSHint | unit/controllers/users-test.js');
+  QUnit.test('should pass jshint', function (assert) {
+    assert.expect(1);
+    assert.ok(true, 'unit/controllers/users-test.js should pass jshint.');
+  });
+});
+define('demonstration/tests/unit/helpers/get-color-test', ['exports', 'demonstration/helpers/get-color', 'qunit'], function (exports, _demonstrationHelpersGetColor, _qunit) {
+
+  (0, _qunit.module)('Unit | Helper | get color');
+
+  // Replace this with your real tests.
+  (0, _qunit.test)('it works', function (assert) {
+    var result = (0, _demonstrationHelpersGetColor.getColor)([42]);
+    assert.ok(result);
+  });
+});
+define('demonstration/tests/unit/helpers/get-color-test.jshint.lint-test', ['exports'], function (exports) {
+  'use strict';
+
+  QUnit.module('JSHint | unit/helpers/get-color-test.js');
+  QUnit.test('should pass jshint', function (assert) {
+    assert.expect(1);
+    assert.ok(true, 'unit/helpers/get-color-test.js should pass jshint.');
+  });
+});
+define('demonstration/tests/unit/helpers/moyene-annee-test', ['exports', 'demonstration/helpers/moyene-annee', 'qunit'], function (exports, _demonstrationHelpersMoyeneAnnee, _qunit) {
+
+  (0, _qunit.module)('Unit | Helper | moyene annee');
+
+  // Replace this with your real tests.
+  (0, _qunit.test)('it works', function (assert) {
+    var result = (0, _demonstrationHelpersMoyeneAnnee.moyeneAnnee)([42]);
+    assert.ok(result);
+  });
+});
+define('demonstration/tests/unit/helpers/moyene-annee-test.jshint.lint-test', ['exports'], function (exports) {
+  'use strict';
+
+  QUnit.module('JSHint | unit/helpers/moyene-annee-test.js');
+  QUnit.test('should pass jshint', function (assert) {
+    assert.expect(1);
+    assert.ok(true, 'unit/helpers/moyene-annee-test.js should pass jshint.');
+  });
+});
+define('demonstration/tests/unit/helpers/moyenne-note-test', ['exports', 'demonstration/helpers/moyenne-note', 'qunit'], function (exports, _demonstrationHelpersMoyenneNote, _qunit) {
+
+  (0, _qunit.module)('Unit | Helper | moyenne note');
+
+  // Replace this with your real tests.
+  (0, _qunit.test)('it works', function (assert) {
+    var result = (0, _demonstrationHelpersMoyenneNote.moyenneNote)([42]);
+    assert.ok(result);
+  });
+});
+define('demonstration/tests/unit/helpers/moyenne-note-test.jshint.lint-test', ['exports'], function (exports) {
+  'use strict';
+
+  QUnit.module('JSHint | unit/helpers/moyenne-note-test.js');
+  QUnit.test('should pass jshint', function (assert) {
+    assert.expect(1);
+    assert.ok(true, 'unit/helpers/moyenne-note-test.js should pass jshint.');
+  });
+});
+define('demonstration/tests/unit/models/enseignant-test', ['exports', 'ember-qunit'], function (exports, _emberQunit) {
+
+  (0, _emberQunit.moduleForModel)('enseignant', 'Unit | Model | enseignant', {
+    // Specify the other units that are required for this test.
+    needs: ['model:ue']
+  });
+
+  (0, _emberQunit.test)('it exists', function (assert) {
+    var model = this.subject();
+    // let store = this.store();
+    assert.ok(!!model);
+  });
+});
+define('demonstration/tests/unit/models/enseignant-test.jshint.lint-test', ['exports'], function (exports) {
+  'use strict';
+
+  QUnit.module('JSHint | unit/models/enseignant-test.js');
+  QUnit.test('should pass jshint', function (assert) {
+    assert.expect(1);
+    assert.ok(true, 'unit/models/enseignant-test.js should pass jshint.');
+  });
+});
+define('demonstration/tests/unit/models/etudiant-test', ['exports', 'ember-qunit'], function (exports, _emberQunit) {
+
+  (0, _emberQunit.moduleForModel)('etudiant', 'Unit | Model | etudiant', {
+    // Specify the other units that are required for this test.
+    needs: ['model:ue']
+  });
+
+  (0, _emberQunit.test)('it exists', function (assert) {
+    var model = this.subject();
+    // let store = this.store();
+    assert.ok(!!model);
+  });
+});
+define('demonstration/tests/unit/models/etudiant-test.jshint.lint-test', ['exports'], function (exports) {
+  'use strict';
+
+  QUnit.module('JSHint | unit/models/etudiant-test.js');
+  QUnit.test('should pass jshint', function (assert) {
+    assert.expect(1);
+    assert.ok(true, 'unit/models/etudiant-test.js should pass jshint.');
+  });
+});
+define('demonstration/tests/unit/models/note-test', ['exports', 'ember-qunit'], function (exports, _emberQunit) {
+
+  (0, _emberQunit.moduleForModel)('note', 'Unit | Model | note', {
+    // Specify the other units that are required for this test.
+    needs: ['model:etudiant', 'model:ue']
+  });
+
+  (0, _emberQunit.test)('it exists', function (assert) {
+    var model = this.subject();
+    // let store = this.store();
+    assert.ok(!!model);
+  });
+});
+define('demonstration/tests/unit/models/note-test.jshint.lint-test', ['exports'], function (exports) {
+  'use strict';
+
+  QUnit.module('JSHint | unit/models/note-test.js');
+  QUnit.test('should pass jshint', function (assert) {
+    assert.expect(1);
+    assert.ok(true, 'unit/models/note-test.js should pass jshint.');
+  });
+});
+define('demonstration/tests/unit/models/ue-test', ['exports', 'ember-qunit'], function (exports, _emberQunit) {
+
+  (0, _emberQunit.moduleForModel)('ue', 'Unit | Model | ue', {
+    // Specify the other units that are required for this test.
+    needs: ['model:etudiant', 'model:enseignant']
+  });
+
+  (0, _emberQunit.test)('it exists', function (assert) {
+    var model = this.subject();
+    // let store = this.store();
+    assert.ok(!!model);
+  });
+});
+define('demonstration/tests/unit/models/ue-test.jshint.lint-test', ['exports'], function (exports) {
+  'use strict';
+
+  QUnit.module('JSHint | unit/models/ue-test.js');
+  QUnit.test('should pass jshint', function (assert) {
+    assert.expect(1);
+    assert.ok(true, 'unit/models/ue-test.js should pass jshint.');
+  });
+});
 define('demonstration/tests/unit/models/user-test', ['exports', 'ember-qunit'], function (exports, _emberQunit) {
 
   (0, _emberQunit.moduleForModel)('user', 'Unit | Model | user', {
@@ -457,6 +913,27 @@ define('demonstration/tests/unit/routes/contact-test.jshint.lint-test', ['export
     assert.ok(true, 'unit/routes/contact-test.js should pass jshint.');
   });
 });
+define('demonstration/tests/unit/routes/index-test', ['exports', 'ember-qunit'], function (exports, _emberQunit) {
+
+  (0, _emberQunit.moduleFor)('route:index', 'Unit | Route | index', {
+    // Specify the other units that are required for this test.
+    // needs: ['controller:foo']
+  });
+
+  (0, _emberQunit.test)('it exists', function (assert) {
+    var route = this.subject();
+    assert.ok(route);
+  });
+});
+define('demonstration/tests/unit/routes/index-test.jshint.lint-test', ['exports'], function (exports) {
+  'use strict';
+
+  QUnit.module('JSHint | unit/routes/index-test.js');
+  QUnit.test('should pass jshint', function (assert) {
+    assert.expect(1);
+    assert.ok(true, 'unit/routes/index-test.js should pass jshint.');
+  });
+});
 define('demonstration/tests/unit/routes/login-test', ['exports', 'ember-qunit'], function (exports, _emberQunit) {
 
   (0, _emberQunit.moduleFor)('route:login', 'Unit | Route | login', {
@@ -476,6 +953,90 @@ define('demonstration/tests/unit/routes/login-test.jshint.lint-test', ['exports'
   QUnit.test('should pass jshint', function (assert) {
     assert.expect(1);
     assert.ok(true, 'unit/routes/login-test.js should pass jshint.');
+  });
+});
+define('demonstration/tests/unit/routes/users-test', ['exports', 'ember-qunit'], function (exports, _emberQunit) {
+
+  (0, _emberQunit.moduleFor)('route:users', 'Unit | Route | users', {
+    // Specify the other units that are required for this test.
+    // needs: ['controller:foo']
+  });
+
+  (0, _emberQunit.test)('it exists', function (assert) {
+    var route = this.subject();
+    assert.ok(route);
+  });
+});
+define('demonstration/tests/unit/routes/users-test.jshint.lint-test', ['exports'], function (exports) {
+  'use strict';
+
+  QUnit.module('JSHint | unit/routes/users-test.js');
+  QUnit.test('should pass jshint', function (assert) {
+    assert.expect(1);
+    assert.ok(true, 'unit/routes/users-test.js should pass jshint.');
+  });
+});
+define('demonstration/tests/unit/routes/users/index-test', ['exports', 'ember-qunit'], function (exports, _emberQunit) {
+
+  (0, _emberQunit.moduleFor)('route:users/index', 'Unit | Route | users/index', {
+    // Specify the other units that are required for this test.
+    // needs: ['controller:foo']
+  });
+
+  (0, _emberQunit.test)('it exists', function (assert) {
+    var route = this.subject();
+    assert.ok(route);
+  });
+});
+define('demonstration/tests/unit/routes/users/index-test.jshint.lint-test', ['exports'], function (exports) {
+  'use strict';
+
+  QUnit.module('JSHint | unit/routes/users/index-test.js');
+  QUnit.test('should pass jshint', function (assert) {
+    assert.expect(1);
+    assert.ok(true, 'unit/routes/users/index-test.js should pass jshint.');
+  });
+});
+define('demonstration/tests/unit/routes/users/profil-test', ['exports', 'ember-qunit'], function (exports, _emberQunit) {
+
+  (0, _emberQunit.moduleFor)('route:users/profil', 'Unit | Route | users/profil', {
+    // Specify the other units that are required for this test.
+    // needs: ['controller:foo']
+  });
+
+  (0, _emberQunit.test)('it exists', function (assert) {
+    var route = this.subject();
+    assert.ok(route);
+  });
+});
+define('demonstration/tests/unit/routes/users/profil-test.jshint.lint-test', ['exports'], function (exports) {
+  'use strict';
+
+  QUnit.module('JSHint | unit/routes/users/profil-test.js');
+  QUnit.test('should pass jshint', function (assert) {
+    assert.expect(1);
+    assert.ok(true, 'unit/routes/users/profil-test.js should pass jshint.');
+  });
+});
+define('demonstration/tests/unit/routes/users/ue-test', ['exports', 'ember-qunit'], function (exports, _emberQunit) {
+
+  (0, _emberQunit.moduleFor)('route:users/ue', 'Unit | Route | users/ue', {
+    // Specify the other units that are required for this test.
+    // needs: ['controller:foo']
+  });
+
+  (0, _emberQunit.test)('it exists', function (assert) {
+    var route = this.subject();
+    assert.ok(route);
+  });
+});
+define('demonstration/tests/unit/routes/users/ue-test.jshint.lint-test', ['exports'], function (exports) {
+  'use strict';
+
+  QUnit.module('JSHint | unit/routes/users/ue-test.js');
+  QUnit.test('should pass jshint', function (assert) {
+    assert.expect(1);
+    assert.ok(true, 'unit/routes/users/ue-test.js should pass jshint.');
   });
 });
 /* jshint ignore:start */

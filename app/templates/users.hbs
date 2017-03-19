@@ -1,0 +1,96 @@
+<div class="container">
+  {{log 'model is =' model }}
+  {{#if isetudiant }}
+  {{#each model.etudiants as |etudiant|}}
+  <div class="col-lg-4 col-md-4 col-sm-4 col-xs-12">
+  <div class="panel panel-default">
+    <div class="panel-heading">Profil</div>
+    <div class="panel-body">
+         <div class="user-profil">
+            <h5><span>Nom complet </span>{{etudiant.nom}} {{etudiant.prenom}}</h5>
+            <h5><span>identifiant:</span> {{etudiant.identifiant}}</h5>
+            <h5><span>Date de naissance:</span> {{etudiant.datedenaissance}}</h5>
+            <h5><span>Email:</span> {{etudiant.email}}</h5>
+          </div>
+
+
+    </div>
+  </div>
+</div>
+  <div class="col-lg-8 col-md-8 col-sm-8 col-xs-12">
+    <div class="panel panel-default">
+      <div class="panel-heading">Notes</div>
+      <div class="panel-body notes_ue">
+            {{#each etudiant.ues as |ue|}}
+
+                <a class="ue" data-toggle="collapse" data-target="{{ue.id}}">
+                  <span class="glyphicon glyphicon-plus-sign" aria-hidden="true"></span> {{ue.nom}}( <b>{{ue.enseignant.nom}} {{ue.enseignant.prenom}} </b>)</a>
+              {{#each etudiant.notes as |note|}}
+                {{#if-equal param1=note.ue.id param2=ue.id}}
+
+                 {{#if-greater param1=note.cc1 param2=0}}
+                   <div class="note" style="background-color: {{get-color note.cc1}}">
+                     <label>Note CC1</label>
+                     {{note.cc1}}<span class="sur">/20</span>
+                   </div>
+                 {{/if-greater}}
+                 {{#if-greater param1=0 param2=note.cc1}}
+                   <div class="note">
+
+                   </div>
+                 {{/if-greater}}
+                  {{#if-greater param1=note.cc2 param2=0}}
+                    <div class="note" style="background-color: {{get-color note.cc2}}">
+                      <label>Note CC2</label>
+                      {{note.cc2}}<span class="sur">/20</span>
+                    </div>
+                  {{/if-greater}}
+                  {{#if-greater param1=0 param2=note.cc2}}
+                    <div class="note">
+
+                    </div>
+                  {{/if-greater}}
+                  {{#if-greater param1=note.ccf param2=0}}
+                    <div class="note" style="background-color: {{get-color note.ccf}}">
+                      <label>Note CCF</label>
+                      {{note.ccf}}<span class="sur">/20</span>
+                    </div>
+                  {{/if-greater}}
+                  {{#if-greater param1=0 param2=note.ccf}}
+                    <div class="note">
+
+                    </div>
+                  {{/if-greater}}
+
+                  {{#if-greater param1=(moyenne-note param1=note.cc1 param2=note.cc2 param3=note.ccf) param2=0}}
+                    <div class="note" style="background-color: {{get-color (moyenne-note param1=note.cc1 param2=note.cc2 param3=note.ccf)}}">
+                      <label>Moyenne</label>
+                      {{moyenne-note param1=note.cc1 param2=note.cc2 param3=note.ccf}}<span class="sur">/20</span>
+                    </div>
+                  {{/if-greater}}
+                  {{#if-greater param1=0 param2=(moyenne-note param1=note.cc1 param2=note.cc2 param3=note.ccf)}}
+                    <div class="note">
+
+                    </div>
+                  {{/if-greater}}
+
+                {{/if-equal}}
+              {{/each}}
+
+
+
+            {{/each}}
+
+            {{moyene-annee param1=etudiant.notes}}
+
+
+      </div>
+    </div>
+  </div>
+  {{/each}}
+
+      {{/if}}
+{{#if isenseignant }}
+{{/if}}
+</div>
+{{outlet}}
