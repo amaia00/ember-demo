@@ -57,6 +57,7 @@ define('demonstration/controllers/login', ['exports', 'ember'], function (export
     identifiant: '',
     password: '',
     isDisabled: _ember['default'].computed.empty('identifiant') && _ember['default'].computed.empty('password'),
+    isAuthenticated: false,
 
     actions: {
 
@@ -219,8 +220,11 @@ define('demonstration/controllers/login', ['exports', 'ember'], function (export
           this.set('responseMessage', 'mot de passe inccorect');
           this.set('emailAddress', '');
         } else {
+          this.set("isAuthenticated", true);
+          console.log('===>' + this.get('isAuthenticated'));
           this.set('responseMessage', 'Bienvenue !! Vous allez être rediriger dans quelque instant!!');
-          this.transitionToRoute('/users/' + identifiant);
+          //this.transitionToRoute('/users/'+identifiant);
+          this.transitionToRoute('protected');
         }
       }
 
@@ -228,8 +232,10 @@ define('demonstration/controllers/login', ['exports', 'ember'], function (export
 
   });
 });
-define('demonstration/controllers/users', ['exports', 'ember'], function (exports, _ember) {
+define('demonstration/controllers/users', ['exports', 'ember', 'demonstration/controllers/login'], function (exports, _ember, _demonstrationControllersLogin) {
   exports['default'] = _ember['default'].Controller.extend({
+    needs: 'login',
+    appController: _ember['default'].inject.controller('login'),
     isetudiant: _ember['default'].computed('model', function () {
       if (this.get('model').etudiants.content.length === 0) {
         return false;
@@ -243,12 +249,22 @@ define('demonstration/controllers/users', ['exports', 'ember'], function (export
       } else {
         return true;
       }
-    })
+    }),
+
+    /*isnoteue : Ember.computed('model',function(){
+      if(this.get('model').etudiants.content[0].relationships.initializedRelationships.notes.canonicalState[0].id=
+    })*/
+
+    actions: {
+      logout: function logout() {
+        this.get('appController').isAuthenticated = false;
+        this.transitionToRoute("login");
+      }
+
+    }
+
   });
 });
-/*isnoteue : Ember.computed('model',function(){
-  if(this.get('model').etudiants.content[0].relationships.initializedRelationships.notes.canonicalState[0].id=
-})*/
 define('demonstration/helpers/app-version', ['exports', 'ember', 'demonstration/config/environment', 'ember-cli-app-version/utils/regexp'], function (exports, _ember, _demonstrationConfigEnvironment, _emberCliAppVersionUtilsRegexp) {
   exports.appVersion = appVersion;
   var version = _demonstrationConfigEnvironment['default'].APP.version;
@@ -427,6 +443,20 @@ define('demonstration/initializers/ember-data', ['exports', 'ember-data/setup-co
     initialize: _emberDataSetupContainer['default']
   };
 });
+define('demonstration/initializers/ember-simple-auth', ['exports', 'demonstration/config/environment', 'ember-simple-auth/configuration', 'ember-simple-auth/initializers/setup-session', 'ember-simple-auth/initializers/setup-session-service'], function (exports, _demonstrationConfigEnvironment, _emberSimpleAuthConfiguration, _emberSimpleAuthInitializersSetupSession, _emberSimpleAuthInitializersSetupSessionService) {
+  exports['default'] = {
+    name: 'ember-simple-auth',
+
+    initialize: function initialize(registry) {
+      var config = _demonstrationConfigEnvironment['default']['ember-simple-auth'] || {};
+      config.baseURL = _demonstrationConfigEnvironment['default'].rootURL || _demonstrationConfigEnvironment['default'].baseURL;
+      _emberSimpleAuthConfiguration['default'].load(config);
+
+      (0, _emberSimpleAuthInitializersSetupSession['default'])(registry);
+      (0, _emberSimpleAuthInitializersSetupSessionService['default'])(registry);
+    }
+  };
+});
 define('demonstration/initializers/emberfire', ['exports', 'emberfire/initializers/emberfire'], function (exports, _emberfireInitializersEmberfire) {
   exports['default'] = _emberfireInitializersEmberfire['default'];
 });
@@ -527,6 +557,15 @@ define("demonstration/instance-initializers/ember-data", ["exports", "ember-data
     initialize: _emberDataPrivateInstanceInitializersInitializeStoreService["default"]
   };
 });
+define('demonstration/instance-initializers/ember-simple-auth', ['exports', 'ember-simple-auth/instance-initializers/setup-session-restoration'], function (exports, _emberSimpleAuthInstanceInitializersSetupSessionRestoration) {
+  exports['default'] = {
+    name: 'ember-simple-auth',
+
+    initialize: function initialize(instance) {
+      (0, _emberSimpleAuthInstanceInitializersSetupSessionRestoration['default'])(instance);
+    }
+  };
+});
 define('demonstration/models/enseignant', ['exports', 'ember-data', 'demonstration/models/user'], function (exports, _emberData, _demonstrationModelsUser) {
   exports['default'] = _demonstrationModelsUser['default'].extend({
 
@@ -580,6 +619,7 @@ define('demonstration/resolver', ['exports', 'ember-resolver'], function (export
 define('demonstration/router', ['exports', 'ember', 'demonstration/config/environment'], function (exports, _ember, _demonstrationConfigEnvironment) {
 
   var Router = _ember['default'].Router.extend({
+
     location: _demonstrationConfigEnvironment['default'].locationType,
     rootURL: _demonstrationConfigEnvironment['default'].rootURL
   });
@@ -588,12 +628,19 @@ define('demonstration/router', ['exports', 'ember', 'demonstration/config/enviro
     this.route('login');
     this.route('contact');
 
-    this.route('users', { path: '/users/:username' }, function () {
+    this.route('login', { path: '/users/:username' }, function () {
       this.route('ue', { path: '/users/:username/ue' });
     });
+
+    this.route('protected');
   });
 
   exports['default'] = Router;
+});
+define('demonstration/routes/application', ['exports', 'ember'], function (exports, _ember) {
+
+  // Ensure the application route exists for ember-simple-auth's `setup-session-restoration` initializer
+  exports['default'] = _ember['default'].Route.extend();
 });
 define('demonstration/routes/contact', ['exports', 'ember'], function (exports, _ember) {
   exports['default'] = _ember['default'].Route.extend({});
@@ -624,6 +671,20 @@ define('demonstration/routes/login', ['exports', 'ember'], function (exports, _e
       return records;
       //
       //return records;
+    }
+  });
+});
+define("demonstration/routes/protected", ["exports", "ember"], function (exports, _ember) {
+  exports["default"] = _ember["default"].Route.extend({
+    beforeModel: function beforeModel() {
+      //console.log(this.get('session'));
+      var isAuthenticated = this.controllerFor("login").get("isAuthenticated");
+      var identifiant = this.controllerFor("login").get("identifiant");
+      console.log(isAuthenticated);
+      if (isAuthenticated) {
+        //this.transitionTo('application');
+        this.transitionTo('/users/' + identifiant);
+      } else {}
     }
   });
 });
@@ -699,11 +760,20 @@ define('demonstration/services/ajax', ['exports', 'ember-ajax/services/ajax'], f
     }
   });
 });
+define('demonstration/services/cookies', ['exports', 'ember-cookies/services/cookies'], function (exports, _emberCookiesServicesCookies) {
+  exports['default'] = _emberCookiesServicesCookies['default'];
+});
 define('demonstration/services/firebase-app', ['exports', 'emberfire/services/firebase-app'], function (exports, _emberfireServicesFirebaseApp) {
   exports['default'] = _emberfireServicesFirebaseApp['default'];
 });
 define('demonstration/services/firebase', ['exports', 'emberfire/services/firebase'], function (exports, _emberfireServicesFirebase) {
   exports['default'] = _emberfireServicesFirebase['default'];
+});
+define('demonstration/services/session', ['exports', 'ember-simple-auth/services/session'], function (exports, _emberSimpleAuthServicesSession) {
+  exports['default'] = _emberSimpleAuthServicesSession['default'];
+});
+define('demonstration/session-stores/application', ['exports', 'ember-simple-auth/session-stores/adaptive'], function (exports, _emberSimpleAuthSessionStoresAdaptive) {
+  exports['default'] = _emberSimpleAuthSessionStoresAdaptive['default'].extend();
 });
 define("demonstration/templates/application", ["exports"], function (exports) {
   exports["default"] = Ember.HTMLBars.template({ "id": "zyyX5VGl", "block": "{\"statements\":[[\"text\",\"\\n\\n  \"],[\"append\",[\"unknown\",[\"outlet\"]],false]],\"locals\":[],\"named\":[],\"yields\":[],\"blocks\":[],\"hasPartials\":false}", "meta": { "moduleName": "demonstration/templates/application.hbs" } });
@@ -725,6 +795,9 @@ define("demonstration/templates/login", ["exports"], function (exports) {
 });
 define("demonstration/templates/navbar", ["exports"], function (exports) {
   exports["default"] = Ember.HTMLBars.template({ "id": "E4pRdUck", "block": "{\"statements\":[[\"open-element\",\"nav\",[]],[\"static-attr\",\"class\",\"navbar navbar-inverse\"],[\"flush-element\"],[\"text\",\"\\n  \"],[\"open-element\",\"div\",[]],[\"static-attr\",\"class\",\"container_nav\"],[\"flush-element\"],[\"text\",\"\\n    \"],[\"open-element\",\"div\",[]],[\"static-attr\",\"class\",\"container-fluid\"],[\"flush-element\"],[\"text\",\"\\n      \"],[\"open-element\",\"div\",[]],[\"static-attr\",\"class\",\"collapse navbar-collapse\"],[\"static-attr\",\"id\",\"main-navbar\"],[\"flush-element\"],[\"text\",\"\\n        \"],[\"open-element\",\"ul\",[]],[\"static-attr\",\"class\",\"nav navbar-nav\"],[\"flush-element\"],[\"text\",\"\\n          \"],[\"block\",[\"link-to\"],[\"index\"],[[\"tagName\"],[\"li\"]],2],[\"text\",\"\\n          \"],[\"block\",[\"link-to\"],[\"login\"],[[\"tagName\"],[\"li\"]],1],[\"text\",\"\\n          \"],[\"block\",[\"link-to\"],[\"contact\"],[[\"tagName\"],[\"li\"]],0],[\"text\",\"\\n\\n        \"],[\"close-element\"],[\"text\",\"\\n      \"],[\"close-element\"],[\"comment\",\" /.navbar-collapse \"],[\"text\",\"\\n    \"],[\"close-element\"],[\"comment\",\" /.container-fluid \"],[\"text\",\"\\n  \"],[\"close-element\"],[\"text\",\"\\n\"],[\"close-element\"]],\"locals\":[],\"named\":[],\"yields\":[],\"blocks\":[{\"statements\":[[\"open-element\",\"a\",[]],[\"static-attr\",\"href\",\"\"],[\"flush-element\"],[\"open-element\",\"span\",[]],[\"static-attr\",\"class\",\"glyphicon glyphicon-envelope\"],[\"static-attr\",\"aria-hidden\",\"true\"],[\"flush-element\"],[\"close-element\"],[\"text\",\"Contact\"],[\"close-element\"]],\"locals\":[]},{\"statements\":[[\"open-element\",\"a\",[]],[\"static-attr\",\"href\",\"\"],[\"flush-element\"],[\"open-element\",\"span\",[]],[\"static-attr\",\"class\",\"glyphicon glyphicon-user\"],[\"static-attr\",\"aria-hidden\",\"true\"],[\"flush-element\"],[\"close-element\"],[\"text\",\"Connexion\"],[\"close-element\"]],\"locals\":[]},{\"statements\":[[\"open-element\",\"a\",[]],[\"static-attr\",\"href\",\"\"],[\"flush-element\"],[\"open-element\",\"span\",[]],[\"static-attr\",\"class\",\"glyphicon glyphicon-home\"],[\"static-attr\",\"aria-hidden\",\"true\"],[\"flush-element\"],[\"close-element\"],[\"text\",\"Accueil\"],[\"close-element\"]],\"locals\":[]}],\"hasPartials\":false}", "meta": { "moduleName": "demonstration/templates/navbar.hbs" } });
+});
+define("demonstration/templates/protected", ["exports"], function (exports) {
+  exports["default"] = Ember.HTMLBars.template({ "id": "Fv+HpbWp", "block": "{\"statements\":[[\"append\",[\"unknown\",[\"outlet\"]],false],[\"text\",\"\\n\"]],\"locals\":[],\"named\":[],\"yields\":[],\"blocks\":[],\"hasPartials\":false}", "meta": { "moduleName": "demonstration/templates/protected.hbs" } });
 });
 define("demonstration/templates/users", ["exports"], function (exports) {
   exports["default"] = Ember.HTMLBars.template({ "id": "7Z4lWgCX", "block": "{\"statements\":[[\"open-element\",\"div\",[]],[\"static-attr\",\"class\",\"container\"],[\"flush-element\"],[\"text\",\"\\n  \"],[\"open-element\",\"button\",[]],[\"static-attr\",\"class\",\"btn btn-primary btn-lg btn-block\"],[\"modifier\",[\"action\"],[[\"get\",[null]],\"logout\"]],[\"flush-element\"],[\"text\",\"Se deconnecter\"],[\"close-element\"],[\"text\",\"\\n  \"],[\"append\",[\"helper\",[\"log\"],[\"model is =\",[\"get\",[\"model\"]]],null],false],[\"text\",\"\\n\"],[\"block\",[\"if\"],[[\"get\",[\"isetudiant\"]]],null,13],[\"block\",[\"if\"],[[\"get\",[\"isenseignant\"]]],null,0],[\"close-element\"],[\"text\",\"\\n\"],[\"append\",[\"unknown\",[\"outlet\"]],false],[\"text\",\"\\n\"]],\"locals\":[],\"named\":[],\"yields\":[],\"blocks\":[{\"statements\":[],\"locals\":[]},{\"statements\":[[\"text\",\"                    \"],[\"open-element\",\"div\",[]],[\"static-attr\",\"class\",\"note\"],[\"flush-element\"],[\"text\",\"\\n\\n                    \"],[\"close-element\"],[\"text\",\"\\n\"]],\"locals\":[]},{\"statements\":[[\"text\",\"                    \"],[\"open-element\",\"div\",[]],[\"static-attr\",\"class\",\"note\"],[\"dynamic-attr\",\"style\",[\"concat\",[\"background-color: \",[\"helper\",[\"get-color\"],[[\"helper\",[\"moyenne-note\"],null,[[\"param1\",\"param2\",\"param3\"],[[\"get\",[\"note\",\"cc1\"]],[\"get\",[\"note\",\"cc2\"]],[\"get\",[\"note\",\"ccf\"]]]]]],null]]]],[\"flush-element\"],[\"text\",\"\\n                      \"],[\"open-element\",\"label\",[]],[\"flush-element\"],[\"text\",\"Moyenne\"],[\"close-element\"],[\"text\",\"\\n                      \"],[\"append\",[\"helper\",[\"moyenne-note\"],null,[[\"param1\",\"param2\",\"param3\"],[[\"get\",[\"note\",\"cc1\"]],[\"get\",[\"note\",\"cc2\"]],[\"get\",[\"note\",\"ccf\"]]]]],false],[\"open-element\",\"span\",[]],[\"static-attr\",\"class\",\"sur\"],[\"flush-element\"],[\"text\",\"/20\"],[\"close-element\"],[\"text\",\"\\n                    \"],[\"close-element\"],[\"text\",\"\\n\"]],\"locals\":[]},{\"statements\":[[\"text\",\"                    \"],[\"open-element\",\"div\",[]],[\"static-attr\",\"class\",\"note\"],[\"flush-element\"],[\"text\",\"\\n\\n                    \"],[\"close-element\"],[\"text\",\"\\n\"]],\"locals\":[]},{\"statements\":[[\"text\",\"                    \"],[\"open-element\",\"div\",[]],[\"static-attr\",\"class\",\"note\"],[\"dynamic-attr\",\"style\",[\"concat\",[\"background-color: \",[\"helper\",[\"get-color\"],[[\"get\",[\"note\",\"ccf\"]]],null]]]],[\"flush-element\"],[\"text\",\"\\n                      \"],[\"open-element\",\"label\",[]],[\"flush-element\"],[\"text\",\"Note CCF\"],[\"close-element\"],[\"text\",\"\\n                      \"],[\"append\",[\"unknown\",[\"note\",\"ccf\"]],false],[\"open-element\",\"span\",[]],[\"static-attr\",\"class\",\"sur\"],[\"flush-element\"],[\"text\",\"/20\"],[\"close-element\"],[\"text\",\"\\n                    \"],[\"close-element\"],[\"text\",\"\\n\"]],\"locals\":[]},{\"statements\":[[\"text\",\"                    \"],[\"open-element\",\"div\",[]],[\"static-attr\",\"class\",\"note\"],[\"flush-element\"],[\"text\",\"\\n\\n                    \"],[\"close-element\"],[\"text\",\"\\n\"]],\"locals\":[]},{\"statements\":[[\"text\",\"                    \"],[\"open-element\",\"div\",[]],[\"static-attr\",\"class\",\"note\"],[\"dynamic-attr\",\"style\",[\"concat\",[\"background-color: \",[\"helper\",[\"get-color\"],[[\"get\",[\"note\",\"cc2\"]]],null]]]],[\"flush-element\"],[\"text\",\"\\n                      \"],[\"open-element\",\"label\",[]],[\"flush-element\"],[\"text\",\"Note CC2\"],[\"close-element\"],[\"text\",\"\\n                      \"],[\"append\",[\"unknown\",[\"note\",\"cc2\"]],false],[\"open-element\",\"span\",[]],[\"static-attr\",\"class\",\"sur\"],[\"flush-element\"],[\"text\",\"/20\"],[\"close-element\"],[\"text\",\"\\n                    \"],[\"close-element\"],[\"text\",\"\\n\"]],\"locals\":[]},{\"statements\":[[\"text\",\"                   \"],[\"open-element\",\"div\",[]],[\"static-attr\",\"class\",\"note\"],[\"flush-element\"],[\"text\",\"\\n\\n                   \"],[\"close-element\"],[\"text\",\"\\n\"]],\"locals\":[]},{\"statements\":[[\"text\",\"                   \"],[\"open-element\",\"div\",[]],[\"static-attr\",\"class\",\"note\"],[\"dynamic-attr\",\"style\",[\"concat\",[\"background-color: \",[\"helper\",[\"get-color\"],[[\"get\",[\"note\",\"cc1\"]]],null]]]],[\"flush-element\"],[\"text\",\"\\n                     \"],[\"open-element\",\"label\",[]],[\"flush-element\"],[\"text\",\"Note CC1\"],[\"close-element\"],[\"text\",\"\\n                     \"],[\"append\",[\"unknown\",[\"note\",\"cc1\"]],false],[\"open-element\",\"span\",[]],[\"static-attr\",\"class\",\"sur\"],[\"flush-element\"],[\"text\",\"/20\"],[\"close-element\"],[\"text\",\"\\n                   \"],[\"close-element\"],[\"text\",\"\\n\"]],\"locals\":[]},{\"statements\":[[\"text\",\"\\n\"],[\"block\",[\"if-greater\"],null,[[\"param1\",\"param2\"],[[\"get\",[\"note\",\"cc1\"]],0]],8],[\"block\",[\"if-greater\"],null,[[\"param1\",\"param2\"],[0,[\"get\",[\"note\",\"cc1\"]]]],7],[\"block\",[\"if-greater\"],null,[[\"param1\",\"param2\"],[[\"get\",[\"note\",\"cc2\"]],0]],6],[\"block\",[\"if-greater\"],null,[[\"param1\",\"param2\"],[0,[\"get\",[\"note\",\"cc2\"]]]],5],[\"block\",[\"if-greater\"],null,[[\"param1\",\"param2\"],[[\"get\",[\"note\",\"ccf\"]],0]],4],[\"block\",[\"if-greater\"],null,[[\"param1\",\"param2\"],[0,[\"get\",[\"note\",\"ccf\"]]]],3],[\"text\",\"\\n\"],[\"block\",[\"if-greater\"],null,[[\"param1\",\"param2\"],[[\"helper\",[\"moyenne-note\"],null,[[\"param1\",\"param2\",\"param3\"],[[\"get\",[\"note\",\"cc1\"]],[\"get\",[\"note\",\"cc2\"]],[\"get\",[\"note\",\"ccf\"]]]]],0]],2],[\"block\",[\"if-greater\"],null,[[\"param1\",\"param2\"],[0,[\"helper\",[\"moyenne-note\"],null,[[\"param1\",\"param2\",\"param3\"],[[\"get\",[\"note\",\"cc1\"]],[\"get\",[\"note\",\"cc2\"]],[\"get\",[\"note\",\"ccf\"]]]]]]],1],[\"text\",\"\\n\"]],\"locals\":[]},{\"statements\":[[\"block\",[\"if-equal\"],null,[[\"param1\",\"param2\"],[[\"get\",[\"note\",\"ue\",\"id\"]],[\"get\",[\"ue\",\"id\"]]]],9]],\"locals\":[\"note\"]},{\"statements\":[[\"text\",\"\\n                \"],[\"open-element\",\"a\",[]],[\"static-attr\",\"class\",\"ue\"],[\"static-attr\",\"data-toggle\",\"collapse\"],[\"dynamic-attr\",\"data-target\",[\"concat\",[[\"unknown\",[\"ue\",\"id\"]]]]],[\"flush-element\"],[\"text\",\"\\n                  \"],[\"open-element\",\"span\",[]],[\"static-attr\",\"class\",\"glyphicon glyphicon-plus-sign\"],[\"static-attr\",\"aria-hidden\",\"true\"],[\"flush-element\"],[\"close-element\"],[\"text\",\" \"],[\"append\",[\"unknown\",[\"ue\",\"nom\"]],false],[\"text\",\"( \"],[\"open-element\",\"b\",[]],[\"flush-element\"],[\"append\",[\"unknown\",[\"ue\",\"enseignant\",\"nom\"]],false],[\"text\",\" \"],[\"append\",[\"unknown\",[\"ue\",\"enseignant\",\"prenom\"]],false],[\"text\",\" \"],[\"close-element\"],[\"text\",\")\"],[\"close-element\"],[\"text\",\"\\n\"],[\"block\",[\"each\"],[[\"get\",[\"etudiant\",\"notes\"]]],null,10],[\"text\",\"\\n\\n\\n\"]],\"locals\":[\"ue\"]},{\"statements\":[[\"text\",\"  \"],[\"open-element\",\"div\",[]],[\"static-attr\",\"class\",\"col-lg-4 col-md-4 col-sm-4 col-xs-12\"],[\"flush-element\"],[\"text\",\"\\n  \"],[\"open-element\",\"div\",[]],[\"static-attr\",\"class\",\"panel panel-default\"],[\"flush-element\"],[\"text\",\"\\n    \"],[\"open-element\",\"div\",[]],[\"static-attr\",\"class\",\"panel-heading\"],[\"flush-element\"],[\"text\",\"Profil\"],[\"close-element\"],[\"text\",\"\\n    \"],[\"open-element\",\"div\",[]],[\"static-attr\",\"class\",\"panel-body\"],[\"flush-element\"],[\"text\",\"\\n         \"],[\"open-element\",\"div\",[]],[\"static-attr\",\"class\",\"user-profil\"],[\"flush-element\"],[\"text\",\"\\n            \"],[\"open-element\",\"h5\",[]],[\"flush-element\"],[\"open-element\",\"span\",[]],[\"flush-element\"],[\"text\",\"Nom complet \"],[\"close-element\"],[\"append\",[\"unknown\",[\"etudiant\",\"nom\"]],false],[\"text\",\" \"],[\"append\",[\"unknown\",[\"etudiant\",\"prenom\"]],false],[\"close-element\"],[\"text\",\"\\n            \"],[\"open-element\",\"h5\",[]],[\"flush-element\"],[\"open-element\",\"span\",[]],[\"flush-element\"],[\"text\",\"identifiant:\"],[\"close-element\"],[\"text\",\" \"],[\"append\",[\"unknown\",[\"etudiant\",\"identifiant\"]],false],[\"close-element\"],[\"text\",\"\\n            \"],[\"open-element\",\"h5\",[]],[\"flush-element\"],[\"open-element\",\"span\",[]],[\"flush-element\"],[\"text\",\"Date de naissance:\"],[\"close-element\"],[\"text\",\" \"],[\"append\",[\"unknown\",[\"etudiant\",\"datedenaissance\"]],false],[\"close-element\"],[\"text\",\"\\n            \"],[\"open-element\",\"h5\",[]],[\"flush-element\"],[\"open-element\",\"span\",[]],[\"flush-element\"],[\"text\",\"Email:\"],[\"close-element\"],[\"text\",\" \"],[\"append\",[\"unknown\",[\"etudiant\",\"email\"]],false],[\"close-element\"],[\"text\",\"\\n          \"],[\"close-element\"],[\"text\",\"\\n\\n\\n    \"],[\"close-element\"],[\"text\",\"\\n  \"],[\"close-element\"],[\"text\",\"\\n\"],[\"close-element\"],[\"text\",\"\\n  \"],[\"open-element\",\"div\",[]],[\"static-attr\",\"class\",\"col-lg-8 col-md-8 col-sm-8 col-xs-12\"],[\"flush-element\"],[\"text\",\"\\n    \"],[\"open-element\",\"div\",[]],[\"static-attr\",\"class\",\"panel panel-default\"],[\"flush-element\"],[\"text\",\"\\n      \"],[\"open-element\",\"div\",[]],[\"static-attr\",\"class\",\"panel-heading\"],[\"flush-element\"],[\"text\",\"Notes\"],[\"close-element\"],[\"text\",\"\\n      \"],[\"open-element\",\"div\",[]],[\"static-attr\",\"class\",\"panel-body notes_ue\"],[\"flush-element\"],[\"text\",\"\\n\"],[\"block\",[\"each\"],[[\"get\",[\"etudiant\",\"ues\"]]],null,11],[\"text\",\"\\n            \"],[\"append\",[\"helper\",[\"moyene-annee\"],null,[[\"param1\"],[[\"get\",[\"etudiant\",\"notes\"]]]]],false],[\"text\",\"\\n\\n\\n      \"],[\"close-element\"],[\"text\",\"\\n    \"],[\"close-element\"],[\"text\",\"\\n  \"],[\"close-element\"],[\"text\",\"\\n\"]],\"locals\":[\"etudiant\"]},{\"statements\":[[\"block\",[\"each\"],[[\"get\",[\"model\",\"etudiants\"]]],null,12],[\"text\",\"\\n\"]],\"locals\":[]}],\"hasPartials\":false}", "meta": { "moduleName": "demonstration/templates/users.hbs" } });
@@ -780,7 +853,7 @@ catch(err) {
 /* jshint ignore:start */
 
 if (!runningTests) {
-  require("demonstration/app")["default"].create({"LOG_RESOLVER":true,"LOG_ACTIVE_GENERATION":true,"LOG_TRANSITIONS":true,"LOG_TRANSITIONS_INTERNAL":true,"LOG_VIEW_LOOKUPS":true,"name":"demonstration","version":"0.0.0+79fec66c"});
+  require("demonstration/app")["default"].create({"LOG_RESOLVER":true,"LOG_ACTIVE_GENERATION":true,"LOG_TRANSITIONS":true,"LOG_TRANSITIONS_INTERNAL":true,"LOG_VIEW_LOOKUPS":true,"name":"demonstration","version":"0.0.0+"});
 }
 
 /* jshint ignore:end */

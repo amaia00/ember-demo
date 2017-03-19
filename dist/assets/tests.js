@@ -60,7 +60,7 @@ define('demonstration/tests/controllers/users.jshint.lint-test', ['exports'], fu
   QUnit.module('JSHint | controllers/users.js');
   QUnit.test('should pass jshint', function (assert) {
     assert.expect(1);
-    assert.ok(true, 'controllers/users.js should pass jshint.');
+    assert.ok(false, 'controllers/users.js should pass jshint.\ncontrollers/users.js: line 2, col 8, \'login\' is defined but never used.\n\n1 error');
   });
 });
 define('demonstration/tests/helpers/create-offline-ref', ['exports', 'firebase'], function (exports, _firebase) {
@@ -146,6 +146,42 @@ define('demonstration/tests/helpers/destroy-firebase-apps', ['exports', 'ember',
     });
   }
 });
+define('demonstration/tests/helpers/ember-simple-auth', ['exports', 'ember-simple-auth/authenticators/test'], function (exports, _emberSimpleAuthAuthenticatorsTest) {
+  exports.authenticateSession = authenticateSession;
+  exports.currentSession = currentSession;
+  exports.invalidateSession = invalidateSession;
+
+  var TEST_CONTAINER_KEY = 'authenticator:test';
+
+  function ensureAuthenticator(app, container) {
+    var authenticator = container.lookup(TEST_CONTAINER_KEY);
+    if (!authenticator) {
+      app.register(TEST_CONTAINER_KEY, _emberSimpleAuthAuthenticatorsTest['default']);
+    }
+  }
+
+  function authenticateSession(app, sessionData) {
+    var container = app.__container__;
+
+    var session = container.lookup('service:session');
+    ensureAuthenticator(app, container);
+    session.authenticate(TEST_CONTAINER_KEY, sessionData);
+    return wait();
+  }
+
+  function currentSession(app) {
+    return app.__container__.lookup('service:session');
+  }
+
+  function invalidateSession(app) {
+    var session = app.__container__.lookup('service:session');
+    if (session.get('isAuthenticated')) {
+      session.invalidate();
+    }
+    return wait();
+  }
+});
+/* global wait */
 define('demonstration/tests/helpers/get-color.jshint.lint-test', ['exports'], function (exports) {
   'use strict';
 
@@ -619,6 +655,15 @@ define('demonstration/tests/routes/login.jshint.lint-test', ['exports'], functio
     assert.ok(true, 'routes/login.js should pass jshint.');
   });
 });
+define('demonstration/tests/routes/protected.jshint.lint-test', ['exports'], function (exports) {
+  'use strict';
+
+  QUnit.module('JSHint | routes/protected.js');
+  QUnit.test('should pass jshint', function (assert) {
+    assert.expect(1);
+    assert.ok(true, 'routes/protected.js should pass jshint.');
+  });
+});
 define('demonstration/tests/routes/users.jshint.lint-test', ['exports'], function (exports) {
   'use strict';
 
@@ -953,6 +998,27 @@ define('demonstration/tests/unit/routes/login-test.jshint.lint-test', ['exports'
   QUnit.test('should pass jshint', function (assert) {
     assert.expect(1);
     assert.ok(true, 'unit/routes/login-test.js should pass jshint.');
+  });
+});
+define('demonstration/tests/unit/routes/protected-test', ['exports', 'ember-qunit'], function (exports, _emberQunit) {
+
+  (0, _emberQunit.moduleFor)('route:protected', 'Unit | Route | protected', {
+    // Specify the other units that are required for this test.
+    // needs: ['controller:foo']
+  });
+
+  (0, _emberQunit.test)('it exists', function (assert) {
+    var route = this.subject();
+    assert.ok(route);
+  });
+});
+define('demonstration/tests/unit/routes/protected-test.jshint.lint-test', ['exports'], function (exports) {
+  'use strict';
+
+  QUnit.module('JSHint | unit/routes/protected-test.js');
+  QUnit.test('should pass jshint', function (assert) {
+    assert.expect(1);
+    assert.ok(true, 'unit/routes/protected-test.js should pass jshint.');
   });
 });
 define('demonstration/tests/unit/routes/users-test', ['exports', 'ember-qunit'], function (exports, _emberQunit) {

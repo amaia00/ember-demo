@@ -5,10 +5,11 @@ export default Ember.Controller.extend({
   identifiant: '',
   password: '',
   isDisabled: Ember.computed.empty('identifiant') && Ember.computed.empty('password'),
+  isAuthenticated: false,
 
   actions: {
 
-    verifyUser() {
+    verifyUser:function() {
       /**
        * a effacer
        */
@@ -199,8 +200,11 @@ export default Ember.Controller.extend({
         this.set('responseMessage', 'mot de passe inccorect');
         this.set('emailAddress', '');
       }else{
+        this.set("isAuthenticated", true);
+          console.log('===>' + this.get('isAuthenticated'));
         this.set('responseMessage', 'Bienvenue !! Vous allez être rediriger dans quelque instant!!');
-        this.transitionToRoute('/users/'+identifiant);
+        //this.transitionToRoute('/users/'+identifiant);
+        this.transitionToRoute('protected');
       }
 
 
