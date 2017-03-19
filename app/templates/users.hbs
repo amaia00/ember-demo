@@ -19,7 +19,6 @@
               {{#each etudiant.notes as |note|}}
                 {{#if-equal param1=note.ue.id param2=ue.id}}
 
-
                   {{student-note note=note.cc1 title-note="Note CC1"}}
                   {{student-note note=note.cc2 title-note="Note CC2"}}
                   {{student-note note=note.ccf title-note="Note CCF"}}
@@ -42,6 +41,7 @@
   {{#if isenseignant }}
 
     {{#each model.enseignants as |enseignant|}}
+
       {{user-profile user=enseignant}}
 
       <!-- Liste d'UEs -->
@@ -53,32 +53,12 @@
             {{#each enseignant.ues as |ue|}}
 
               <a class="ue" data-toggle="collapse" data-target="{{ue.id}}">
-                <span class="glyphicon glyphicon-plus-sign" aria-hidden="true"></span> {{ue.nom}}</a>
+                <span class="glyphicon glyphicon-plus-sign" aria-hidden="true"></span> {{ue.nom}}
+              </a>
+
               {{#each ue.etudiants as |etudiant|}}
-
-                <label>{{etudiant.nom}}, {{etudiant.prenom}}</label><br/>
-                <label>Identifiant: {{etudiant.identifiant}}</label>
-                {{#each etudiant.notes as |note|}}
-
-                  {{#if-equal param1=note.ue.id param2=ue.id}}
-                    <div class="form-inline">
-                      {{input type="number" min="0" max="20" value=note.cc1 class="form-control"
-                              placeholder="CC1" style="background-color: {{get-color note.cc1}}"}}
-                      {{input type="number" min="0" max="20" value=note.cc2 class="form-control"
-                              placeholder="CC2" style="background-color: {{get-color note.cc2}}"}}
-                      {{input type="number" min="0" max="20" value=note.ccf class="form-control"
-                              placeholder="CCF" style="background-color: {{get-color note.ccf}}"}}
-
-                      <button class="btn btn-primary btn-orange btn-sm" {{action 'saveNote' note}}>Save</button>
-
-                      {{student-average note=note}}
-                    </div>
-
-                  {{/if-equal}}
-                {{/each}}
-
+                {{student-info etudiant=etudiant ue=ue}}
               {{/each}}
-
 
             {{/each}}
           </div>
