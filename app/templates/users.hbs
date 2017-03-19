@@ -14,6 +14,7 @@
 
                 <a class="ue" data-toggle="collapse" data-target="{{ue.id}}">
                   <span class="glyphicon glyphicon-plus-sign" aria-hidden="true"></span> {{ue.nom}}( <b>{{ue.enseignant.nom}} {{ue.enseignant.prenom}} </b>)</a>
+
               {{#each etudiant.notes as |note|}}
                 {{#if-equal param1=note.ue.id param2=ue.id}}
 
@@ -98,17 +99,17 @@
 
                   {{#if-equal param1=note.ue.id param2=ue.id}}
                   <div class="form-inline">
-                      {{input type="number" value=note.cc1 class="form-control"
+                      {{input type="number" min="0" max="20" value=note.cc1 class="form-control"
                               placeholder="CC1"}}
-                      {{input type="number" value=note.cc2 class="form-control"
+                      {{input type="number" min="0" max="20" value=note.cc2 class="form-control"
                               placeholder="CC2"}}
-                      {{input type="number" value=note.ccf class="form-control"
+                      {{input type="number" min="0" max="20" value=note.ccf class="form-control"
                               placeholder="CCF"}}
 
-                    <button class="btn btn-primary btn-xs" {{action 'saveNote' note}}>Save</button>
-                  </div>
-                  <br/>
+                    <button class="btn btn-primary btn-orange btn-sm" {{action 'saveNote' note}}>Save</button>
                     Moyenne:
+                  </div>
+
                   {{/if-equal}}
                 {{/each}}
 
