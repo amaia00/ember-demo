@@ -3,6 +3,7 @@ import Ember from 'ember';
 export default Ember.Route.extend({
   model: function(params) {
     console.log(params.username);
+
     return Ember.RSVP.hash({
       enseignants: this.store.query('enseignant', {
         orderBy: 'identifiant',
@@ -11,7 +12,10 @@ export default Ember.Route.extend({
       etudiants: this.store.query('etudiant', {
         orderBy: 'identifiant',
         equalTo: params.username
-      })
+      }),
+      ues: this.store.findAll('ue').then(results => results.filter((ue) =>{
+        return ue.get('enseignant') == params.username;
+      }))
     });
   }
     /*this.store.query('enseignant', {

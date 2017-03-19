@@ -8,6 +8,7 @@ export default Ember.Controller.extend({
       return true;
     }
   }),
+
   isenseignant: Ember.computed('model',function(){
     if(this.get('model').enseignants.content.length === 0){
       return false;
@@ -15,7 +16,10 @@ export default Ember.Controller.extend({
       return true;
     }
   }),
-  /*isnoteue : Ember.computed('model',function(){
-    if(this.get('model').etudiants.content[0].relationships.initializedRelationships.notes.canonicalState[0].id=
-  })*/
+
+  actions: {
+    saveNote(note) {
+      note.save();
+    }
+  }
 });

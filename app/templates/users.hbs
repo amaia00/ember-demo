@@ -78,12 +78,9 @@
                 {{/if-equal}}
               {{/each}}
 
-
-
             {{/each}}
 
             {{moyene-annee param1=etudiant.notes}}
-
 
       </div>
     </div>
@@ -92,6 +89,64 @@
 
       {{/if}}
 {{#if isenseignant }}
+
+  {{#each model.enseignants as |enseignant|}}
+    <!-- Profile -->
+      <div class="col-lg-4 col-md-4 col-sm-4 col-xs-12">
+        <div class="panel panel-default">
+          <div class="panel-heading">Profil</div>
+          <div class="panel-body">
+            <div class="user-profil">
+              <h5><span>Nom complet </span>{{enseignant.nom}} {{enseignant.prenom}}</h5>
+              <h5><span>identifiant:</span> {{enseignant.identifiant}}</h5>
+              <h5><span>Date de naissance:</span> {{enseignant.datedenaissance}}</h5>
+              <h5><span>Email:</span> {{enseignant.email}}</h5>
+            </div>
+          </div>
+        </div>
+      </div>
+
+    <!-- Liste d'UEs -->
+
+    <div class="col-lg-8 col-md-8 col-sm-8 col-xs-12">
+      <div class="panel panel-default">
+        <div class="panel-heading">UEs</div>
+        <div class="panel-body notes_ue">
+          {{#each enseignant.ues as |ue|}}
+
+            <a class="ue" data-toggle="collapse" data-target="{{ue.id}}">
+              <span class="glyphicon glyphicon-plus-sign" aria-hidden="true"></span> {{ue.nom}}</a>
+              {{#each ue.etudiants as |etudiant|}}
+
+                <label>{{etudiant.nom}}</label>
+                {{#each etudiant.notes as |note|}}
+
+                  {{#if-equal param1=note.ue.id param2=ue.id}}
+                  <div class="form-inline">
+                      {{input type="number" value=note.cc1 class="form-control"
+                              placeholder="CC1"}}
+                      {{input type="number" value=note.cc2 class="form-control"
+                              placeholder="CC2"}}
+                      {{input type="number" value=note.ccf class="form-control"
+                              placeholder="CCF"}}
+
+                    <button class="btn btn-primary btn-xs" {{action 'saveNote' note}}>Save</button>
+                  </div>
+                  <br/>
+                    Moyenne:
+                  {{/if-equal}}
+                {{/each}}
+
+              {{/each}}
+
+
+          {{/each}}
+        </div>
+      </div>
+    </div>
+
+  {{/each}}
+
 {{/if}}
 </div>
 {{outlet}}
