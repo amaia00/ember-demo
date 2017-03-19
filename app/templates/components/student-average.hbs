@@ -1,0 +1,13 @@
+
+{{#if-greater param1=(moyenne-note param1=note.cc1 param2=note.cc2 param3=note.ccf) param2=0}}
+<div class="note" style="background-color: {{get-color (moyenne-note param1=note.cc1 param2=note.cc2 param3=note.ccf)}}">
+  <label>Moyenne</label>
+  {{moyenne-note param1=note.cc1 param2=note.cc2 param3=note.ccf}}<span class="sur">/20</span>
+</div>
+{{/if-greater}}
+
+{{#if-greater param1=0 param2=(moyenne-note param1=note.cc1 param2=note.cc2 param3=note.ccf)}}
+  <div class="note">
+
+  </div>
+{{/if-greater}}

@@ -2,67 +2,29 @@
   <button class="btn btn-primary btn-lg btn-block"{{action 'logout'}}>Se deconnecter</button>
   {{log 'model is =' model }}
   {{#if isetudiant }}
-  {{#each model.etudiants as |etudiant|}}
+    {{#each model.etudiants as |etudiant|}}
 
-    {{user-profile user=etudiant}}
+      {{user-profile user=etudiant}}
 
-  <div class="col-lg-8 col-md-8 col-sm-8 col-xs-12">
-    <div class="panel panel-default">
-      <div class="panel-heading">Notes</div>
-      <div class="panel-body notes_ue">
+      <div class="col-lg-8 col-md-8 col-sm-8 col-xs-12">
+        <div class="panel panel-default">
+          <div class="panel-heading">Notes</div>
+          <div class="panel-body notes_ue">
             {{#each etudiant.ues as |ue|}}
 
-                <a class="ue" data-toggle="collapse" data-target="{{ue.id}}">
-                  <span class="glyphicon glyphicon-plus-sign" aria-hidden="true"></span> {{ue.nom}}( <b>{{ue.enseignant.nom}} {{ue.enseignant.prenom}} </b>)</a>
+              <a class="ue" data-toggle="collapse" data-target="{{ue.id}}">
+                <span class="glyphicon glyphicon-plus-sign" aria-hidden="true"></span> {{ue.nom}}(
+                <b>{{ue.enseignant.nom}} {{ue.enseignant.prenom}} </b>)</a>
 
               {{#each etudiant.notes as |note|}}
                 {{#if-equal param1=note.ue.id param2=ue.id}}
 
-                 {{#if-greater param1=note.cc1 param2=0}}
-                   <div class="note" style="background-color: {{get-color note.cc1}}">
-                     <label>Note CC1</label>
-                     {{note.cc1}}<span class="sur">/20</span>
-                   </div>
-                 {{/if-greater}}
-                 {{#if-greater param1=0 param2=note.cc1}}
-                   <div class="note">
 
-                   </div>
-                 {{/if-greater}}
-                  {{#if-greater param1=note.cc2 param2=0}}
-                    <div class="note" style="background-color: {{get-color note.cc2}}">
-                      <label>Note CC2</label>
-                      {{note.cc2}}<span class="sur">/20</span>
-                    </div>
-                  {{/if-greater}}
-                  {{#if-greater param1=0 param2=note.cc2}}
-                    <div class="note">
+                  {{student-note note=note.cc1 title-note="Note CC1"}}
+                  {{student-note note=note.cc2 title-note="Note CC2"}}
+                  {{student-note note=note.ccf title-note="Note CCF"}}
 
-                    </div>
-                  {{/if-greater}}
-                  {{#if-greater param1=note.ccf param2=0}}
-                    <div class="note" style="background-color: {{get-color note.ccf}}">
-                      <label>Note CCF</label>
-                      {{note.ccf}}<span class="sur">/20</span>
-                    </div>
-                  {{/if-greater}}
-                  {{#if-greater param1=0 param2=note.ccf}}
-                    <div class="note">
-
-                    </div>
-                  {{/if-greater}}
-
-                  {{#if-greater param1=(moyenne-note param1=note.cc1 param2=note.cc2 param3=note.ccf) param2=0}}
-                    <div class="note" style="background-color: {{get-color (moyenne-note param1=note.cc1 param2=note.cc2 param3=note.ccf)}}">
-                      <label>Moyenne</label>
-                      {{moyenne-note param1=note.cc1 param2=note.cc2 param3=note.ccf}}<span class="sur">/20</span>
-                    </div>
-                  {{/if-greater}}
-                  {{#if-greater param1=0 param2=(moyenne-note param1=note.cc1 param2=note.cc2 param3=note.ccf)}}
-                    <div class="note">
-
-                    </div>
-                  {{/if-greater}}
+                  {{student-average note=note}}
 
                 {{/if-equal}}
               {{/each}}
@@ -71,44 +33,46 @@
 
             {{moyene-annee param1=etudiant.notes}}
 
+          </div>
+        </div>
       </div>
-    </div>
-  </div>
-  {{/each}}
+    {{/each}}
 
-      {{/if}}
-{{#if isenseignant }}
+  {{/if}}
+  {{#if isenseignant }}
 
-  {{#each model.enseignants as |enseignant|}}
-    {{user-profile user=enseignant}}
+    {{#each model.enseignants as |enseignant|}}
+      {{user-profile user=enseignant}}
 
-    <!-- Liste d'UEs -->
+      <!-- Liste d'UEs -->
 
-    <div class="col-lg-8 col-md-8 col-sm-8 col-xs-12">
-      <div class="panel panel-default">
-        <div class="panel-heading">UEs</div>
-        <div class="panel-body notes_ue">
-          {{#each enseignant.ues as |ue|}}
+      <div class="col-lg-8 col-md-8 col-sm-8 col-xs-12">
+        <div class="panel panel-default">
+          <div class="panel-heading">UEs</div>
+          <div class="panel-body notes_ue">
+            {{#each enseignant.ues as |ue|}}
 
-            <a class="ue" data-toggle="collapse" data-target="{{ue.id}}">
-              <span class="glyphicon glyphicon-plus-sign" aria-hidden="true"></span> {{ue.nom}}</a>
+              <a class="ue" data-toggle="collapse" data-target="{{ue.id}}">
+                <span class="glyphicon glyphicon-plus-sign" aria-hidden="true"></span> {{ue.nom}}</a>
               {{#each ue.etudiants as |etudiant|}}
 
-                <label>{{etudiant.nom}}</label>
+                <label>{{etudiant.nom}}, {{etudiant.prenom}}</label><br/>
+                <label>Identifiant: {{etudiant.identifiant}}</label>
                 {{#each etudiant.notes as |note|}}
 
                   {{#if-equal param1=note.ue.id param2=ue.id}}
-                  <div class="form-inline">
+                    <div class="form-inline">
                       {{input type="number" min="0" max="20" value=note.cc1 class="form-control"
-                              placeholder="CC1"}}
+                              placeholder="CC1" style="background-color: {{get-color note.cc1}}"}}
                       {{input type="number" min="0" max="20" value=note.cc2 class="form-control"
-                              placeholder="CC2"}}
+                              placeholder="CC2" style="background-color: {{get-color note.cc2}}"}}
                       {{input type="number" min="0" max="20" value=note.ccf class="form-control"
-                              placeholder="CCF"}}
+                              placeholder="CCF" style="background-color: {{get-color note.ccf}}"}}
 
-                    <button class="btn btn-primary btn-orange btn-sm" {{action 'saveNote' note}}>Save</button>
-                    Moyenne:
-                  </div>
+                      <button class="btn btn-primary btn-orange btn-sm" {{action 'saveNote' note}}>Save</button>
+
+                      {{student-average note=note}}
+                    </div>
 
                   {{/if-equal}}
                 {{/each}}
@@ -116,13 +80,13 @@
               {{/each}}
 
 
-          {{/each}}
+            {{/each}}
+          </div>
         </div>
       </div>
-    </div>
 
-  {{/each}}
+    {{/each}}
 
-{{/if}}
+  {{/if}}
 </div>
 {{outlet}}

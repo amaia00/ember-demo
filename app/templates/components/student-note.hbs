@@ -1,0 +1,11 @@
+
+{{#if-greater param1=note param2=0}}
+  <div class="note" style="background-color: {{get-color note}}">
+    <label>{{title-note}}</label>
+    {{note}}<span class="sur">/20</span>
+  </div>
+{{/if-greater}}
+
+{{#if-greater param1=0 param2=note}}
+  <div class="note"></div>
+{{/if-greater}}
