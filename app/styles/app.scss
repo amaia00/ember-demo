@@ -88,6 +88,14 @@ h5 span {
   display: inline-block;
 }
 
+.form-teacher input, .form-student input{
+  margin-bottom: 15px;
+}
+
+.input-form{
+  width: 100% !important;
+}
+
 .note {
   width: 60px;
   //line-height: 30px;

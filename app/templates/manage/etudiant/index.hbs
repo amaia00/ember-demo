@@ -1,0 +1,22 @@
+
+{{#admin-layout}}
+  {{#form-user-add class="teacher" title="Enseignants"}}
+    <button class="btn btn-primary btn-orange" {{action "saveStudent"}}>Sauvegarder</button>
+  {{/form-user-add}}
+
+  {{#user-list}}
+    {{#each model as |student|}}
+      <tr>
+        <td>{{student.identifiant}}</td>
+        <td>{{student.prenom}}</td>
+        <td>{{student.nom}}</td>
+        <td>{{student.email}}</td>
+        <td>
+          <button class="btn btn-primary btn-orange btn-sm" {{action 'deleteStudent' student}}>Supprimer</button>
+        </td>
+        <td></td>
+      </tr>
+    {{/each}}
+  {{/user-list}}
+
+{{/admin-layout}}

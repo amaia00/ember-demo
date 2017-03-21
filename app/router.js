@@ -13,6 +13,15 @@ Router.map(function() {
   this.route('users', { path: '/users/:username' }, function() {
     this.route('ue', { path: '/users/:username/ue' });
   });
+
+  this.route('manage', function () {
+    this.route('etudiant', function () {
+      this.route('etudiant');
+    });
+    this.route('enseignant', function () {
+      this.route('enseignant');
+    });
+  });
 });
 
 export default Router;

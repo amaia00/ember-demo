@@ -2,7 +2,6 @@ import DS from 'ember-data';
 
 //noinspection JSAnnotator
 export default DS.Model.extend({
-  //id: DS.attr('number'),
   password: DS.attr('string'),
   identifiant: DS.attr('string'),
   nom: DS.attr('string'),

@@ -10,9 +10,22 @@ export default Ember.Controller.extend({
 
     verifyUser() {
       /**
-       * a effacer
+       * TODO a effacer
        */
+
       /*
+       const recordAdmin = this.store.createRecord('user',{
+       password: 'admin',
+       identifiant: 'admin',
+       nom: 'Administrator',
+       prenom: ' ',
+       datedenaissance: null,
+       email: 'admin@univ-lyon1.fr'
+
+       } );
+
+       recordAdmin.save();
+
        var recordetu1 = this.store.createRecord('etudiant',{
        password: 'etu1',
        identifiant: 'etu1',
@@ -177,30 +190,38 @@ export default Ember.Controller.extend({
        */
 
 
-      const identifiant = this.get('identifiant');
+      const identifier = this.get('identifiant');
       const password = this.get('password');
 
+      const model = this.get('model');
+      let valid = false;
 
-      var modele = this.get('model');
-      var valid = false;
-      for (var i = 0; i < modele.length; i++) {
-        if (modele[i][0] === identifiant && modele[i][1] === password) {
+      console.debug("MODEL", model);
+
+      for (let i = 0; i < model.length; i++) {
+        if (model[i][0] === identifier && model[i][1] === password) {
           valid = true;
           break;
-        }
-        else {
+        } else {
           valid = false;
 
         }
       }
 
       if (valid === false) {
-        console.log('false1');
+
         this.set('responseMessage', 'mot de passe inccorect');
         this.set('emailAddress', '');
+
       } else {
-        this.set('responseMessage', 'Bienvenue !! Vous allez être rediriger dans quelque instant!!');
-        this.transitionToRoute('/users/' + identifiant);
+
+        if (identifier === 'admin') {
+          this.transitionToRoute('/manage', {queryParams: {id: identifier}});
+        } else {
+          this.set('responseMessage', 'Bienvenue !! Vous allez être rediriger dans quelque instant!!');
+          this.transitionToRoute('/users/' + identifier);
+        }
+
       }
     }
   }
