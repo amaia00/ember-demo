@@ -1,10 +1,10 @@
 import Ember from 'ember';
 
 export default Ember.Route.extend({
-  lastname:'',
 
   model() {
-    return this.store.findAll('etudiant');
+    return this.store.findAll('etudiant')
+      .then(orders => orders.sortBy('identifiant'));
   },
 
   variable: {},
@@ -12,12 +12,21 @@ export default Ember.Route.extend({
 
   actions: {
 
-    saveStudent(){
-      console.log('BLUUUU', this.get('lastname'))
+    saveStudent(identifier, name, lastname, mail) {
+
+      const student = this.store.createRecord('etudiant', {
+        password: 'default',
+        identifiant: identifier,
+        nom: lastname,
+        prenom: name,
+        datedenaissance: null,
+        email: mail
+      });
+
+      student.save();
     },
 
     deleteStudent(student) {
-      console.debug("DELETE STUDENT ACTION");
       student.destroyRecord();
     }
   }

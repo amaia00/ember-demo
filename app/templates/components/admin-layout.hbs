@@ -1,19 +1,19 @@
 <div class="container">
   <button class="btn btn-primary btn-lg btn-block"{{action 'logout'}}>Se deconnecter</button>
 
-  <!-- Menu -->
-  <div class="col-lg-4 col-md-4 col-sm-4 col-xs-12">
-    <div class="panel panel-default">
-      <div class="panel-heading">Menu</div>
-      <div class="panel-body">
-        <ul>
-          <li>{{#link-to "manage.etudiant" }}Etudiants{{/link-to}} </li>
-          <li>{{#link-to "manage.enseignant" }}Enseignants{{/link-to}}</li>
-        </ul>
+    <!-- Menu -->
+    <div class="col-lg-4 col-md-4 col-sm-4 col-xs-12">
+      <div class="panel panel-default">
+        <div class="panel-heading">Menu</div>
+        <div class="panel-body">
+          <ul>
+            <li>{{#link-to "manage.etudiant" (query-params isAdmin=isAdmin)}}Etudiants{{/link-to}} </li>
+            <li>{{#link-to "manage.enseignant" (query-params isAdmin=isAdmin) }}Enseignants{{/link-to}}</li>
+          </ul>
+        </div>
       </div>
     </div>
-  </div>
 
-  {{yield}}
+    {{yield}}
 
 </div>

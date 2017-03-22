@@ -1,11 +1,36 @@
-
 {{#admin-layout}}
-  {{form-user-add class="teacher" title="Enseignants" user=model}}
+  {{#form-user-add class="teacher" title="Nouveau enseignant"}}
 
-  {{!/form-user-add}}
+    <div class="row">
+      <div class="col-md-6">
+        Identifiant: {{input type="text" value=identifier autofocus="autofocus" class="form-control input-form"
+                             placeholder="Identifiant"}}
+      </div>
+
+      <div class="col-md-6">
+        Nom: {{input type="text" value=lastname class="form-control input-form" placeholder="Nom"}}
+      </div>
+    </div>
+
+    <div class="row">
+      <div class="col-md-6">
+        Prenom: {{input type="text" value=name class="form-control input-form" placeholder="Prenom"}}
+      </div>
+
+      <div class="col-md-6">
+        Email  {{input type="email" value=mail class="form-control input-form" placeholder="Email"}}
+      </div>
+    </div>
+
+    <button class="btn btn-primary btn-orange" {{action "saveTeacher" identifier lastname name mail}}>Sauvegarder
+    </button>
+
+  {{/form-user-add}}
+
 
   {{#user-list}}
     {{#each model as |teacher|}}
+
       <tr>
         <td>{{teacher.identifiant}}</td>
         <td>{{teacher.prenom}}</td>
@@ -14,8 +39,8 @@
         <td>
           <button class="btn btn-primary btn-orange btn-sm" {{action 'deleteTeacher' teacher}}>Supprimer</button>
         </td>
-        <td></td>
       </tr>
+
     {{/each}}
   {{/user-list}}
 {{/admin-layout}}

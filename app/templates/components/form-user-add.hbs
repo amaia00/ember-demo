@@ -4,23 +4,7 @@
     <div class="panel-body">
       <div class="form-{{class}}">
         <form class="form-inline">
-          <div class="row">
-            <div class="col-md-6">
-              Identifiant: {{input type="text" value=identifier autofocus="autofocus" class="form-control input-form" placeholder="Identifiant"}}
-            </div>
-            <div class="col-md-6">
-              Nom: {{input type="text" value=lastname class="form-control input-form" placeholder="Nom"}}
-            </div>
-          </div>
-          <div class="row">
-            <div class="col-md-6">
-              Prenom: {{input type="text" value=name class="form-control input-form" placeholder="Prenom"}}
-            </div>
-            <div class="col-md-6">
-              Email  {{input type="email" value=mail class="form-control input-form" placeholder="Email"}}
-            </div>
-          </div>
-          <button class="btn btn-primary btn-orange" {{action action-form model}}>Sauvegarder</button>
+          {{yield}}
         </form>
       </div>
     </div>
