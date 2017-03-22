@@ -22,5 +22,5 @@ export default Ember.Route.extend({
         return ue.get('enseignant') === params.username;
       }))
     });
-  }
+  },
 });
