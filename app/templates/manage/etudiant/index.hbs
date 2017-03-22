@@ -2,22 +2,22 @@
   {{#form-user-add class="teacher" title="Nouveau etudiant"}}
     <div class="row">
       <div class="col-md-6">
-        Identifiant: {{input type="text" value=(mut (get identifier field)) autofocus="autofocus" class="form-control input-form"
+        Identifiant: {{input type="text" value=identifier autofocus="autofocus" class="form-control input-form "
                              placeholder="Identifiant"}}
       </div>
       <div class="col-md-6">
-        Nom: {{input type="text" value=(mut (get lastname field)) class="form-control input-form" placeholder="Nom"}}
+        Nom: {{input type="text" value=lastname class="form-control input-form" placeholder="Nom"}}
       </div>
     </div>
     <div class="row">
       <div class="col-md-6">
-        Prenom: {{input type="text" value=(mut (get name field)) class="form-control input-form" placeholder="Prenom"}}
+        Prenom: {{input type="text" value=name class="form-control input-form" placeholder="Prenom"}}
       </div>
       <div class="col-md-6">
-        Email  {{input type="email" value=(mut (get mail field)) class="form-control input-form" placeholder="Email"}}
+        Email  {{input type="email" value=mail class="form-control input-form" placeholder="Email"}}
       </div>
     </div>
-    <button class="btn btn-primary btn-orange" {{action "saveStudent" identifier lastname name mail}}>Sauvegarder
+    <button class="btn btn-primary btn-orange btn-add-data" {{action "saveStudent" identifier lastname name mail}}>Sauvegarder
     </button>
 
   {{/form-user-add}}

@@ -2,11 +2,13 @@ import Ember from 'ember';
 
 
 export default Ember.Route.extend({
+
   model() {
     return this.store.query('enseignant', {
       orderBy: 'identifiant'
     });
   },
+
 
   actions: {
 
@@ -21,8 +23,8 @@ export default Ember.Route.extend({
         email: mail
       });
 
-      this.set('identifier', '');
       teacher.save();
+
     },
 
     deleteTeacher(teacher) {
