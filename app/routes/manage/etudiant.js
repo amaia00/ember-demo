@@ -3,8 +3,9 @@ import Ember from 'ember';
 export default Ember.Route.extend({
 
   model() {
-    return this.store.findAll('etudiant')
-      .then(orders => orders.sortBy('identifiant'));
+    return this.store.query('etudiant', {
+      orderBy: 'identifiant'
+    });
   },
 
   variable: {},
@@ -24,6 +25,7 @@ export default Ember.Route.extend({
       });
 
       student.save();
+
     },
 
     deleteStudent(student) {

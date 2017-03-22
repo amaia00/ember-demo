@@ -1,17 +1,16 @@
 import Ember from 'ember';
 
+
 export default Ember.Route.extend({
   model() {
-    return this.store.findAll('enseignant')
-      .then(orders => orders.sortBy('identifiant'));
+    return this.store.query('enseignant', {
+      orderBy: 'identifiant'
+    });
   },
-
-  variable: {},
 
   actions: {
 
     saveTeacher(identifier, name, lastname, mail) {
-      console.debug("Route teacher", identifier, name, lastname, mail);
 
       const teacher = this.store.createRecord('enseignant', {
         password: 'default',
@@ -22,6 +21,7 @@ export default Ember.Route.extend({
         email: mail
       });
 
+      this.set('identifier', '');
       teacher.save();
     },
 
