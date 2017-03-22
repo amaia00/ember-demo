@@ -18,11 +18,16 @@ body {
   box-shadow: 1px 1px 10px #57585a;
   border-radius: 10px;
 }
-.login_page input {
+.login_page input , .contact_page input {
   margin: 10px 0;
   height: 34px !important;
   font-size: 15px !important;
   border: 1px solid #57585a;
+}
+.contact_page textarea {
+  border: 1px solid #57585a;
+  height:300px;
+  font-size: 15px !important;
 }
 .message_login {
   font-size: 0.8em;
@@ -52,7 +57,7 @@ body {
   display: block;
   margin: 0 auto;
 }
-.login_page h3,  h4 {
+.login_page h3, .contact_page h3,  h4 {
   border-bottom: 2px solid #57585a;
   padding: 0 0 15px 0;
   text-align: center;
@@ -142,4 +147,26 @@ h5 span {
   margin-bottom: 5px;
   display: inherit;
   text-decoration: underline;
+}
+
+.btn-block {
+  width: 200px;
+  background: #000;
+  margin-left: auto;
+}
+h1 {
+  color: #f27e16;
+  text-align: center;
+  text-shadow: 2px 2px 2px #000;
+  margin-bottom: 20px;
+}
+a:hover {
+  text-decoration: none;
+
+
+}
+
+.btn-primary:hover {
+  background-color: #f27e16 ;
+  border-color: #f27e16;
 }

@@ -19,7 +19,8 @@ You will need the following things properly installed on your computer.
 * `cd demonstration`
 * `npm install`
 * `bower install`
-
+* `npm install ember-cli --save`
+* `rm -rf node_modules && npm cache clean && npm install `
 ## Running / Development
 
 * `ember serve`
