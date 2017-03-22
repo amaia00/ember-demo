@@ -30,7 +30,7 @@ export default Ember.Controller.extend({
         nom: 'Meziani',
         prenom: 'Amina',
         datedenaissance: Date(),
-        email: 'amina.meziani@etu.fr'
+        email: 'amina.meziani@univ-lyon1.fr'
 
       });
 
@@ -40,7 +40,7 @@ export default Ember.Controller.extend({
         nom: 'El Gharbi',
         prenom: 'Mouad',
         datedenaissance: Date(),
-        email: 'mouad.elgharbi@etu.com'
+        email: 'mouad.elgharbi@univ-lyon1.fr'
 
       } );
 
@@ -50,7 +50,7 @@ export default Ember.Controller.extend({
         nom: 'Faddi',
         prenom: 'Sofiaa',
         datedenaissance: Date(),
-        email: 'sofiaa.faddi@etu.com'
+        email: 'sofiaa.faddi@univ-lyon1.fr'
 
       } );
 
@@ -60,7 +60,7 @@ export default Ember.Controller.extend({
         nom: 'Nazabal',
         prenom: 'Amaia',
         datedenaissance: Date(),
-        email: 'amaia.nazabal@etu.com'
+        email: 'amaia.nazabal@univ-lyon1.fr'
 
       } );
 
@@ -70,7 +70,7 @@ export default Ember.Controller.extend({
         nom: 'Diop',
         prenom: 'Michel',
         datedenaissance: Date(),
-        email: 'michel.diop@etu.com'
+        email: 'michel.diop@univ-lyon1.fr'
 
       } );
 
@@ -81,17 +81,17 @@ export default Ember.Controller.extend({
         nom: 'Donald',
         prenom: 'Trump',
         datedenaissance: Date(),
-        email: 'ens1@ens.com'
+        email: 'donald.trump@univ-lyon1.fr'
 
       } );
 
       var recordens2 = this.store.createRecord('enseignant',{
         password: 'laure',
         identifiant: 'laure',
-        nom: 'Gonnord',
+        nom: 'Eric',
         prenom: 'Laure',
         datedenaissance: Date(),
-        email: 'laure.gonnord@ens.com'
+        email: 'laure.eric@univ-lyon1.fr'
 
       } );
 
@@ -101,7 +101,7 @@ export default Ember.Controller.extend({
         nom: 'Michel',
         prenom: 'François',
         datedenaissance: Date(),
-        email: 'ens1@ens.com'
+        email: 'françois.michel@univ-lyon1.fr'
 
       } );
 
@@ -111,7 +111,7 @@ export default Ember.Controller.extend({
         nom: 'Ezequel',
         prenom: 'Fabien',
         datedenaissance: Date(),
-        email: 'fabien.ezequel@ens.com'
+        email: 'fabien.ezequel@univ-lyon1.fr'
 
       } );
 
@@ -121,7 +121,7 @@ export default Ember.Controller.extend({
         nom: 'Brandel',
         prenom: 'julien',
         datedenaissance: Date(),
-        email: 'julien.brandel@ens.com'
+        email: 'julien.brandel@univ-lyon1.fr'
 
       } );
 
@@ -399,12 +399,8 @@ export default Ember.Controller.extend({
       recordetu4.save();
       recordetu5.save();
 
-*/
 
-
-
-
-
+****************/
 
       const identifier = this.get('identifiant');
       const password = this.get('password');
