@@ -1,4 +1,8 @@
+/* jshint ignore:start */
 
+
+
+/* jshint ignore:end */
 
 /*!
  * QUnit 2.2.1
@@ -5132,7 +5136,6 @@ define('ember-cli-test-loader/test-support/index', ['exports'], function (export
 
     return false;
   }
-
   function TestLoader() {
     this._didLogMissingUnsee = false;
   }
@@ -5208,6 +5211,8 @@ define('ember-cli-test-loader/test-support/index', ['exports'], function (export
   };
 });
 define('ember-qunit', ['exports', 'ember-qunit/module-for', 'ember-qunit/module-for-component', 'ember-qunit/module-for-model', 'ember-qunit/adapter', 'ember-test-helpers', 'qunit'], function (exports, _emberQunitModuleFor, _emberQunitModuleForComponent, _emberQunitModuleForModel, _emberQunitAdapter, _emberTestHelpers, _qunit) {
+  'use strict';
+
   Object.defineProperty(exports, 'module', {
     enumerable: true,
     get: function get() {
@@ -5239,6 +5244,8 @@ define('ember-qunit', ['exports', 'ember-qunit/module-for', 'ember-qunit/module-
   exports.QUnitAdapter = _emberQunitAdapter['default'];
 });
 define('ember-qunit/adapter', ['exports', 'ember', 'qunit'], function (exports, _ember, _qunit) {
+  'use strict';
+
   exports['default'] = _ember['default'].Test.Adapter.extend({
     init: function init() {
       this.doneCallbacks = [];
@@ -5258,6 +5265,8 @@ define('ember-qunit/adapter', ['exports', 'ember', 'qunit'], function (exports, 
   });
 });
 define('ember-qunit/module-for-component', ['exports', 'ember-qunit/qunit-module', 'ember-test-helpers'], function (exports, _emberQunitQunitModule, _emberTestHelpers) {
+  'use strict';
+
   exports['default'] = moduleForComponent;
 
   function moduleForComponent(name, description, callbacks) {
@@ -5265,6 +5274,8 @@ define('ember-qunit/module-for-component', ['exports', 'ember-qunit/qunit-module
   }
 });
 define('ember-qunit/module-for-model', ['exports', 'ember-qunit/qunit-module', 'ember-test-helpers'], function (exports, _emberQunitQunitModule, _emberTestHelpers) {
+  'use strict';
+
   exports['default'] = moduleForModel;
 
   function moduleForModel(name, description, callbacks) {
@@ -5272,6 +5283,8 @@ define('ember-qunit/module-for-model', ['exports', 'ember-qunit/qunit-module', '
   }
 });
 define('ember-qunit/module-for', ['exports', 'ember-qunit/qunit-module', 'ember-test-helpers'], function (exports, _emberQunitQunitModule, _emberTestHelpers) {
+  'use strict';
+
   exports['default'] = moduleFor;
 
   function moduleFor(name, description, callbacks) {
@@ -5279,6 +5292,8 @@ define('ember-qunit/module-for', ['exports', 'ember-qunit/qunit-module', 'ember-
   }
 });
 define('ember-qunit/qunit-module', ['exports', 'ember', 'qunit'], function (exports, _ember, _qunit) {
+  'use strict';
+
   exports.createModule = createModule;
 
   function beforeEachCallback(callbacks) {
@@ -5355,6 +5370,7 @@ define('ember-qunit/qunit-module', ['exports', 'ember', 'qunit'], function (expo
   }
 });
 define('ember-test-helpers', ['exports', 'ember', 'ember-test-helpers/test-module', 'ember-test-helpers/test-module-for-acceptance', 'ember-test-helpers/test-module-for-integration', 'ember-test-helpers/test-module-for-component', 'ember-test-helpers/test-module-for-model', 'ember-test-helpers/test-context', 'ember-test-helpers/test-resolver'], function (exports, _ember, _emberTestHelpersTestModule, _emberTestHelpersTestModuleForAcceptance, _emberTestHelpersTestModuleForIntegration, _emberTestHelpersTestModuleForComponent, _emberTestHelpersTestModuleForModel, _emberTestHelpersTestContext, _emberTestHelpersTestResolver) {
+  'use strict';
 
   _ember['default'].testing = true;
 
@@ -5369,6 +5385,8 @@ define('ember-test-helpers', ['exports', 'ember', 'ember-test-helpers/test-modul
   exports.setResolver = _emberTestHelpersTestResolver.setResolver;
 });
 define('ember-test-helpers/-legacy-overrides', ['exports', 'ember', 'ember-test-helpers/has-ember-version'], function (exports, _ember, _emberTestHelpersHasEmberVersion) {
+  'use strict';
+
   exports.preGlimmerSetupIntegrationForComponent = preGlimmerSetupIntegrationForComponent;
 
   function preGlimmerSetupIntegrationForComponent() {
@@ -5461,6 +5479,8 @@ define('ember-test-helpers/-legacy-overrides', ['exports', 'ember', 'ember-test-
   }
 });
 define('ember-test-helpers/abstract-test-module', ['exports', 'ember-test-helpers/wait', 'ember-test-helpers/test-context', 'ember'], function (exports, _emberTestHelpersWait, _emberTestHelpersTestContext, _ember) {
+  'use strict';
+
   var _createClass = (function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ('value' in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; })();
 
   function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError('Cannot call a class as a function'); } }
@@ -5665,6 +5685,9 @@ define('ember-test-helpers/abstract-test-module', ['exports', 'ember-test-helper
   exports['default'] = _default;
 });
 define('ember-test-helpers/build-registry', ['exports', 'require', 'ember'], function (exports, _require, _ember) {
+  /* globals global, self, requirejs */
+
+  'use strict';
 
   function exposeRegistryMethodsWithoutDeprecations(container) {
     var methods = ['register', 'unregister', 'resolve', 'normalize', 'typeInjection', 'injection', 'factoryInjection', 'factoryTypeInjection', 'has', 'options', 'optionsForType'];
@@ -5785,8 +5808,9 @@ define('ember-test-helpers/build-registry', ['exports', 'require', 'ember'], fun
     };
   };
 });
-/* globals global, self, requirejs */
 define('ember-test-helpers/has-ember-version', ['exports', 'ember'], function (exports, _ember) {
+  'use strict';
+
   exports['default'] = hasEmberVersion;
 
   function hasEmberVersion(major, minor) {
@@ -5797,6 +5821,8 @@ define('ember-test-helpers/has-ember-version', ['exports', 'ember'], function (e
   }
 });
 define("ember-test-helpers/test-context", ["exports"], function (exports) {
+  "use strict";
+
   exports.setContext = setContext;
   exports.getContext = getContext;
   exports.unsetContext = unsetContext;
@@ -5815,6 +5841,8 @@ define("ember-test-helpers/test-context", ["exports"], function (exports) {
   }
 });
 define('ember-test-helpers/test-module-for-acceptance', ['exports', 'ember-test-helpers/abstract-test-module', 'ember', 'ember-test-helpers/test-context'], function (exports, _emberTestHelpersAbstractTestModule, _ember, _emberTestHelpersTestContext) {
+  'use strict';
+
   var _createClass = (function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ('value' in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; })();
 
   var _get = function get(_x, _x2, _x3) { var _again = true; _function: while (_again) { var object = _x, property = _x2, receiver = _x3; _again = false; if (object === null) object = Function.prototype; var desc = Object.getOwnPropertyDescriptor(object, property); if (desc === undefined) { var parent = Object.getPrototypeOf(object); if (parent === null) { return undefined; } else { _x = parent; _x2 = property; _x3 = receiver; _again = true; desc = parent = undefined; continue _function; } } else if ('value' in desc) { return desc.value; } else { var getter = desc.get; if (getter === undefined) { return undefined; } return getter.call(receiver); } } };
@@ -5871,6 +5899,8 @@ define('ember-test-helpers/test-module-for-acceptance', ['exports', 'ember-test-
   exports['default'] = _default;
 });
 define('ember-test-helpers/test-module-for-component', ['exports', 'ember-test-helpers/test-module', 'ember', 'ember-test-helpers/has-ember-version', 'ember-test-helpers/-legacy-overrides'], function (exports, _emberTestHelpersTestModule, _ember, _emberTestHelpersHasEmberVersion, _emberTestHelpersLegacyOverrides) {
+  'use strict';
+
   var _createClass = (function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ('value' in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; })();
 
   var _get = function get(_x, _x2, _x3) { var _again = true; _function: while (_again) { var object = _x, property = _x2, receiver = _x3; _again = false; if (object === null) object = Function.prototype; var desc = Object.getOwnPropertyDescriptor(object, property); if (desc === undefined) { var parent = Object.getPrototypeOf(object); if (parent === null) { return undefined; } else { _x = parent; _x2 = property; _x3 = receiver; _again = true; desc = parent = undefined; continue _function; } } else if ('value' in desc) { return desc.value; } else { var getter = desc.get; if (getter === undefined) { return undefined; } return getter.call(receiver); } } };
@@ -6203,6 +6233,8 @@ define('ember-test-helpers/test-module-for-component', ['exports', 'ember-test-h
   }
 });
 define('ember-test-helpers/test-module-for-integration', ['exports', 'ember', 'ember-test-helpers/abstract-test-module', 'ember-test-helpers/test-resolver', 'ember-test-helpers/build-registry', 'ember-test-helpers/has-ember-version', 'ember-test-helpers/-legacy-overrides', 'ember-test-helpers/test-module-for-component'], function (exports, _ember, _emberTestHelpersAbstractTestModule, _emberTestHelpersTestResolver, _emberTestHelpersBuildRegistry, _emberTestHelpersHasEmberVersion, _emberTestHelpersLegacyOverrides, _emberTestHelpersTestModuleForComponent) {
+  'use strict';
+
   var _createClass = (function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ('value' in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; })();
 
   var _get = function get(_x, _x2, _x3) { var _again = true; _function: while (_again) { var object = _x, property = _x2, receiver = _x3; _again = false; if (object === null) object = Function.prototype; var desc = Object.getOwnPropertyDescriptor(object, property); if (desc === undefined) { var parent = Object.getPrototypeOf(object); if (parent === null) { return undefined; } else { _x = parent; _x2 = property; _x3 = receiver; _again = true; desc = parent = undefined; continue _function; } } else if ('value' in desc) { return desc.value; } else { var getter = desc.get; if (getter === undefined) { return undefined; } return getter.call(receiver); } } };
@@ -6426,6 +6458,10 @@ define('ember-test-helpers/test-module-for-integration', ['exports', 'ember', 'e
   exports['default'] = _default;
 });
 define('ember-test-helpers/test-module-for-model', ['exports', 'require', 'ember-test-helpers/test-module', 'ember'], function (exports, _require, _emberTestHelpersTestModule, _ember) {
+  /* global DS, requirejs */ // added here to prevent an import from erroring when ED is not present
+
+  'use strict';
+
   var _createClass = (function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ('value' in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; })();
 
   var _get = function get(_x, _x2, _x3) { var _again = true; _function: while (_again) { var object = _x, property = _x2, receiver = _x3; _again = false; if (object === null) object = Function.prototype; var desc = Object.getOwnPropertyDescriptor(object, property); if (desc === undefined) { var parent = Object.getPrototypeOf(object); if (parent === null) { return undefined; } else { _x = parent; _x2 = property; _x3 = receiver; _again = true; desc = parent = undefined; continue _function; } } else if ('value' in desc) { return desc.value; } else { var getter = desc.get; if (getter === undefined) { return undefined; } return getter.call(receiver); } } };
@@ -6496,8 +6532,9 @@ define('ember-test-helpers/test-module-for-model', ['exports', 'require', 'ember
 
   exports['default'] = _default;
 });
-/* global DS, requirejs */ // added here to prevent an import from erroring when ED is not present
 define('ember-test-helpers/test-module', ['exports', 'ember', 'ember-test-helpers/abstract-test-module', 'ember-test-helpers/test-resolver', 'ember-test-helpers/build-registry', 'ember-test-helpers/has-ember-version'], function (exports, _ember, _emberTestHelpersAbstractTestModule, _emberTestHelpersTestResolver, _emberTestHelpersBuildRegistry, _emberTestHelpersHasEmberVersion) {
+  'use strict';
+
   var _createClass = (function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ('value' in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; })();
 
   var _get = function get(_x, _x2, _x3) { var _again = true; _function: while (_again) { var object = _x, property = _x2, receiver = _x3; _again = false; if (object === null) object = Function.prototype; var desc = Object.getOwnPropertyDescriptor(object, property); if (desc === undefined) { var parent = Object.getPrototypeOf(object); if (parent === null) { return undefined; } else { _x = parent; _x2 = property; _x3 = receiver; _again = true; desc = parent = undefined; continue _function; } } else if ('value' in desc) { return desc.value; } else { var getter = desc.get; if (getter === undefined) { return undefined; } return getter.call(receiver); } } };
@@ -6808,6 +6845,8 @@ define('ember-test-helpers/test-module', ['exports', 'ember', 'ember-test-helper
   exports['default'] = _default;
 });
 define('ember-test-helpers/test-resolver', ['exports'], function (exports) {
+  'use strict';
+
   exports.setResolver = setResolver;
   exports.getResolver = getResolver;
   var __resolver__;
@@ -6825,6 +6864,10 @@ define('ember-test-helpers/test-resolver', ['exports'], function (exports) {
   }
 });
 define('ember-test-helpers/wait', ['exports', 'ember'], function (exports, _ember) {
+  /* globals self */
+
+  'use strict';
+
   var _slicedToArray = (function () { function sliceIterator(arr, i) { var _arr = []; var _n = true; var _d = false; var _e = undefined; try { for (var _i = arr[Symbol.iterator](), _s; !(_n = (_s = _i.next()).done); _n = true) { _arr.push(_s.value); if (i && _arr.length === i) break; } } catch (err) { _d = true; _e = err; } finally { try { if (!_n && _i['return']) _i['return'](); } finally { if (_d) throw _e; } } return _arr; } return function (arr, i) { if (Array.isArray(arr)) { return arr; } else if (Symbol.iterator in Object(arr)) { return sliceIterator(arr, i); } else { throw new TypeError('Invalid attempt to destructure non-iterable instance'); } }; })();
 
   exports._teardownAJAXHooks = _teardownAJAXHooks;
@@ -6918,9 +6961,10 @@ define('ember-test-helpers/wait', ['exports', 'ember'], function (exports, _embe
     });
   }
 });
-/* globals self */
 define("qunit", ["exports"], function (exports) {
   /* globals QUnit */
+
+  "use strict";
 
   var _module = QUnit.module;
   exports.module = _module;
@@ -6933,6 +6977,8 @@ define("qunit", ["exports"], function (exports) {
   exports.only = only;
   exports["default"] = QUnit;
 });
+/* jshint ignore:start */
+
 runningTests = true;
 
 if (window.Testem) {
@@ -6940,4 +6986,6 @@ if (window.Testem) {
 }
 
 
+
+/* jshint ignore:end */
 //# sourceMappingURL=test-support.map
