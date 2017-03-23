@@ -15,9 +15,10 @@ export default Ember.Route.extend({
     actions: {
 
     saveTeacher(identifier, name, lastname, mail) {
+        let self = this;
         const auth = this.get('firebaseApp').auth();
         auth.createUserWithEmailAndPassword(identifier+'@univ-lyon1.fr', 'default-default').then((userResponse) => {
-            const user =  this.store.createRecord('enseignant', {
+            const user =  self.store.createRecord('enseignant', {
                 password: 'default',
                 identifiant: identifier,
                 nom: lastname,
@@ -25,7 +26,8 @@ export default Ember.Route.extend({
                 datedenaissance: null,
                 email: mail
             });
-            return user.save();
+            user.save();
+
         });
 
     },
