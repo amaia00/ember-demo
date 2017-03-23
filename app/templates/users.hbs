@@ -57,7 +57,7 @@
               </a>
 
               {{#each ue.etudiants as |etudiant|}}
-                {{student-info etudiant=etudiant ue=ue}}
+                {{student-info etudiant=etudiant ue=ue action-note=(action 'saveNote')}}
               {{/each}}
 
             {{/each}}
