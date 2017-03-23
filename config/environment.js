@@ -7,13 +7,19 @@ module.exports = function(environment) {
     rootURL: '/',
     locationType: 'auto',
     firebase: {
-      apiKey: "AIzaSyC0eD3vsGjNewpOPBxE76ImpwAs3Tw1lJ8",
-      authDomain: "ember-demo-44821.firebaseapp.com",
-      databaseURL: "https://ember-demo-44821.firebaseio.com",
-      storageBucket: "ember-demo-44821.appspot.com",
-      messagingSenderId: "164962372300"
+      apiKey: "AIzaSyDQ7ZjOwOa-CAA_AnF2u3S6_ITDYNX1BDY",
+      authDomain: "tpwebember.firebaseapp.com",
+      databaseURL: "https://tpwebember.firebaseio.com",
+      storageBucket: "tpwebember.appspot.com",
+      messagingSenderId: "796731125915"
     },
 
+
+    /* apiKey: "AIzaSyC0eD3vsGjNewpOPBxE76ImpwAs3Tw1lJ8",
+     authDomain: "ember-demo-44821.firebaseapp.com",
+     databaseURL: "https://ember-demo-44821.firebaseio.com",
+     storageBucket: "ember-demo-44821.appspot.com",
+     messagingSenderId: "164962372300"*/
 
     torii: {
       sessionServiceName: 'session'

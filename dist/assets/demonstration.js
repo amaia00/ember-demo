@@ -1,6 +1,10 @@
 "use strict";
 
+/* jshint ignore:start */
 
+
+
+/* jshint ignore:end */
 
 define('demonstration/adapters/application', ['exports', 'emberfire/adapters/firebase'], function (exports, _emberfireAdaptersFirebase) {
   exports['default'] = _emberfireAdaptersFirebase['default'].extend({});
@@ -46,7 +50,13 @@ define('demonstration/components/student-average', ['exports', 'ember'], functio
   exports['default'] = _ember['default'].Component.extend({});
 });
 define('demonstration/components/student-info', ['exports', 'ember'], function (exports, _ember) {
-  exports['default'] = _ember['default'].Component.extend({});
+  exports['default'] = _ember['default'].Component.extend({
+    actions: {
+      saveNote: function saveNote(item) {
+        this.sendAction('saveNote', item);
+      }
+    }
+  });
 });
 define('demonstration/components/student-note', ['exports', 'ember'], function (exports, _ember) {
   exports['default'] = _ember['default'].Component.extend({});
@@ -80,153 +90,323 @@ define('demonstration/controllers/login', ['exports', 'ember'], function (export
       verifyUser: function verifyUser() {
         /**
          * TODO a effacer
-         */
-
-        /*
-         const recordAdmin = this.store.createRecord('user',{
-         password: 'admin',
-         identifiant: 'admin',
-         nom: 'Administrator',
-         prenom: ' ',
-         datedenaissance: null,
-         email: 'admin@univ-lyon1.fr'
-          } );
-          recordAdmin.save();
-          var recordetu1 = this.store.createRecord('etudiant',{
-         password: 'etu1',
-         identifiant: 'etu1',
-         nom: 'etu1',
-         prenom: 'etu1',
-         datedenaissance: Date(),
-         email: 'etu1@etu.com'
-          } );
-          var recordetu2 = this.store.createRecord('etudiant',{
-         password: 'etu2',
-         identifiant: 'etu2',
-         nom: 'etu2',
-         prenom: 'etu2',
-         datedenaissance: Date(),
-         email: 'etu2@etu.com'
-          } );
+         * /
+         var recordAdmin = this.store.createRecord('user',{
+          password: 'admin',
+          identifiant: 'admin',
+          nom: 'Administrator',
+          prenom: ' ',
+          datedenaissance: null,
+          email: 'admin@univ-lyon1.fr'
+         } );
+        recordAdmin.save();
+         var recordetu1 = this.store.createRecord('etudiant', {
+          password: 'amina',
+          identifiant: 'p1411332',
+          nom: 'Meziani',
+          prenom: 'Amina',
+          datedenaissance: Date(),
+          email: 'amina.meziani@univ-lyon1.fr'
+         });
+         var recordetu2 = this.store.createRecord('etudiant',{
+          password: 'mouad',
+          identifiant: 'p1310550',
+          nom: 'El Gharbi',
+          prenom: 'Mouad',
+          datedenaissance: Date(),
+          email: 'mouad.elgharbi@univ-lyon1.fr'
+         } );
+         var recordetu3 = this.store.createRecord('etudiant',{
+          password: 'sofiaa',
+          identifiant: 'p1614340',
+          nom: 'Faddi',
+          prenom: 'Sofiaa',
+          datedenaissance: Date(),
+          email: 'sofiaa.faddi@univ-lyon1.fr'
+         } );
+         var recordetu4 = this.store.createRecord('etudiant',{
+          password: 'amaia',
+          identifiant: 'p1614291',
+          nom: 'Nazabal',
+          prenom: 'Amaia',
+          datedenaissance: Date(),
+          email: 'amaia.nazabal@univ-lyon1.fr'
+         } );
+         var recordetu5 = this.store.createRecord('etudiant',{
+          password: 'michel',
+          identifiant: 'p1111111',
+          nom: 'Diop',
+          prenom: 'Michel',
+          datedenaissance: Date(),
+          email: 'michel.diop@univ-lyon1.fr'
+         } );
           var recordens1 = this.store.createRecord('enseignant',{
-         password: 'ens1',
-         identifiant: 'ens1',
-         nom: 'ens1',
-         prenom: 'ens1',
-         datedenaissance: Date(),
-         email: 'ens1@ens.com'
-          } );
+          password: 'donald',
+          identifiant: 'donald',
+          nom: 'Donald',
+          prenom: 'Trump',
+          datedenaissance: Date(),
+          email: 'donald.trump@univ-lyon1.fr'
+         } );
          var recordens2 = this.store.createRecord('enseignant',{
-         password: 'ens2',
-         identifiant: 'ens2',
-         nom: 'ens2',
-         prenom: 'ens2',
-         datedenaissance: Date(),
-         email: 'ens2@ens.com'
-          } );
-         var recordue1 = this.store.createRecord('ue',{
-         nom:'xx1',
-         datedouverture: '20/12/2016',
-         datedefermeture: '20/12/2017'
-          });
-         var recordue2 = this.store.createRecord('ue',{
-         nom:'xx2',
-         datedouverture: '20/12/2016',
-         datedefermeture: '20/12/2017'
-          });
-         var recordue3 = this.store.createRecord('ue',{
-         nom:'xx3',
-         datedouverture: '20/12/2016',
-         datedefermeture: '20/12/2017'
+          password: 'laure',
+          identifiant: 'laure',
+          nom: 'Eric',
+          prenom: 'Laure',
+          datedenaissance: Date(),
+          email: 'laure.eric@univ-lyon1.fr'
+         } );
+         var recordens3 = this.store.createRecord('enseignant',{
+          password: 'françois',
+          identifiant: 'françois',
+          nom: 'Michel',
+          prenom: 'François',
+          datedenaissance: Date(),
+          email: 'françois.michel@univ-lyon1.fr'
+         } );
+         var recordens4 = this.store.createRecord('enseignant',{
+          password: 'fabien',
+          identifiant: 'fabien',
+          nom: 'Ezequel',
+          prenom: 'Fabien',
+          datedenaissance: Date(),
+          email: 'fabien.ezequel@univ-lyon1.fr'
+         } );
+         var recordens5 = this.store.createRecord('enseignant',{
+          password: 'julien',
+          identifiant: 'Julien',
+          nom: 'Brandel',
+          prenom: 'julien',
+          datedenaissance: Date(),
+          email: 'julien.brandel@univ-lyon1.fr'
+         } );
+           var recordue1 = this.store.createRecord('ue',{
+          nom:'Compilation',
+          datedouverture: '20/12/2016',
+          datedefermeture: '20/12/2017'
+        });
+        var recordue2 = this.store.createRecord('ue',{
+          nom:'Réseau',
+          datedouverture: '20/12/2016',
+          datedefermeture: '20/12/2017'
          });
-         var recordue4 = this.store.createRecord('ue',{
-         nom:'xx4',
-         datedouverture: '20/12/2016',
-         datedefermeture: '20/12/2017'
+        var recordue3 = this.store.createRecord('ue',{
+          nom:'Logique',
+          datedouverture: '20/12/2016',
+          datedefermeture: '20/12/2017'
+        });
+        var recordue4 = this.store.createRecord('ue',{
+          nom:'Droit',
+          datedouverture: '20/12/2016',
+          datedefermeture: '20/12/2017'
+        });
+        var recordue5 = this.store.createRecord('ue',{
+          nom:'Programmation',
+          datedouverture: '20/12/2016',
+          datedefermeture: '20/12/2017'
          });
-         var recordue5 = this.store.createRecord('ue',{
-         nom:'xx5',
-         datedouverture: '20/12/2016',
-         datedefermeture: '20/12/2017'
-          });
          var recordnote1 = this.store.createRecord('note',{
-         cc1: -1,
-         cc2: -1,
-         ccf: -1
-         });
-         var recordnote2 = this.store.createRecord('note',{
-         cc1: -1,
-         cc2: -1,
-         ccf: -2
-         });
-         var recordnote3 = this.store.createRecord('note',{
-         cc1: -1,
-         cc2: -1,
-         ccf: -3
-         });
-         var recordnote4 = this.store.createRecord('note',{
-         cc1: -1,
-         cc2: -1,
-         ccf: -4
-         });
-         var recordnote5 = this.store.createRecord('note',{
-         cc1: -1,
-         cc2: -1,
-         ccf: -5
-         });
-         var recordnote6 = this.store.createRecord('note',{
-         cc1: -1,
-         cc2: -1,
-         ccf: -6
-         });
-         var recordnote7 = this.store.createRecord('note',{
-         cc1: -1,
-         cc2: -1,
-         ccf: -7
-         });
-         recordens1.get('ues').pushObject(recordue1);
-         recordens1.get('ues').pushObject(recordue2);
-         recordens1.get('ues').pushObject(recordue5);
-          recordens2.get('ues').pushObject(recordue3);
-         recordens2.get('ues').pushObject(recordue4);
-          recordetu1.get('ues').pushObject(recordue1);
-         recordetu1.get('ues').pushObject(recordue2);
-         recordetu1.get('ues').pushObject(recordue5);
-         recordetu1.get('ues').pushObject(recordue4);
-          recordetu2.get('ues').pushObject(recordue1);
-         recordetu2.get('ues').pushObject(recordue3);
-         recordetu2.get('ues').pushObject(recordue5);
+          cc1: 12,
+          cc2: 10,
+          ccf: 15
+        });
+        var recordnote2 = this.store.createRecord('note',{
+          cc1: 10,
+          cc2: 8,
+          ccf: 12
+        });
+        var recordnote3 = this.store.createRecord('note',{
+          cc1: 12,
+          cc2: 15,
+          ccf: 13
+        });
+        var recordnote4 = this.store.createRecord('note',{
+          cc1: 11,
+          cc2: 11,
+          ccf: 14
+        });
+        var recordnote5 = this.store.createRecord('note',{
+          cc1: 13,
+          cc2: 14,
+          ccf: 12
+        });
+        var recordnote6 = this.store.createRecord('note',{
+          cc1: 11,
+          cc2: 15,
+          ccf: 18
+        });
+        var recordnote7 = this.store.createRecord('note',{
+          cc1: 20,
+          cc2: 19,
+          ccf: 12
+        });
+         var recordnote8 = this.store.createRecord('note',{
+          cc1: 12,
+          cc2: 19,
+          ccf: 12
+        });
+         var recordnote9 = this.store.createRecord('note',{
+          cc1: 10,
+          cc2: 19,
+          ccf: 12
+        });
+         var recordnote10 = this.store.createRecord('note',{
+          cc1: 10,
+          cc2: 19,
+          ccf: 12
+        });
+         var recordnote11 = this.store.createRecord('note',{
+          cc1: 10,
+          cc2: 19,
+          ccf: 12
+        });
+         var recordnote12 = this.store.createRecord('note',{
+          cc1: 16,
+          cc2: 19,
+          ccf: 12
+        });
+         var recordnote13 = this.store.createRecord('note',{
+          cc1: 9,
+          cc2: 19,
+          ccf: 12
+        });
+         var recordnote14 = this.store.createRecord('note',{
+          cc1: 10,
+          cc2: 19,
+          ccf: 12
+        });
+         var recordnote15 = this.store.createRecord('note',{
+          cc1: 15,
+          cc2: 19,
+          ccf: 12
+        });
+         var recordnote16 = this.store.createRecord('note',{
+          cc1: 14,
+          cc2: 19,
+          ccf: 12
+        });
+         var recordnote17 = this.store.createRecord('note',{
+          cc1: 13,
+          cc2: 19,
+          ccf: 12
+        });
+         var recordnote18 = this.store.createRecord('note',{
+          cc1: 12,
+          cc2: 19,
+          ccf: 12
+        });
+         var recordnote19 = this.store.createRecord('note',{
+          cc1: 11,
+          cc2: 19,
+          ccf: 12
+        });
+         var recordnote20 = this.store.createRecord('note',{
+          cc1: 20,
+          cc2: 19,
+          ccf: 12
+        });
+         recordens1.get('ues').pushObject(recordue4);
+        recordens2.get('ues').pushObject(recordue1);
+        recordens3.get('ues').pushObject(recordue2);
+        recordens3.get('ues').pushObject(recordue5);
+        recordens4.get('ues').pushObject(recordue3);
+        recordens5.get('ues').pushObject(recordue5);
+         recordetu1.get('ues').pushObject(recordue1);
+        recordetu1.get('ues').pushObject(recordue2);
+        recordetu1.get('ues').pushObject(recordue5);
+        recordetu1.get('ues').pushObject(recordue4);
+         recordetu2.get('ues').pushObject(recordue1);
+        recordetu2.get('ues').pushObject(recordue3);
+        recordetu2.get('ues').pushObject(recordue5);
+        recordetu2.get('ues').pushObject(recordue4);
+         recordetu3.get('ues').pushObject(recordue5);
+        recordetu3.get('ues').pushObject(recordue1);
+        recordetu3.get('ues').pushObject(recordue2);
+        recordetu3.get('ues').pushObject(recordue3);
+         recordetu4.get('ues').pushObject(recordue1);
+        recordetu4.get('ues').pushObject(recordue2);
+        recordetu4.get('ues').pushObject(recordue3);
+        recordetu4.get('ues').pushObject(recordue5);
+         recordetu5.get('ues').pushObject(recordue1);
+        recordetu5.get('ues').pushObject(recordue5);
+        recordetu5.get('ues').pushObject(recordue4);
+        recordetu5.get('ues').pushObject(recordue2);
            recordue1.get('notes').pushObject(recordnote1);
-         recordetu1.get('notes').pushObject(recordnote1);
-          recordue2.get('notes').pushObject(recordnote2);
-         recordetu1.get('notes').pushObject(recordnote2);
-          recordue5.get('notes').pushObject(recordnote3);
-         recordetu1.get('notes').pushObject(recordnote3);
-          recordue4.get('notes').pushObject(recordnote4);
-         recordetu1.get('notes').pushObject(recordnote4);
-          recordue1.get('notes').pushObject(recordnote5);
-         recordetu2.get('notes').pushObject(recordnote5);
-          recordue3.get('notes').pushObject(recordnote6);
-         recordetu2.get('notes').pushObject(recordnote6);
+        recordetu1.get('notes').pushObject(recordnote1);
+         recordue2.get('notes').pushObject(recordnote2);
+        recordetu1.get('notes').pushObject(recordnote2);
+         recordue5.get('notes').pushObject(recordnote3);
+        recordetu1.get('notes').pushObject(recordnote3);
+         recordue4.get('notes').pushObject(recordnote20);
+        recordetu1.get('notes').pushObject(recordnote20);
+           recordue1.get('notes').pushObject(recordnote19);
+        recordetu2.get('notes').pushObject(recordnote19);
+         recordue3.get('notes').pushObject(recordnote4);
+        recordetu2.get('notes').pushObject(recordnote4);
+         recordue5.get('notes').pushObject(recordnote5);
+        recordetu2.get('notes').pushObject(recordnote5);
+         recordue4.get('notes').pushObject(recordnote6);
+        recordetu2.get('notes').pushObject(recordnote6);
           recordue5.get('notes').pushObject(recordnote7);
-         recordetu2.get('notes').pushObject(recordnote7);
-           recordnote1.save();
-         recordnote2.save();
-         recordnote3.save();
-         recordnote4.save();
-         recordnote5.save();
-         recordnote6.save();
-         recordnote7.save();
-           recordue1.save();
-         recordue2.save();
-         recordue3.save();
-         recordue4.save();
-         recordue5.save();
-          recordens1.save();
-         recordens2.save();
-          recordetu1.save();
-         recordetu2.save();
-          */
+        recordetu3.get('notes').pushObject(recordnote7);
+         recordue1.get('notes').pushObject(recordnote8);
+        recordetu3.get('notes').pushObject(recordnote8);
+         recordue2.get('notes').pushObject(recordnote18);
+        recordetu3.get('notes').pushObject(recordnote18);
+         recordue3.get('notes').pushObject(recordnote9);
+        recordetu3.get('notes').pushObject(recordnote9);
+          recordue1.get('notes').pushObject(recordnote10);
+        recordetu4.get('notes').pushObject(recordnote10);
+         recordue2.get('notes').pushObject(recordnote11);
+        recordetu4.get('notes').pushObject(recordnote11);
+         recordue3.get('notes').pushObject(recordnote12);
+        recordetu4.get('notes').pushObject(recordnote12);
+         recordue5.get('notes').pushObject(recordnote13);
+        recordetu4.get('notes').pushObject(recordnote13);
+           recordue1.get('notes').pushObject(recordnote14);
+        recordetu5.get('notes').pushObject(recordnote14);
+         recordue5.get('notes').pushObject(recordnote15);
+        recordetu5.get('notes').pushObject(recordnote15);
+         recordue4.get('notes').pushObject(recordnote16);
+        recordetu5.get('notes').pushObject(recordnote16);
+         recordue2.get('notes').pushObject(recordnote17);
+        recordetu5.get('notes').pushObject(recordnote17);
+            recordnote1.save();
+        recordnote2.save();
+        recordnote3.save();
+        recordnote4.save();
+        recordnote5.save();
+        recordnote6.save();
+        recordnote7.save();
+        recordnote8.save();
+        recordnote9.save();
+        recordnote10.save();
+        recordnote11.save();
+        recordnote12.save();
+        recordnote13.save();
+        recordnote14.save();
+        recordnote15.save();
+        recordnote16.save();
+        recordnote17.save();
+        recordnote18.save();
+        recordnote19.save();
+        recordnote20.save();
+          recordue1.save();
+        recordue2.save();
+        recordue3.save();
+        recordue4.save();
+        recordue5.save();
+         recordens1.save();
+        recordens2.save();
+        recordens3.save();
+        recordens4.save();
+        recordens5.save();
+         recordetu1.save();
+        recordetu2.save();
+        recordetu3.save();
+        recordetu4.save();
+        recordetu5.save();
+        ****************/
 
         var identifier = this.get('identifiant');
         var password = this.get('password');
@@ -690,6 +870,7 @@ define('demonstration/routes/manage', ['exports', 'ember'], function (exports, _
 });
 define('demonstration/routes/manage/enseignant', ['exports', 'ember'], function (exports, _ember) {
   exports['default'] = _ember['default'].Route.extend({
+
     model: function model() {
       return this.store.query('enseignant', {
         orderBy: 'identifiant'
@@ -701,7 +882,6 @@ define('demonstration/routes/manage/enseignant', ['exports', 'ember'], function 
       saveTeacher: function saveTeacher(identifier, name, lastname, mail) {
 
         var teacher = this.store.createRecord('enseignant', {
-
           password: 'default',
           identifiant: identifier,
           nom: lastname,
@@ -711,7 +891,6 @@ define('demonstration/routes/manage/enseignant', ['exports', 'ember'], function 
         });
 
         teacher.save();
-        teacher.load();
       },
 
       deleteTeacher: function deleteTeacher(teacher) {
@@ -806,7 +985,7 @@ define("demonstration/templates/components/admin-layout", ["exports"], function 
   exports["default"] = Ember.HTMLBars.template({ "id": "sP8AkZiz", "block": "{\"statements\":[[\"open-element\",\"div\",[]],[\"static-attr\",\"class\",\"container\"],[\"flush-element\"],[\"text\",\"\\n  \"],[\"open-element\",\"button\",[]],[\"static-attr\",\"class\",\"btn btn-primary btn-lg btn-block\"],[\"modifier\",[\"action\"],[[\"get\",[null]],\"logout\"]],[\"flush-element\"],[\"text\",\"Se deconnecter\"],[\"close-element\"],[\"text\",\"\\n\\n    \"],[\"comment\",\" Menu \"],[\"text\",\"\\n    \"],[\"open-element\",\"div\",[]],[\"static-attr\",\"class\",\"col-lg-4 col-md-4 col-sm-4 col-xs-12\"],[\"flush-element\"],[\"text\",\"\\n      \"],[\"open-element\",\"div\",[]],[\"static-attr\",\"class\",\"panel panel-default\"],[\"flush-element\"],[\"text\",\"\\n        \"],[\"open-element\",\"div\",[]],[\"static-attr\",\"class\",\"panel-heading\"],[\"flush-element\"],[\"text\",\"Menu\"],[\"close-element\"],[\"text\",\"\\n        \"],[\"open-element\",\"div\",[]],[\"static-attr\",\"class\",\"panel-body\"],[\"flush-element\"],[\"text\",\"\\n          \"],[\"open-element\",\"ul\",[]],[\"flush-element\"],[\"text\",\"\\n            \"],[\"open-element\",\"li\",[]],[\"flush-element\"],[\"block\",[\"link-to\"],[\"manage.etudiant\",[\"helper\",[\"query-params\"],null,[[\"isAdmin\"],[[\"get\",[\"isAdmin\"]]]]]],null,1],[\"text\",\" \"],[\"close-element\"],[\"text\",\"\\n            \"],[\"open-element\",\"li\",[]],[\"flush-element\"],[\"block\",[\"link-to\"],[\"manage.enseignant\",[\"helper\",[\"query-params\"],null,[[\"isAdmin\"],[[\"get\",[\"isAdmin\"]]]]]],null,0],[\"close-element\"],[\"text\",\"\\n          \"],[\"close-element\"],[\"text\",\"\\n        \"],[\"close-element\"],[\"text\",\"\\n      \"],[\"close-element\"],[\"text\",\"\\n    \"],[\"close-element\"],[\"text\",\"\\n\\n    \"],[\"yield\",\"default\"],[\"text\",\"\\n\\n\"],[\"close-element\"]],\"locals\":[],\"named\":[],\"yields\":[\"default\"],\"blocks\":[{\"statements\":[[\"text\",\"Enseignants\"]],\"locals\":[]},{\"statements\":[[\"text\",\"Etudiants\"]],\"locals\":[]}],\"hasPartials\":false}", "meta": { "moduleName": "demonstration/templates/components/admin-layout.hbs" } });
 });
 define("demonstration/templates/components/form-user-add", ["exports"], function (exports) {
-  exports["default"] = Ember.HTMLBars.template({ "id": "km4CiXml", "block": "{\"statements\":[[\"open-element\",\"div\",[]],[\"static-attr\",\"class\",\"col-lg-8 col-md-8 col-sm-8 col-xs-12\"],[\"flush-element\"],[\"text\",\"\\n  \"],[\"open-element\",\"div\",[]],[\"static-attr\",\"class\",\"panel panel-default\"],[\"flush-element\"],[\"text\",\"\\n    \"],[\"open-element\",\"div\",[]],[\"static-attr\",\"class\",\"panel-heading\"],[\"flush-element\"],[\"append\",[\"unknown\",[\"title\"]],false],[\"close-element\"],[\"text\",\"\\n    \"],[\"open-element\",\"div\",[]],[\"static-attr\",\"class\",\"panel-body\"],[\"flush-element\"],[\"text\",\"\\n      \"],[\"open-element\",\"div\",[]],[\"dynamic-attr\",\"class\",[\"concat\",[\"form-\",[\"unknown\",[\"class\"]]]]],[\"flush-element\"],[\"text\",\"\\n        \"],[\"open-element\",\"form\",[]],[\"static-attr\",\"class\",\"form-inline\"],[\"flush-element\"],[\"text\",\"\\n          \"],[\"yield\",\"default\"],[\"text\",\"\\n        \"],[\"close-element\"],[\"text\",\"\\n      \"],[\"close-element\"],[\"text\",\"\\n    \"],[\"close-element\"],[\"text\",\"\\n  \"],[\"close-element\"],[\"text\",\"\\n\"],[\"close-element\"]],\"locals\":[],\"named\":[],\"yields\":[\"default\"],\"blocks\":[],\"hasPartials\":false}", "meta": { "moduleName": "demonstration/templates/components/form-user-add.hbs" } });
+  exports["default"] = Ember.HTMLBars.template({ "id": "1VxbuMgo", "block": "{\"statements\":[[\"open-element\",\"div\",[]],[\"static-attr\",\"class\",\"col-lg-8 col-md-8 col-sm-8 col-xs-12\"],[\"flush-element\"],[\"text\",\"\\n  \"],[\"open-element\",\"div\",[]],[\"static-attr\",\"class\",\"panel panel-default\"],[\"flush-element\"],[\"text\",\"\\n    \"],[\"open-element\",\"div\",[]],[\"static-attr\",\"class\",\"panel-heading\"],[\"flush-element\"],[\"append\",[\"unknown\",[\"title\"]],false],[\"close-element\"],[\"text\",\"\\n    \"],[\"open-element\",\"div\",[]],[\"static-attr\",\"class\",\"panel-body\"],[\"flush-element\"],[\"text\",\"\\n      \"],[\"open-element\",\"div\",[]],[\"dynamic-attr\",\"class\",[\"concat\",[\"form-\",[\"unknown\",[\"class\"]]]]],[\"flush-element\"],[\"text\",\"\\n        \"],[\"open-element\",\"form\",[]],[\"static-attr\",\"class\",\"form-inline\"],[\"flush-element\"],[\"text\",\"\\n          \"],[\"yield\",\"default\"],[\"text\",\"\\n        \"],[\"close-element\"],[\"text\",\"\\n      \"],[\"close-element\"],[\"text\",\"\\n    \"],[\"close-element\"],[\"text\",\"\\n  \"],[\"close-element\"],[\"text\",\"\\n\"],[\"close-element\"],[\"text\",\"\\n\\n\"],[\"open-element\",\"script\",[]],[\"static-attr\",\"type\",\"text/javascript\"],[\"flush-element\"],[\"text\",\"\\n  document.getElementsByClassName(\\\"btn-add-data\\\")[0].addEventListener(\\\"click\\\", cleanInputsFields);\\n\\n  function cleanInputsFields() {\\n\\n      const inputs = document.getElementsByClassName('input-form');\\n\\n      for (const i in inputs) {\\n        if (inputs.hasOwnProperty(i))\\n          inputs[i].value = '';\\n      }\\n  }\\n\\n\"],[\"close-element\"]],\"locals\":[],\"named\":[],\"yields\":[\"default\"],\"blocks\":[],\"hasPartials\":false}", "meta": { "moduleName": "demonstration/templates/components/form-user-add.hbs" } });
 });
 define("demonstration/templates/components/if-equal", ["exports"], function (exports) {
   exports["default"] = Ember.HTMLBars.template({ "id": "CKpbJn1u", "block": "{\"statements\":[[\"block\",[\"if\"],[[\"get\",[\"isEqual\"]]],null,0]],\"locals\":[],\"named\":[],\"yields\":[\"default\"],\"blocks\":[{\"statements\":[[\"text\",\"  \"],[\"yield\",\"default\"],[\"text\",\"\\n\"]],\"locals\":[]}],\"hasPartials\":false}", "meta": { "moduleName": "demonstration/templates/components/if-equal.hbs" } });
@@ -818,7 +997,7 @@ define("demonstration/templates/components/student-average", ["exports"], functi
   exports["default"] = Ember.HTMLBars.template({ "id": "cbCYHlCB", "block": "{\"statements\":[[\"text\",\"\\n\"],[\"block\",[\"if-greater\"],null,[[\"param1\",\"param2\"],[[\"helper\",[\"moyenne-note\"],null,[[\"param1\",\"param2\",\"param3\"],[[\"get\",[\"note\",\"cc1\"]],[\"get\",[\"note\",\"cc2\"]],[\"get\",[\"note\",\"ccf\"]]]]],0]],1],[\"text\",\"\\n\"],[\"block\",[\"if-greater\"],null,[[\"param1\",\"param2\"],[0,[\"helper\",[\"moyenne-note\"],null,[[\"param1\",\"param2\",\"param3\"],[[\"get\",[\"note\",\"cc1\"]],[\"get\",[\"note\",\"cc2\"]],[\"get\",[\"note\",\"ccf\"]]]]]]],0]],\"locals\":[],\"named\":[],\"yields\":[],\"blocks\":[{\"statements\":[[\"text\",\"  \"],[\"open-element\",\"div\",[]],[\"static-attr\",\"class\",\"note\"],[\"flush-element\"],[\"text\",\"\\n\\n  \"],[\"close-element\"],[\"text\",\"\\n\"]],\"locals\":[]},{\"statements\":[[\"open-element\",\"div\",[]],[\"static-attr\",\"class\",\"note\"],[\"dynamic-attr\",\"style\",[\"concat\",[\"background-color: \",[\"helper\",[\"get-color\"],[[\"helper\",[\"moyenne-note\"],null,[[\"param1\",\"param2\",\"param3\"],[[\"get\",[\"note\",\"cc1\"]],[\"get\",[\"note\",\"cc2\"]],[\"get\",[\"note\",\"ccf\"]]]]]],null]]]],[\"flush-element\"],[\"text\",\"\\n  \"],[\"open-element\",\"label\",[]],[\"flush-element\"],[\"text\",\"Moyenne\"],[\"close-element\"],[\"text\",\"\\n  \"],[\"append\",[\"helper\",[\"moyenne-note\"],null,[[\"param1\",\"param2\",\"param3\"],[[\"get\",[\"note\",\"cc1\"]],[\"get\",[\"note\",\"cc2\"]],[\"get\",[\"note\",\"ccf\"]]]]],false],[\"open-element\",\"span\",[]],[\"static-attr\",\"class\",\"sur\"],[\"flush-element\"],[\"text\",\"/20\"],[\"close-element\"],[\"text\",\"\\n\"],[\"close-element\"],[\"text\",\"\\n\"]],\"locals\":[]}],\"hasPartials\":false}", "meta": { "moduleName": "demonstration/templates/components/student-average.hbs" } });
 });
 define("demonstration/templates/components/student-info", ["exports"], function (exports) {
-  exports["default"] = Ember.HTMLBars.template({ "id": "7Ss+ewMf", "block": "{\"statements\":[[\"text\",\"\\n\"],[\"open-element\",\"label\",[]],[\"flush-element\"],[\"append\",[\"unknown\",[\"etudiant\",\"nom\"]],false],[\"text\",\", \"],[\"append\",[\"unknown\",[\"etudiant\",\"prenom\"]],false],[\"close-element\"],[\"open-element\",\"br\",[]],[\"flush-element\"],[\"close-element\"],[\"text\",\"\\n\"],[\"open-element\",\"label\",[]],[\"flush-element\"],[\"text\",\"Identifiant: \"],[\"append\",[\"unknown\",[\"etudiant\",\"identifiant\"]],false],[\"close-element\"],[\"open-element\",\"br\",[]],[\"flush-element\"],[\"close-element\"],[\"text\",\"\\n\"],[\"block\",[\"each\"],[[\"get\",[\"etudiant\",\"notes\"]]],null,1]],\"locals\":[],\"named\":[],\"yields\":[],\"blocks\":[{\"statements\":[[\"text\",\"    \"],[\"open-element\",\"div\",[]],[\"static-attr\",\"class\",\"form-inline\"],[\"flush-element\"],[\"text\",\"\\n\\n      \"],[\"append\",[\"helper\",[\"input\"],null,[[\"type\",\"min\",\"max\",\"value\",\"class\",\"placeholder\",\"style\"],[\"number\",\"0\",\"20\",[\"get\",[\"note\",\"cc1\"]],\"form-control\",\"CC1\",\"background-color: {{get-color note.cc1}}\"]]],false],[\"text\",\"\\n      \"],[\"append\",[\"helper\",[\"input\"],null,[[\"type\",\"min\",\"max\",\"value\",\"class\",\"placeholder\",\"style\"],[\"number\",\"0\",\"20\",[\"get\",[\"note\",\"cc2\"]],\"form-control\",\"CC2\",\"background-color: {{get-color note.cc2}}\"]]],false],[\"text\",\"\\n      \"],[\"append\",[\"helper\",[\"input\"],null,[[\"type\",\"min\",\"max\",\"value\",\"class\",\"placeholder\",\"style\"],[\"number\",\"0\",\"20\",[\"get\",[\"note\",\"ccf\"]],\"form-control\",\"CCF\",\"background-color: {{get-color note.ccf}}\"]]],false],[\"text\",\"\\n\\n      \"],[\"open-element\",\"button\",[]],[\"static-attr\",\"class\",\"btn btn-primary btn-orange btn-sm\"],[\"modifier\",[\"action\"],[[\"get\",[null]],\"saveNote\",[\"get\",[\"note\"]]]],[\"flush-element\"],[\"text\",\"Save\"],[\"close-element\"],[\"text\",\"\\n\\n      \"],[\"append\",[\"helper\",[\"student-average\"],null,[[\"note\"],[[\"get\",[\"note\"]]]]],false],[\"text\",\"\\n    \"],[\"close-element\"],[\"text\",\"\\n\\n\"]],\"locals\":[]},{\"statements\":[[\"text\",\"\\n\"],[\"block\",[\"if-equal\"],null,[[\"param1\",\"param2\"],[[\"get\",[\"note\",\"ue\",\"id\"]],[\"get\",[\"ue\",\"id\"]]]],0]],\"locals\":[\"note\"]}],\"hasPartials\":false}", "meta": { "moduleName": "demonstration/templates/components/student-info.hbs" } });
+  exports["default"] = Ember.HTMLBars.template({ "id": "r0NZTOh6", "block": "{\"statements\":[[\"text\",\"\\n\"],[\"open-element\",\"label\",[]],[\"flush-element\"],[\"append\",[\"unknown\",[\"etudiant\",\"nom\"]],false],[\"text\",\", \"],[\"append\",[\"unknown\",[\"etudiant\",\"prenom\"]],false],[\"close-element\"],[\"open-element\",\"br\",[]],[\"flush-element\"],[\"close-element\"],[\"text\",\"\\n\"],[\"open-element\",\"label\",[]],[\"flush-element\"],[\"text\",\"Identifiant: \"],[\"append\",[\"unknown\",[\"etudiant\",\"identifiant\"]],false],[\"close-element\"],[\"open-element\",\"br\",[]],[\"flush-element\"],[\"close-element\"],[\"text\",\"\\n\"],[\"block\",[\"each\"],[[\"get\",[\"etudiant\",\"notes\"]]],null,1]],\"locals\":[],\"named\":[],\"yields\":[],\"blocks\":[{\"statements\":[[\"text\",\"    \"],[\"open-element\",\"div\",[]],[\"static-attr\",\"class\",\"form-inline\"],[\"flush-element\"],[\"text\",\"\\n\\n      \"],[\"append\",[\"helper\",[\"input\"],null,[[\"type\",\"min\",\"max\",\"value\",\"class\",\"placeholder\",\"style\"],[\"number\",\"0\",\"20\",[\"get\",[\"note\",\"cc1\"]],\"form-control\",\"CC1\",\"background-color: {{get-color note.cc1}}\"]]],false],[\"text\",\"\\n      \"],[\"append\",[\"helper\",[\"input\"],null,[[\"type\",\"min\",\"max\",\"value\",\"class\",\"placeholder\",\"style\"],[\"number\",\"0\",\"20\",[\"get\",[\"note\",\"cc2\"]],\"form-control\",\"CC2\",\"background-color: {{get-color note.cc2}}\"]]],false],[\"text\",\"\\n      \"],[\"append\",[\"helper\",[\"input\"],null,[[\"type\",\"min\",\"max\",\"value\",\"class\",\"placeholder\",\"style\"],[\"number\",\"0\",\"20\",[\"get\",[\"note\",\"ccf\"]],\"form-control\",\"CCF\",\"background-color: {{get-color note.ccf}}\"]]],false],[\"text\",\"\\n\\n      \"],[\"open-element\",\"button\",[]],[\"static-attr\",\"class\",\"btn btn-primary btn-orange btn-sm\"],[\"modifier\",[\"action\"],[[\"get\",[null]],[\"get\",[\"action-note\"]],[\"get\",[\"note\"]]]],[\"flush-element\"],[\"text\",\"Save\"],[\"close-element\"],[\"text\",\"\\n\\n      \"],[\"append\",[\"helper\",[\"student-average\"],null,[[\"note\"],[[\"get\",[\"note\"]]]]],false],[\"text\",\"\\n    \"],[\"close-element\"],[\"text\",\"\\n\\n\"]],\"locals\":[]},{\"statements\":[[\"text\",\"\\n\"],[\"block\",[\"if-equal\"],null,[[\"param1\",\"param2\"],[[\"get\",[\"note\",\"ue\",\"id\"]],[\"get\",[\"ue\",\"id\"]]]],0]],\"locals\":[\"note\"]}],\"hasPartials\":false}", "meta": { "moduleName": "demonstration/templates/components/student-info.hbs" } });
 });
 define("demonstration/templates/components/student-note", ["exports"], function (exports) {
   exports["default"] = Ember.HTMLBars.template({ "id": "ZNzSrJKF", "block": "{\"statements\":[[\"text\",\"\\n\"],[\"block\",[\"if-greater\"],null,[[\"param1\",\"param2\"],[[\"get\",[\"note\"]],0]],1],[\"text\",\"\\n\"],[\"block\",[\"if-greater\"],null,[[\"param1\",\"param2\"],[0,[\"get\",[\"note\"]]]],0]],\"locals\":[],\"named\":[],\"yields\":[],\"blocks\":[{\"statements\":[[\"text\",\"  \"],[\"open-element\",\"div\",[]],[\"static-attr\",\"class\",\"note\"],[\"flush-element\"],[\"close-element\"],[\"text\",\"\\n\"]],\"locals\":[]},{\"statements\":[[\"text\",\"  \"],[\"open-element\",\"div\",[]],[\"static-attr\",\"class\",\"note\"],[\"dynamic-attr\",\"style\",[\"concat\",[\"background-color: \",[\"helper\",[\"get-color\"],[[\"get\",[\"note\"]]],null]]]],[\"flush-element\"],[\"text\",\"\\n    \"],[\"open-element\",\"label\",[]],[\"flush-element\"],[\"append\",[\"unknown\",[\"title-note\"]],false],[\"close-element\"],[\"text\",\"\\n    \"],[\"append\",[\"unknown\",[\"note\"]],false],[\"open-element\",\"span\",[]],[\"static-attr\",\"class\",\"sur\"],[\"flush-element\"],[\"text\",\"/20\"],[\"close-element\"],[\"text\",\"\\n  \"],[\"close-element\"],[\"text\",\"\\n\"]],\"locals\":[]}],\"hasPartials\":false}", "meta": { "moduleName": "demonstration/templates/components/student-note.hbs" } });
@@ -827,7 +1006,7 @@ define("demonstration/templates/components/user-list", ["exports"], function (ex
   exports["default"] = Ember.HTMLBars.template({ "id": "J7Mp2nOH", "block": "{\"statements\":[[\"open-element\",\"div\",[]],[\"static-attr\",\"class\",\"col-lg-12 col-md-12 col-sm-12 col-xs-12\"],[\"flush-element\"],[\"text\",\"\\n  \"],[\"open-element\",\"div\",[]],[\"static-attr\",\"class\",\"panel panel-default\"],[\"flush-element\"],[\"text\",\"\\n    \"],[\"open-element\",\"div\",[]],[\"static-attr\",\"class\",\"panel-body\"],[\"flush-element\"],[\"text\",\"\\n      \"],[\"open-element\",\"table\",[]],[\"static-attr\",\"class\",\"table table-hover\"],[\"flush-element\"],[\"text\",\"\\n        \"],[\"open-element\",\"thead\",[]],[\"flush-element\"],[\"text\",\"\\n        \"],[\"open-element\",\"tr\",[]],[\"flush-element\"],[\"text\",\"\\n          \"],[\"open-element\",\"th\",[]],[\"flush-element\"],[\"text\",\"Identifiant\"],[\"close-element\"],[\"text\",\"\\n          \"],[\"open-element\",\"th\",[]],[\"flush-element\"],[\"text\",\"Prenom\"],[\"close-element\"],[\"text\",\"\\n          \"],[\"open-element\",\"th\",[]],[\"flush-element\"],[\"text\",\"Nom\"],[\"close-element\"],[\"text\",\"\\n          \"],[\"open-element\",\"th\",[]],[\"flush-element\"],[\"text\",\"Email\"],[\"close-element\"],[\"text\",\"\\n          \"],[\"open-element\",\"th\",[]],[\"flush-element\"],[\"close-element\"],[\"text\",\"\\n        \"],[\"close-element\"],[\"text\",\"\\n        \"],[\"close-element\"],[\"text\",\"\\n        \"],[\"open-element\",\"tbody\",[]],[\"flush-element\"],[\"text\",\"\\n        \"],[\"yield\",\"default\"],[\"text\",\"\\n        \"],[\"close-element\"],[\"text\",\"\\n      \"],[\"close-element\"],[\"text\",\"\\n    \"],[\"close-element\"],[\"text\",\"\\n  \"],[\"close-element\"],[\"text\",\"\\n\"],[\"close-element\"]],\"locals\":[],\"named\":[],\"yields\":[\"default\"],\"blocks\":[],\"hasPartials\":false}", "meta": { "moduleName": "demonstration/templates/components/user-list.hbs" } });
 });
 define("demonstration/templates/components/user-profile", ["exports"], function (exports) {
-  exports["default"] = Ember.HTMLBars.template({ "id": "Z8yKH8Pr", "block": "{\"statements\":[[\"comment\",\" Profile \"],[\"text\",\"\\n\"],[\"open-element\",\"div\",[]],[\"static-attr\",\"class\",\"col-lg-4 col-md-4 col-sm-4 col-xs-12\"],[\"flush-element\"],[\"text\",\"\\n  \"],[\"open-element\",\"div\",[]],[\"static-attr\",\"class\",\"panel panel-default\"],[\"flush-element\"],[\"text\",\"\\n    \"],[\"open-element\",\"div\",[]],[\"static-attr\",\"class\",\"panel-heading\"],[\"flush-element\"],[\"text\",\"Profil\"],[\"close-element\"],[\"text\",\"\\n    \"],[\"open-element\",\"div\",[]],[\"static-attr\",\"class\",\"panel-body\"],[\"flush-element\"],[\"text\",\"\\n      \"],[\"open-element\",\"div\",[]],[\"static-attr\",\"class\",\"user-profil\"],[\"flush-element\"],[\"text\",\"\\n        \"],[\"open-element\",\"img\",[]],[\"dynamic-attr\",\"src\",[\"concat\",[\"/assets/images/\",[\"unknown\",[\"user\",\"identifiant\"]],\".png\"]]],[\"static-attr\",\"alt\",\"...\"],[\"static-attr\",\"class\",\"img-thumbnail\"],[\"flush-element\"],[\"close-element\"],[\"text\",\"\\n        \"],[\"open-element\",\"h5\",[]],[\"flush-element\"],[\"open-element\",\"span\",[]],[\"flush-element\"],[\"text\",\"Nom complet \"],[\"close-element\"],[\"append\",[\"unknown\",[\"user\",\"nom\"]],false],[\"text\",\" \"],[\"append\",[\"unknown\",[\"user\",\"prenom\"]],false],[\"close-element\"],[\"text\",\"\\n        \"],[\"open-element\",\"h5\",[]],[\"flush-element\"],[\"open-element\",\"span\",[]],[\"flush-element\"],[\"text\",\"identifiant:\"],[\"close-element\"],[\"text\",\" \"],[\"append\",[\"unknown\",[\"user\",\"identifiant\"]],false],[\"close-element\"],[\"text\",\"\\n        \"],[\"open-element\",\"h5\",[]],[\"flush-element\"],[\"open-element\",\"span\",[]],[\"flush-element\"],[\"text\",\"Date de naissance:\"],[\"close-element\"],[\"text\",\" \"],[\"append\",[\"unknown\",[\"user\",\"datedenaissance\"]],false],[\"close-element\"],[\"text\",\"\\n        \"],[\"open-element\",\"h5\",[]],[\"flush-element\"],[\"open-element\",\"span\",[]],[\"flush-element\"],[\"text\",\"Email:\"],[\"close-element\"],[\"text\",\" \"],[\"append\",[\"unknown\",[\"user\",\"email\"]],false],[\"close-element\"],[\"text\",\"\\n      \"],[\"close-element\"],[\"text\",\"\\n    \"],[\"close-element\"],[\"text\",\"\\n  \"],[\"close-element\"],[\"text\",\"\\n\"],[\"close-element\"],[\"text\",\"\\n\"]],\"locals\":[],\"named\":[],\"yields\":[],\"blocks\":[],\"hasPartials\":false}", "meta": { "moduleName": "demonstration/templates/components/user-profile.hbs" } });
+  exports["default"] = Ember.HTMLBars.template({ "id": "jsGCQrC9", "block": "{\"statements\":[[\"open-element\",\"div\",[]],[\"static-attr\",\"class\",\"col-lg-4 col-md-4 col-sm-4 col-xs-12\"],[\"flush-element\"],[\"text\",\"\\n  \"],[\"open-element\",\"div\",[]],[\"static-attr\",\"class\",\"panel panel-default\"],[\"flush-element\"],[\"text\",\"\\n    \"],[\"open-element\",\"div\",[]],[\"static-attr\",\"class\",\"panel-heading\"],[\"flush-element\"],[\"text\",\"Profil\"],[\"close-element\"],[\"text\",\"\\n    \"],[\"open-element\",\"div\",[]],[\"static-attr\",\"class\",\"panel-body\"],[\"flush-element\"],[\"text\",\"\\n      \"],[\"open-element\",\"div\",[]],[\"static-attr\",\"class\",\"user-profil\"],[\"flush-element\"],[\"text\",\"\\n        \"],[\"open-element\",\"img\",[]],[\"dynamic-attr\",\"src\",[\"concat\",[\"/assets/images/\",[\"unknown\",[\"user\",\"identifiant\"]],\".png\"]]],[\"static-attr\",\"onerror\",\"this.src='/assets/images/default_user.png'\"],[\"static-attr\",\"alt\",\"...\"],[\"static-attr\",\"class\",\"img-thumbnail\"],[\"flush-element\"],[\"close-element\"],[\"text\",\"\\n        \"],[\"open-element\",\"h5\",[]],[\"flush-element\"],[\"open-element\",\"span\",[]],[\"flush-element\"],[\"text\",\"Nom complet \"],[\"close-element\"],[\"append\",[\"unknown\",[\"user\",\"nom\"]],false],[\"text\",\" \"],[\"append\",[\"unknown\",[\"user\",\"prenom\"]],false],[\"close-element\"],[\"text\",\"\\n        \"],[\"open-element\",\"h5\",[]],[\"flush-element\"],[\"open-element\",\"span\",[]],[\"flush-element\"],[\"text\",\"identifiant:\"],[\"close-element\"],[\"text\",\" \"],[\"append\",[\"unknown\",[\"user\",\"identifiant\"]],false],[\"close-element\"],[\"text\",\"\\n        \"],[\"open-element\",\"h5\",[]],[\"flush-element\"],[\"open-element\",\"span\",[]],[\"flush-element\"],[\"text\",\"Date de naissance:\"],[\"close-element\"],[\"text\",\" \"],[\"append\",[\"unknown\",[\"user\",\"datedenaissance\"]],false],[\"close-element\"],[\"text\",\"\\n        \"],[\"open-element\",\"h5\",[]],[\"flush-element\"],[\"open-element\",\"span\",[]],[\"flush-element\"],[\"text\",\"Email:\"],[\"close-element\"],[\"text\",\" \"],[\"append\",[\"unknown\",[\"user\",\"email\"]],false],[\"close-element\"],[\"text\",\"\\n      \"],[\"close-element\"],[\"text\",\"\\n    \"],[\"close-element\"],[\"text\",\"\\n  \"],[\"close-element\"],[\"text\",\"\\n\"],[\"close-element\"],[\"text\",\"\\n\"]],\"locals\":[],\"named\":[],\"yields\":[],\"blocks\":[],\"hasPartials\":false}", "meta": { "moduleName": "demonstration/templates/components/user-profile.hbs" } });
 });
 define("demonstration/templates/contact", ["exports"], function (exports) {
   exports["default"] = Ember.HTMLBars.template({ "id": "btBcsVkq", "block": "{\"statements\":[[\"partial\",\"navbar\"],[\"text\",\"\\n\\n\"],[\"open-element\",\"div\",[]],[\"static-attr\",\"class\",\"contact_page\"],[\"flush-element\"],[\"text\",\"\\n  \"],[\"open-element\",\"h3\",[]],[\"flush-element\"],[\"text\",\"Contact\"],[\"close-element\"],[\"text\",\"\\n  \"],[\"open-element\",\"div\",[]],[\"static-attr\",\"class\",\"form-horizontal form-group form-group-lg row\"],[\"flush-element\"],[\"text\",\"\\n    \"],[\"open-element\",\"div\",[]],[\"static-attr\",\"class\",\"col-xs-10 col-xs-offset-1 col-sm-6 col-sm-offset-1 col-md-6 col-md-offset-1 connect_horizental\"],[\"flush-element\"],[\"text\",\"\\n      \"],[\"append\",[\"helper\",[\"input\"],null,[[\"type\",\"class\",\"value\",\"placeholder\",\"autofocus\"],[\"text\",\"form-control\",[\"get\",[\"nom\"]],\"Entrer votre nom.\",\"autofocus\"]]],false],[\"text\",\"\\n    \"],[\"close-element\"],[\"text\",\"\\n    \"],[\"open-element\",\"div\",[]],[\"static-attr\",\"class\",\"col-xs-10 col-xs-offset-1 col-sm-6 col-sm-offset-1 col-md-6 col-md-offset-1 connect_horizental\"],[\"flush-element\"],[\"text\",\"\\n      \"],[\"append\",[\"helper\",[\"input\"],null,[[\"type\",\"class\",\"value\",\"placeholder\",\"autofocus\"],[\"email\",\"form-control\",[\"get\",[\"email\"]],\"Entrer votre email.\",\"autofocus\"]]],false],[\"text\",\"\\n    \"],[\"close-element\"],[\"text\",\"\\n    \"],[\"open-element\",\"div\",[]],[\"static-attr\",\"class\",\"col-xs-10 col-xs-offset-1 col-sm-10 col-sm-offset-1 col-md-10 col-md-offset-1 connect_horizental\"],[\"flush-element\"],[\"text\",\"\\n      \"],[\"append\",[\"helper\",[\"textarea\"],null,[[\"class\",\"value\",\"placeholder\"],[\"form-control\",[\"get\",[\"message\"]],\"Entrer votre message.\"]]],false],[\"text\",\"\\n    \"],[\"close-element\"],[\"text\",\"\\n\\n    \"],[\"open-element\",\"div\",[]],[\"static-attr\",\"class\",\"col-xs-10 col-xs-offset-1 col-sm-offset-1 col-sm-10 col-md-10 col-md-offset-1 col-lg-10 col-lg-offset-1\"],[\"flush-element\"],[\"text\",\"\\n      \"],[\"open-element\",\"button\",[]],[\"static-attr\",\"class\",\"btn btn-primary btn-lg btn-block\"],[\"dynamic-attr\",\"disabled\",[\"unknown\",[\"isDisabled\"]],null],[\"modifier\",[\"action\"],[[\"get\",[null]],\"verifyMessage\"]],[\"flush-element\"],[\"text\",\"Nous contacter\"],[\"close-element\"],[\"text\",\"\\n    \"],[\"close-element\"],[\"text\",\"\\n  \"],[\"close-element\"],[\"text\",\"\\n\\n\\n\\n\"],[\"block\",[\"if\"],[[\"get\",[\"responseMessage\"]]],null,0],[\"close-element\"],[\"text\",\"\\n\\n\\n\"],[\"append\",[\"unknown\",[\"outlet\"]],false],[\"text\",\"\\n\"]],\"locals\":[],\"named\":[],\"yields\":[],\"blocks\":[{\"statements\":[[\"text\",\"    \"],[\"open-element\",\"div\",[]],[\"static-attr\",\"class\",\"alert alert-danger\"],[\"flush-element\"],[\"append\",[\"unknown\",[\"responseMessage\"]],false],[\"close-element\"],[\"text\",\"\\n\"]],\"locals\":[]}],\"hasPartials\":true}", "meta": { "moduleName": "demonstration/templates/contact.hbs" } });
@@ -839,10 +1018,10 @@ define("demonstration/templates/login", ["exports"], function (exports) {
   exports["default"] = Ember.HTMLBars.template({ "id": "YrDQhKpO", "block": "{\"statements\":[[\"partial\",\"navbar\"],[\"text\",\"\\n\"],[\"open-element\",\"div\",[]],[\"static-attr\",\"class\",\"login_page\"],[\"flush-element\"],[\"text\",\"\\n  \"],[\"open-element\",\"h3\",[]],[\"flush-element\"],[\"text\",\"Service d'Authentification\"],[\"close-element\"],[\"text\",\"\\n  \"],[\"open-element\",\"div\",[]],[\"static-attr\",\"class\",\"form-horizontal form-group form-group-lg row\"],[\"flush-element\"],[\"text\",\"\\n    \"],[\"open-element\",\"div\",[]],[\"static-attr\",\"class\",\"col-xs-10 col-xs-offset-1 col-sm-6 col-sm-offset-3 col-md-6 col-md-offset-3 connect_horizental\"],[\"flush-element\"],[\"text\",\"\\n      \"],[\"append\",[\"helper\",[\"input\"],null,[[\"type\",\"class\",\"value\",\"placeholder\",\"autofocus\"],[\"text\",\"form-control\",[\"get\",[\"identifiant\"]],\"Entrer votre identifiant.\",\"autofocus\"]]],false],[\"text\",\"\\n    \"],[\"close-element\"],[\"text\",\"\\n    \"],[\"open-element\",\"div\",[]],[\"static-attr\",\"class\",\"col-xs-10 col-xs-offset-1 col-sm-6 col-sm-offset-3 col-md-6 col-md-offset-3 connect_horizental\"],[\"flush-element\"],[\"text\",\"\\n      \"],[\"append\",[\"helper\",[\"input\"],null,[[\"type\",\"class\",\"value\",\"placeholder\",\"autofocus\"],[\"password\",\"form-control\",[\"get\",[\"password\"]],\"Entrer votre mot de passe.\",\"autofocus\"]]],false],[\"text\",\"\\n    \"],[\"close-element\"],[\"text\",\"\\n\\n    \"],[\"open-element\",\"div\",[]],[\"static-attr\",\"class\",\"col-xs-10 col-xs-offset-1 col-sm-offset-1 col-sm-10 col-md-10 col-md-offset-1 col-lg-10 col-lg-offset-1\"],[\"flush-element\"],[\"text\",\"\\n      \"],[\"open-element\",\"button\",[]],[\"static-attr\",\"class\",\"btn btn-primary btn-lg btn-block\"],[\"dynamic-attr\",\"disabled\",[\"unknown\",[\"isDisabled\"]],null],[\"modifier\",[\"action\"],[[\"get\",[null]],\"verifyUser\"]],[\"flush-element\"],[\"text\",\"Se connecter\"],[\"close-element\"],[\"text\",\"\\n    \"],[\"close-element\"],[\"text\",\"\\n  \"],[\"close-element\"],[\"text\",\"\\n  \"],[\"open-element\",\"img\",[]],[\"static-attr\",\"src\",\"/assets/images/note.gif\"],[\"static-attr\",\"class\",\"image_login\"],[\"flush-element\"],[\"close-element\"],[\"text\",\"\\n  \"],[\"open-element\",\"p\",[]],[\"static-attr\",\"class\",\"message_login\"],[\"flush-element\"],[\"text\",\"Pour des raisons de sécurité, veuillez vous déconnecter et fermer votre navigateur lorsque vous avez fini d'accéder\\n    aux services authentifiés.\"],[\"close-element\"],[\"text\",\"\\n\\n\\n\"],[\"block\",[\"if\"],[[\"get\",[\"responseMessage\"]]],null,0],[\"close-element\"]],\"locals\":[],\"named\":[],\"yields\":[],\"blocks\":[{\"statements\":[[\"text\",\"    \"],[\"open-element\",\"div\",[]],[\"static-attr\",\"class\",\"alert alert-danger\"],[\"flush-element\"],[\"append\",[\"unknown\",[\"responseMessage\"]],false],[\"close-element\"],[\"text\",\"\\n\"]],\"locals\":[]}],\"hasPartials\":true}", "meta": { "moduleName": "demonstration/templates/login.hbs" } });
 });
 define("demonstration/templates/manage/enseignant/index", ["exports"], function (exports) {
-  exports["default"] = Ember.HTMLBars.template({ "id": "Jmh2WdZu", "block": "{\"statements\":[[\"block\",[\"admin-layout\"],null,null,3]],\"locals\":[],\"named\":[],\"yields\":[],\"blocks\":[{\"statements\":[[\"text\",\"\\n      \"],[\"open-element\",\"tr\",[]],[\"flush-element\"],[\"text\",\"\\n        \"],[\"open-element\",\"td\",[]],[\"flush-element\"],[\"append\",[\"unknown\",[\"teacher\",\"identifiant\"]],false],[\"close-element\"],[\"text\",\"\\n        \"],[\"open-element\",\"td\",[]],[\"flush-element\"],[\"append\",[\"unknown\",[\"teacher\",\"prenom\"]],false],[\"close-element\"],[\"text\",\"\\n        \"],[\"open-element\",\"td\",[]],[\"flush-element\"],[\"append\",[\"unknown\",[\"teacher\",\"nom\"]],false],[\"close-element\"],[\"text\",\"\\n        \"],[\"open-element\",\"td\",[]],[\"flush-element\"],[\"append\",[\"unknown\",[\"teacher\",\"email\"]],false],[\"close-element\"],[\"text\",\"\\n        \"],[\"open-element\",\"td\",[]],[\"flush-element\"],[\"text\",\"\\n          \"],[\"open-element\",\"button\",[]],[\"static-attr\",\"class\",\"btn btn-primary btn-orange btn-sm\"],[\"modifier\",[\"action\"],[[\"get\",[null]],\"deleteTeacher\",[\"get\",[\"teacher\"]]]],[\"flush-element\"],[\"text\",\"Supprimer\"],[\"close-element\"],[\"text\",\"\\n        \"],[\"close-element\"],[\"text\",\"\\n      \"],[\"close-element\"],[\"text\",\"\\n\\n\"]],\"locals\":[\"teacher\"]},{\"statements\":[[\"block\",[\"each\"],[[\"get\",[\"model\"]]],null,0]],\"locals\":[]},{\"statements\":[[\"text\",\"\\n    \"],[\"open-element\",\"div\",[]],[\"static-attr\",\"class\",\"row\"],[\"flush-element\"],[\"text\",\"\\n      \"],[\"open-element\",\"div\",[]],[\"static-attr\",\"class\",\"col-md-6\"],[\"flush-element\"],[\"text\",\"\\n        Identifiant: \"],[\"append\",[\"helper\",[\"input\"],null,[[\"type\",\"value\",\"autofocus\",\"class\",\"placeholder\"],[\"text\",[\"get\",[\"identifier\"]],\"autofocus\",\"form-control input-form\",\"Identifiant\"]]],false],[\"text\",\"\\n      \"],[\"close-element\"],[\"text\",\"\\n\\n      \"],[\"open-element\",\"div\",[]],[\"static-attr\",\"class\",\"col-md-6\"],[\"flush-element\"],[\"text\",\"\\n        Nom: \"],[\"append\",[\"helper\",[\"input\"],null,[[\"type\",\"value\",\"class\",\"placeholder\"],[\"text\",[\"get\",[\"lastname\"]],\"form-control input-form\",\"Nom\"]]],false],[\"text\",\"\\n      \"],[\"close-element\"],[\"text\",\"\\n    \"],[\"close-element\"],[\"text\",\"\\n\\n    \"],[\"open-element\",\"div\",[]],[\"static-attr\",\"class\",\"row\"],[\"flush-element\"],[\"text\",\"\\n      \"],[\"open-element\",\"div\",[]],[\"static-attr\",\"class\",\"col-md-6\"],[\"flush-element\"],[\"text\",\"\\n        Prenom: \"],[\"append\",[\"helper\",[\"input\"],null,[[\"type\",\"value\",\"class\",\"placeholder\"],[\"text\",[\"get\",[\"name\"]],\"form-control input-form\",\"Prenom\"]]],false],[\"text\",\"\\n      \"],[\"close-element\"],[\"text\",\"\\n\\n      \"],[\"open-element\",\"div\",[]],[\"static-attr\",\"class\",\"col-md-6\"],[\"flush-element\"],[\"text\",\"\\n        Email  \"],[\"append\",[\"helper\",[\"input\"],null,[[\"type\",\"value\",\"class\",\"placeholder\"],[\"email\",[\"get\",[\"mail\"]],\"form-control input-form\",\"Email\"]]],false],[\"text\",\"\\n      \"],[\"close-element\"],[\"text\",\"\\n    \"],[\"close-element\"],[\"text\",\"\\n\\n    \"],[\"open-element\",\"button\",[]],[\"static-attr\",\"class\",\"btn btn-primary btn-orange\"],[\"modifier\",[\"action\"],[[\"get\",[null]],\"saveTeacher\",[\"get\",[\"identifier\"]],[\"get\",[\"lastname\"]],[\"get\",[\"name\"]],[\"get\",[\"mail\"]]]],[\"flush-element\"],[\"text\",\"Sauvegarder\\n    \"],[\"close-element\"],[\"text\",\"\\n\\n\"]],\"locals\":[]},{\"statements\":[[\"block\",[\"form-user-add\"],null,[[\"class\",\"title\"],[\"teacher\",\"Nouveau enseignant\"]],2],[\"text\",\"\\n\\n\"],[\"block\",[\"user-list\"],null,null,1]],\"locals\":[]}],\"hasPartials\":false}", "meta": { "moduleName": "demonstration/templates/manage/enseignant/index.hbs" } });
+  exports["default"] = Ember.HTMLBars.template({ "id": "OI5hyqgd", "block": "{\"statements\":[[\"block\",[\"admin-layout\"],null,null,3]],\"locals\":[],\"named\":[],\"yields\":[],\"blocks\":[{\"statements\":[[\"text\",\"\\n      \"],[\"open-element\",\"tr\",[]],[\"flush-element\"],[\"text\",\"\\n        \"],[\"open-element\",\"td\",[]],[\"flush-element\"],[\"append\",[\"unknown\",[\"teacher\",\"identifiant\"]],false],[\"close-element\"],[\"text\",\"\\n        \"],[\"open-element\",\"td\",[]],[\"flush-element\"],[\"append\",[\"unknown\",[\"teacher\",\"prenom\"]],false],[\"close-element\"],[\"text\",\"\\n        \"],[\"open-element\",\"td\",[]],[\"flush-element\"],[\"append\",[\"unknown\",[\"teacher\",\"nom\"]],false],[\"close-element\"],[\"text\",\"\\n        \"],[\"open-element\",\"td\",[]],[\"flush-element\"],[\"append\",[\"unknown\",[\"teacher\",\"email\"]],false],[\"close-element\"],[\"text\",\"\\n        \"],[\"open-element\",\"td\",[]],[\"flush-element\"],[\"text\",\"\\n          \"],[\"open-element\",\"button\",[]],[\"static-attr\",\"class\",\"btn btn-primary btn-orange btn-sm\"],[\"modifier\",[\"action\"],[[\"get\",[null]],\"deleteTeacher\",[\"get\",[\"teacher\"]]]],[\"flush-element\"],[\"text\",\"Supprimer\"],[\"close-element\"],[\"text\",\"\\n        \"],[\"close-element\"],[\"text\",\"\\n      \"],[\"close-element\"],[\"text\",\"\\n\\n\"]],\"locals\":[\"teacher\"]},{\"statements\":[[\"block\",[\"each\"],[[\"get\",[\"model\"]]],null,0]],\"locals\":[]},{\"statements\":[[\"text\",\"\\n    \"],[\"open-element\",\"div\",[]],[\"static-attr\",\"class\",\"row\"],[\"flush-element\"],[\"text\",\"\\n      \"],[\"open-element\",\"div\",[]],[\"static-attr\",\"class\",\"col-md-6\"],[\"flush-element\"],[\"text\",\"\\n        Identifiant: \"],[\"append\",[\"helper\",[\"input\"],null,[[\"type\",\"value\",\"autofocus\",\"class\",\"placeholder\"],[\"text\",[\"get\",[\"identifier\"]],\"autofocus\",\"form-control input-form\",\"Identifiant\"]]],false],[\"text\",\"\\n      \"],[\"close-element\"],[\"text\",\"\\n\\n      \"],[\"open-element\",\"div\",[]],[\"static-attr\",\"class\",\"col-md-6\"],[\"flush-element\"],[\"text\",\"\\n        Nom: \"],[\"append\",[\"helper\",[\"input\"],null,[[\"type\",\"value\",\"class\",\"placeholder\"],[\"text\",[\"get\",[\"lastname\"]],\"form-control input-form\",\"Nom\"]]],false],[\"text\",\"\\n      \"],[\"close-element\"],[\"text\",\"\\n    \"],[\"close-element\"],[\"text\",\"\\n\\n    \"],[\"open-element\",\"div\",[]],[\"static-attr\",\"class\",\"row\"],[\"flush-element\"],[\"text\",\"\\n      \"],[\"open-element\",\"div\",[]],[\"static-attr\",\"class\",\"col-md-6\"],[\"flush-element\"],[\"text\",\"\\n        Prenom: \"],[\"append\",[\"helper\",[\"input\"],null,[[\"type\",\"value\",\"class\",\"placeholder\"],[\"text\",[\"get\",[\"name\"]],\"form-control input-form\",\"Prenom\"]]],false],[\"text\",\"\\n      \"],[\"close-element\"],[\"text\",\"\\n\\n      \"],[\"open-element\",\"div\",[]],[\"static-attr\",\"class\",\"col-md-6\"],[\"flush-element\"],[\"text\",\"\\n        Email  \"],[\"append\",[\"helper\",[\"input\"],null,[[\"type\",\"value\",\"class\",\"placeholder\"],[\"email\",[\"get\",[\"mail\"]],\"form-control input-form\",\"Email\"]]],false],[\"text\",\"\\n      \"],[\"close-element\"],[\"text\",\"\\n    \"],[\"close-element\"],[\"text\",\"\\n\\n    \"],[\"open-element\",\"button\",[]],[\"static-attr\",\"class\",\"btn btn-primary btn-orange btn-add-data\"],[\"modifier\",[\"action\"],[[\"get\",[null]],\"saveTeacher\",[\"get\",[\"identifier\"]],[\"get\",[\"lastname\"]],[\"get\",[\"name\"]],[\"get\",[\"mail\"]]]],[\"flush-element\"],[\"text\",\"Sauvegarder\\n    \"],[\"close-element\"],[\"text\",\"\\n\\n\"]],\"locals\":[]},{\"statements\":[[\"block\",[\"form-user-add\"],null,[[\"class\",\"title\"],[\"teacher\",\"Nouveau enseignant\"]],2],[\"text\",\"\\n\\n\"],[\"block\",[\"user-list\"],null,null,1]],\"locals\":[]}],\"hasPartials\":false}", "meta": { "moduleName": "demonstration/templates/manage/enseignant/index.hbs" } });
 });
 define("demonstration/templates/manage/etudiant/index", ["exports"], function (exports) {
-  exports["default"] = Ember.HTMLBars.template({ "id": "EF5TUfRz", "block": "{\"statements\":[[\"block\",[\"admin-layout\"],null,null,3]],\"locals\":[],\"named\":[],\"yields\":[],\"blocks\":[{\"statements\":[[\"text\",\"      \"],[\"open-element\",\"tr\",[]],[\"flush-element\"],[\"text\",\"\\n        \"],[\"open-element\",\"td\",[]],[\"flush-element\"],[\"append\",[\"unknown\",[\"student\",\"identifiant\"]],false],[\"close-element\"],[\"text\",\"\\n        \"],[\"open-element\",\"td\",[]],[\"flush-element\"],[\"append\",[\"unknown\",[\"student\",\"prenom\"]],false],[\"close-element\"],[\"text\",\"\\n        \"],[\"open-element\",\"td\",[]],[\"flush-element\"],[\"append\",[\"unknown\",[\"student\",\"nom\"]],false],[\"close-element\"],[\"text\",\"\\n        \"],[\"open-element\",\"td\",[]],[\"flush-element\"],[\"append\",[\"unknown\",[\"student\",\"email\"]],false],[\"close-element\"],[\"text\",\"\\n        \"],[\"open-element\",\"td\",[]],[\"flush-element\"],[\"text\",\"\\n          \"],[\"open-element\",\"button\",[]],[\"static-attr\",\"class\",\"btn btn-primary btn-orange btn-sm\"],[\"modifier\",[\"action\"],[[\"get\",[null]],\"deleteStudent\",[\"get\",[\"student\"]]]],[\"flush-element\"],[\"text\",\"Supprimer\"],[\"close-element\"],[\"text\",\"\\n        \"],[\"close-element\"],[\"text\",\"\\n        \"],[\"open-element\",\"td\",[]],[\"flush-element\"],[\"close-element\"],[\"text\",\"\\n      \"],[\"close-element\"],[\"text\",\"\\n\"]],\"locals\":[\"student\"]},{\"statements\":[[\"block\",[\"each\"],[[\"get\",[\"model\"]]],null,0]],\"locals\":[]},{\"statements\":[[\"text\",\"    \"],[\"open-element\",\"div\",[]],[\"static-attr\",\"class\",\"row\"],[\"flush-element\"],[\"text\",\"\\n      \"],[\"open-element\",\"div\",[]],[\"static-attr\",\"class\",\"col-md-6\"],[\"flush-element\"],[\"text\",\"\\n        Identifiant: \"],[\"append\",[\"helper\",[\"input\"],null,[[\"type\",\"value\",\"autofocus\",\"class\",\"placeholder\"],[\"text\",[\"helper\",[\"mut\"],[[\"helper\",[\"get\"],[[\"get\",[\"identifier\"]],[\"get\",[\"field\"]]],null]],null],\"autofocus\",\"form-control input-form\",\"Identifiant\"]]],false],[\"text\",\"\\n      \"],[\"close-element\"],[\"text\",\"\\n      \"],[\"open-element\",\"div\",[]],[\"static-attr\",\"class\",\"col-md-6\"],[\"flush-element\"],[\"text\",\"\\n        Nom: \"],[\"append\",[\"helper\",[\"input\"],null,[[\"type\",\"value\",\"class\",\"placeholder\"],[\"text\",[\"helper\",[\"mut\"],[[\"helper\",[\"get\"],[[\"get\",[\"lastname\"]],[\"get\",[\"field\"]]],null]],null],\"form-control input-form\",\"Nom\"]]],false],[\"text\",\"\\n      \"],[\"close-element\"],[\"text\",\"\\n    \"],[\"close-element\"],[\"text\",\"\\n    \"],[\"open-element\",\"div\",[]],[\"static-attr\",\"class\",\"row\"],[\"flush-element\"],[\"text\",\"\\n      \"],[\"open-element\",\"div\",[]],[\"static-attr\",\"class\",\"col-md-6\"],[\"flush-element\"],[\"text\",\"\\n        Prenom: \"],[\"append\",[\"helper\",[\"input\"],null,[[\"type\",\"value\",\"class\",\"placeholder\"],[\"text\",[\"helper\",[\"mut\"],[[\"helper\",[\"get\"],[[\"get\",[\"name\"]],[\"get\",[\"field\"]]],null]],null],\"form-control input-form\",\"Prenom\"]]],false],[\"text\",\"\\n      \"],[\"close-element\"],[\"text\",\"\\n      \"],[\"open-element\",\"div\",[]],[\"static-attr\",\"class\",\"col-md-6\"],[\"flush-element\"],[\"text\",\"\\n        Email  \"],[\"append\",[\"helper\",[\"input\"],null,[[\"type\",\"value\",\"class\",\"placeholder\"],[\"email\",[\"helper\",[\"mut\"],[[\"helper\",[\"get\"],[[\"get\",[\"mail\"]],[\"get\",[\"field\"]]],null]],null],\"form-control input-form\",\"Email\"]]],false],[\"text\",\"\\n      \"],[\"close-element\"],[\"text\",\"\\n    \"],[\"close-element\"],[\"text\",\"\\n    \"],[\"open-element\",\"button\",[]],[\"static-attr\",\"class\",\"btn btn-primary btn-orange\"],[\"modifier\",[\"action\"],[[\"get\",[null]],\"saveStudent\",[\"get\",[\"identifier\"]],[\"get\",[\"lastname\"]],[\"get\",[\"name\"]],[\"get\",[\"mail\"]]]],[\"flush-element\"],[\"text\",\"Sauvegarder\\n    \"],[\"close-element\"],[\"text\",\"\\n\\n\"]],\"locals\":[]},{\"statements\":[[\"block\",[\"form-user-add\"],null,[[\"class\",\"title\"],[\"teacher\",\"Nouveau etudiant\"]],2],[\"text\",\"\\n\"],[\"block\",[\"user-list\"],null,null,1],[\"text\",\"\\n\"]],\"locals\":[]}],\"hasPartials\":false}", "meta": { "moduleName": "demonstration/templates/manage/etudiant/index.hbs" } });
+  exports["default"] = Ember.HTMLBars.template({ "id": "raOQF0ps", "block": "{\"statements\":[[\"block\",[\"admin-layout\"],null,null,3]],\"locals\":[],\"named\":[],\"yields\":[],\"blocks\":[{\"statements\":[[\"text\",\"      \"],[\"open-element\",\"tr\",[]],[\"flush-element\"],[\"text\",\"\\n        \"],[\"open-element\",\"td\",[]],[\"flush-element\"],[\"append\",[\"unknown\",[\"student\",\"identifiant\"]],false],[\"close-element\"],[\"text\",\"\\n        \"],[\"open-element\",\"td\",[]],[\"flush-element\"],[\"append\",[\"unknown\",[\"student\",\"prenom\"]],false],[\"close-element\"],[\"text\",\"\\n        \"],[\"open-element\",\"td\",[]],[\"flush-element\"],[\"append\",[\"unknown\",[\"student\",\"nom\"]],false],[\"close-element\"],[\"text\",\"\\n        \"],[\"open-element\",\"td\",[]],[\"flush-element\"],[\"append\",[\"unknown\",[\"student\",\"email\"]],false],[\"close-element\"],[\"text\",\"\\n        \"],[\"open-element\",\"td\",[]],[\"flush-element\"],[\"text\",\"\\n          \"],[\"open-element\",\"button\",[]],[\"static-attr\",\"class\",\"btn btn-primary btn-orange btn-sm\"],[\"modifier\",[\"action\"],[[\"get\",[null]],\"deleteStudent\",[\"get\",[\"student\"]]]],[\"flush-element\"],[\"text\",\"Supprimer\"],[\"close-element\"],[\"text\",\"\\n        \"],[\"close-element\"],[\"text\",\"\\n        \"],[\"open-element\",\"td\",[]],[\"flush-element\"],[\"close-element\"],[\"text\",\"\\n      \"],[\"close-element\"],[\"text\",\"\\n\"]],\"locals\":[\"student\"]},{\"statements\":[[\"block\",[\"each\"],[[\"get\",[\"model\"]]],null,0]],\"locals\":[]},{\"statements\":[[\"text\",\"    \"],[\"open-element\",\"div\",[]],[\"static-attr\",\"class\",\"row\"],[\"flush-element\"],[\"text\",\"\\n      \"],[\"open-element\",\"div\",[]],[\"static-attr\",\"class\",\"col-md-6\"],[\"flush-element\"],[\"text\",\"\\n        Identifiant: \"],[\"append\",[\"helper\",[\"input\"],null,[[\"type\",\"value\",\"autofocus\",\"class\",\"placeholder\"],[\"text\",[\"get\",[\"identifier\"]],\"autofocus\",\"form-control input-form \",\"Identifiant\"]]],false],[\"text\",\"\\n      \"],[\"close-element\"],[\"text\",\"\\n      \"],[\"open-element\",\"div\",[]],[\"static-attr\",\"class\",\"col-md-6\"],[\"flush-element\"],[\"text\",\"\\n        Nom: \"],[\"append\",[\"helper\",[\"input\"],null,[[\"type\",\"value\",\"class\",\"placeholder\"],[\"text\",[\"get\",[\"lastname\"]],\"form-control input-form\",\"Nom\"]]],false],[\"text\",\"\\n      \"],[\"close-element\"],[\"text\",\"\\n    \"],[\"close-element\"],[\"text\",\"\\n    \"],[\"open-element\",\"div\",[]],[\"static-attr\",\"class\",\"row\"],[\"flush-element\"],[\"text\",\"\\n      \"],[\"open-element\",\"div\",[]],[\"static-attr\",\"class\",\"col-md-6\"],[\"flush-element\"],[\"text\",\"\\n        Prenom: \"],[\"append\",[\"helper\",[\"input\"],null,[[\"type\",\"value\",\"class\",\"placeholder\"],[\"text\",[\"get\",[\"name\"]],\"form-control input-form\",\"Prenom\"]]],false],[\"text\",\"\\n      \"],[\"close-element\"],[\"text\",\"\\n      \"],[\"open-element\",\"div\",[]],[\"static-attr\",\"class\",\"col-md-6\"],[\"flush-element\"],[\"text\",\"\\n        Email  \"],[\"append\",[\"helper\",[\"input\"],null,[[\"type\",\"value\",\"class\",\"placeholder\"],[\"email\",[\"get\",[\"mail\"]],\"form-control input-form\",\"Email\"]]],false],[\"text\",\"\\n      \"],[\"close-element\"],[\"text\",\"\\n    \"],[\"close-element\"],[\"text\",\"\\n    \"],[\"open-element\",\"button\",[]],[\"static-attr\",\"class\",\"btn btn-primary btn-orange btn-add-data\"],[\"modifier\",[\"action\"],[[\"get\",[null]],\"saveStudent\",[\"get\",[\"identifier\"]],[\"get\",[\"lastname\"]],[\"get\",[\"name\"]],[\"get\",[\"mail\"]]]],[\"flush-element\"],[\"text\",\"Sauvegarder\\n    \"],[\"close-element\"],[\"text\",\"\\n\\n\"]],\"locals\":[]},{\"statements\":[[\"block\",[\"form-user-add\"],null,[[\"class\",\"title\"],[\"teacher\",\"Nouveau etudiant\"]],2],[\"text\",\"\\n\"],[\"block\",[\"user-list\"],null,null,1],[\"text\",\"\\n\"]],\"locals\":[]}],\"hasPartials\":false}", "meta": { "moduleName": "demonstration/templates/manage/etudiant/index.hbs" } });
 });
 define("demonstration/templates/manage/index", ["exports"], function (exports) {
   exports["default"] = Ember.HTMLBars.template({ "id": "ZkZfnmRO", "block": "{\"statements\":[[\"append\",[\"unknown\",[\"admin-layout\"]],false]],\"locals\":[],\"named\":[],\"yields\":[],\"blocks\":[],\"hasPartials\":false}", "meta": { "moduleName": "demonstration/templates/manage/index.hbs" } });
@@ -851,7 +1030,7 @@ define("demonstration/templates/navbar", ["exports"], function (exports) {
   exports["default"] = Ember.HTMLBars.template({ "id": "E4pRdUck", "block": "{\"statements\":[[\"open-element\",\"nav\",[]],[\"static-attr\",\"class\",\"navbar navbar-inverse\"],[\"flush-element\"],[\"text\",\"\\n  \"],[\"open-element\",\"div\",[]],[\"static-attr\",\"class\",\"container_nav\"],[\"flush-element\"],[\"text\",\"\\n    \"],[\"open-element\",\"div\",[]],[\"static-attr\",\"class\",\"container-fluid\"],[\"flush-element\"],[\"text\",\"\\n      \"],[\"open-element\",\"div\",[]],[\"static-attr\",\"class\",\"collapse navbar-collapse\"],[\"static-attr\",\"id\",\"main-navbar\"],[\"flush-element\"],[\"text\",\"\\n        \"],[\"open-element\",\"ul\",[]],[\"static-attr\",\"class\",\"nav navbar-nav\"],[\"flush-element\"],[\"text\",\"\\n          \"],[\"block\",[\"link-to\"],[\"index\"],[[\"tagName\"],[\"li\"]],2],[\"text\",\"\\n          \"],[\"block\",[\"link-to\"],[\"login\"],[[\"tagName\"],[\"li\"]],1],[\"text\",\"\\n          \"],[\"block\",[\"link-to\"],[\"contact\"],[[\"tagName\"],[\"li\"]],0],[\"text\",\"\\n\\n        \"],[\"close-element\"],[\"text\",\"\\n      \"],[\"close-element\"],[\"comment\",\" /.navbar-collapse \"],[\"text\",\"\\n    \"],[\"close-element\"],[\"comment\",\" /.container-fluid \"],[\"text\",\"\\n  \"],[\"close-element\"],[\"text\",\"\\n\"],[\"close-element\"]],\"locals\":[],\"named\":[],\"yields\":[],\"blocks\":[{\"statements\":[[\"open-element\",\"a\",[]],[\"static-attr\",\"href\",\"\"],[\"flush-element\"],[\"open-element\",\"span\",[]],[\"static-attr\",\"class\",\"glyphicon glyphicon-envelope\"],[\"static-attr\",\"aria-hidden\",\"true\"],[\"flush-element\"],[\"close-element\"],[\"text\",\"Contact\"],[\"close-element\"]],\"locals\":[]},{\"statements\":[[\"open-element\",\"a\",[]],[\"static-attr\",\"href\",\"\"],[\"flush-element\"],[\"open-element\",\"span\",[]],[\"static-attr\",\"class\",\"glyphicon glyphicon-user\"],[\"static-attr\",\"aria-hidden\",\"true\"],[\"flush-element\"],[\"close-element\"],[\"text\",\"Connexion\"],[\"close-element\"]],\"locals\":[]},{\"statements\":[[\"open-element\",\"a\",[]],[\"static-attr\",\"href\",\"\"],[\"flush-element\"],[\"open-element\",\"span\",[]],[\"static-attr\",\"class\",\"glyphicon glyphicon-home\"],[\"static-attr\",\"aria-hidden\",\"true\"],[\"flush-element\"],[\"close-element\"],[\"text\",\"Accueil\"],[\"close-element\"]],\"locals\":[]}],\"hasPartials\":false}", "meta": { "moduleName": "demonstration/templates/navbar.hbs" } });
 });
 define("demonstration/templates/users", ["exports"], function (exports) {
-  exports["default"] = Ember.HTMLBars.template({ "id": "Zcghth3e", "block": "{\"statements\":[[\"open-element\",\"div\",[]],[\"static-attr\",\"class\",\"container\"],[\"flush-element\"],[\"text\",\"\\n  \"],[\"open-element\",\"button\",[]],[\"static-attr\",\"class\",\"btn btn-primary btn-lg btn-block\"],[\"modifier\",[\"action\"],[[\"get\",[null]],\"logout\"]],[\"flush-element\"],[\"text\",\"Se deconnecter\"],[\"close-element\"],[\"text\",\"\\n\\n\"],[\"block\",[\"if\"],[[\"get\",[\"isetudiant\"]]],null,8],[\"block\",[\"if\"],[[\"get\",[\"isenseignant\"]]],null,3],[\"close-element\"],[\"text\",\"\\n\"],[\"append\",[\"unknown\",[\"outlet\"]],false],[\"text\",\"\\n\"]],\"locals\":[],\"named\":[],\"yields\":[],\"blocks\":[{\"statements\":[[\"text\",\"                \"],[\"append\",[\"helper\",[\"student-info\"],null,[[\"etudiant\",\"ue\"],[[\"get\",[\"etudiant\"]],[\"get\",[\"ue\"]]]]],false],[\"text\",\"\\n\"]],\"locals\":[\"etudiant\"]},{\"statements\":[[\"text\",\"\\n              \"],[\"open-element\",\"a\",[]],[\"static-attr\",\"class\",\"ue\"],[\"static-attr\",\"data-toggle\",\"collapse\"],[\"dynamic-attr\",\"data-target\",[\"concat\",[[\"unknown\",[\"ue\",\"id\"]]]]],[\"flush-element\"],[\"text\",\"\\n                \"],[\"open-element\",\"span\",[]],[\"static-attr\",\"class\",\"glyphicon glyphicon-plus-sign\"],[\"static-attr\",\"aria-hidden\",\"true\"],[\"flush-element\"],[\"close-element\"],[\"text\",\" \"],[\"append\",[\"unknown\",[\"ue\",\"nom\"]],false],[\"text\",\"\\n              \"],[\"close-element\"],[\"text\",\"\\n\\n\"],[\"block\",[\"each\"],[[\"get\",[\"ue\",\"etudiants\"]]],null,0],[\"text\",\"\\n\"]],\"locals\":[\"ue\"]},{\"statements\":[[\"text\",\"\\n      \"],[\"append\",[\"helper\",[\"user-profile\"],null,[[\"user\"],[[\"get\",[\"enseignant\"]]]]],false],[\"text\",\"\\n\\n      \"],[\"comment\",\" Liste d'UEs \"],[\"text\",\"\\n\\n      \"],[\"open-element\",\"div\",[]],[\"static-attr\",\"class\",\"col-lg-8 col-md-8 col-sm-8 col-xs-12\"],[\"flush-element\"],[\"text\",\"\\n        \"],[\"open-element\",\"div\",[]],[\"static-attr\",\"class\",\"panel panel-default\"],[\"flush-element\"],[\"text\",\"\\n          \"],[\"open-element\",\"div\",[]],[\"static-attr\",\"class\",\"panel-heading\"],[\"flush-element\"],[\"text\",\"UEs\"],[\"close-element\"],[\"text\",\"\\n          \"],[\"open-element\",\"div\",[]],[\"static-attr\",\"class\",\"panel-body notes_ue\"],[\"flush-element\"],[\"text\",\"\\n\"],[\"block\",[\"each\"],[[\"get\",[\"enseignant\",\"ues\"]]],null,1],[\"text\",\"          \"],[\"close-element\"],[\"text\",\"\\n        \"],[\"close-element\"],[\"text\",\"\\n      \"],[\"close-element\"],[\"text\",\"\\n\\n\"]],\"locals\":[\"enseignant\"]},{\"statements\":[[\"text\",\"\\n\"],[\"block\",[\"each\"],[[\"get\",[\"model\",\"enseignants\"]]],null,2],[\"text\",\"\\n\"]],\"locals\":[]},{\"statements\":[[\"text\",\"\\n                  \"],[\"append\",[\"helper\",[\"student-note\"],null,[[\"note\",\"title-note\"],[[\"get\",[\"note\",\"cc1\"]],\"Note CC1\"]]],false],[\"text\",\"\\n                  \"],[\"append\",[\"helper\",[\"student-note\"],null,[[\"note\",\"title-note\"],[[\"get\",[\"note\",\"cc2\"]],\"Note CC2\"]]],false],[\"text\",\"\\n                  \"],[\"append\",[\"helper\",[\"student-note\"],null,[[\"note\",\"title-note\"],[[\"get\",[\"note\",\"ccf\"]],\"Note CCF\"]]],false],[\"text\",\"\\n\\n                  \"],[\"append\",[\"helper\",[\"student-average\"],null,[[\"note\"],[[\"get\",[\"note\"]]]]],false],[\"text\",\"\\n\\n\"]],\"locals\":[]},{\"statements\":[[\"block\",[\"if-equal\"],null,[[\"param1\",\"param2\"],[[\"get\",[\"note\",\"ue\",\"id\"]],[\"get\",[\"ue\",\"id\"]]]],4]],\"locals\":[\"note\"]},{\"statements\":[[\"text\",\"\\n              \"],[\"open-element\",\"a\",[]],[\"static-attr\",\"class\",\"ue\"],[\"static-attr\",\"data-toggle\",\"collapse\"],[\"dynamic-attr\",\"data-target\",[\"concat\",[[\"unknown\",[\"ue\",\"id\"]]]]],[\"flush-element\"],[\"text\",\"\\n                \"],[\"open-element\",\"span\",[]],[\"static-attr\",\"class\",\"glyphicon glyphicon-plus-sign\"],[\"static-attr\",\"aria-hidden\",\"true\"],[\"flush-element\"],[\"close-element\"],[\"text\",\" \"],[\"append\",[\"unknown\",[\"ue\",\"nom\"]],false],[\"text\",\"(\\n                \"],[\"open-element\",\"b\",[]],[\"flush-element\"],[\"append\",[\"unknown\",[\"ue\",\"enseignant\",\"nom\"]],false],[\"text\",\" \"],[\"append\",[\"unknown\",[\"ue\",\"enseignant\",\"prenom\"]],false],[\"text\",\" \"],[\"close-element\"],[\"text\",\")\"],[\"close-element\"],[\"text\",\"\\n\\n\"],[\"block\",[\"each\"],[[\"get\",[\"etudiant\",\"notes\"]]],null,5],[\"text\",\"\\n\"]],\"locals\":[\"ue\"]},{\"statements\":[[\"text\",\"\\n      \"],[\"append\",[\"helper\",[\"user-profile\"],null,[[\"user\"],[[\"get\",[\"etudiant\"]]]]],false],[\"text\",\"\\n\\n      \"],[\"open-element\",\"div\",[]],[\"static-attr\",\"class\",\"col-lg-8 col-md-8 col-sm-8 col-xs-12\"],[\"flush-element\"],[\"text\",\"\\n        \"],[\"open-element\",\"div\",[]],[\"static-attr\",\"class\",\"panel panel-default\"],[\"flush-element\"],[\"text\",\"\\n          \"],[\"open-element\",\"div\",[]],[\"static-attr\",\"class\",\"panel-heading\"],[\"flush-element\"],[\"text\",\"Notes\"],[\"close-element\"],[\"text\",\"\\n          \"],[\"open-element\",\"div\",[]],[\"static-attr\",\"class\",\"panel-body notes_ue\"],[\"flush-element\"],[\"text\",\"\\n\"],[\"block\",[\"each\"],[[\"get\",[\"etudiant\",\"ues\"]]],null,6],[\"text\",\"\\n            \"],[\"append\",[\"helper\",[\"moyene-annee\"],null,[[\"param1\"],[[\"get\",[\"etudiant\",\"notes\"]]]]],false],[\"text\",\"\\n\\n          \"],[\"close-element\"],[\"text\",\"\\n        \"],[\"close-element\"],[\"text\",\"\\n      \"],[\"close-element\"],[\"text\",\"\\n\"]],\"locals\":[\"etudiant\"]},{\"statements\":[[\"block\",[\"each\"],[[\"get\",[\"model\",\"etudiants\"]]],null,7],[\"text\",\"\\n\"]],\"locals\":[]}],\"hasPartials\":false}", "meta": { "moduleName": "demonstration/templates/users.hbs" } });
+  exports["default"] = Ember.HTMLBars.template({ "id": "md/mP7Vg", "block": "{\"statements\":[[\"open-element\",\"div\",[]],[\"static-attr\",\"class\",\"container\"],[\"flush-element\"],[\"text\",\"\\n  \"],[\"open-element\",\"button\",[]],[\"static-attr\",\"class\",\"btn btn-primary btn-lg btn-block\"],[\"modifier\",[\"action\"],[[\"get\",[null]],\"logout\"]],[\"flush-element\"],[\"text\",\"Se deconnecter\"],[\"close-element\"],[\"text\",\"\\n\\n\"],[\"block\",[\"if\"],[[\"get\",[\"isetudiant\"]]],null,8],[\"block\",[\"if\"],[[\"get\",[\"isenseignant\"]]],null,3],[\"close-element\"],[\"text\",\"\\n\"],[\"append\",[\"unknown\",[\"outlet\"]],false],[\"text\",\"\\n\"]],\"locals\":[],\"named\":[],\"yields\":[],\"blocks\":[{\"statements\":[[\"text\",\"                \"],[\"append\",[\"helper\",[\"student-info\"],null,[[\"etudiant\",\"ue\",\"action-note\"],[[\"get\",[\"etudiant\"]],[\"get\",[\"ue\"]],[\"helper\",[\"action\"],[[\"get\",[null]],\"saveNote\"],null]]]],false],[\"text\",\"\\n\"]],\"locals\":[\"etudiant\"]},{\"statements\":[[\"text\",\"\\n              \"],[\"open-element\",\"a\",[]],[\"static-attr\",\"class\",\"ue\"],[\"static-attr\",\"data-toggle\",\"collapse\"],[\"dynamic-attr\",\"data-target\",[\"concat\",[[\"unknown\",[\"ue\",\"id\"]]]]],[\"flush-element\"],[\"text\",\"\\n                \"],[\"open-element\",\"span\",[]],[\"static-attr\",\"class\",\"glyphicon glyphicon-plus-sign\"],[\"static-attr\",\"aria-hidden\",\"true\"],[\"flush-element\"],[\"close-element\"],[\"text\",\" \"],[\"append\",[\"unknown\",[\"ue\",\"nom\"]],false],[\"text\",\"\\n              \"],[\"close-element\"],[\"text\",\"\\n\\n\"],[\"block\",[\"each\"],[[\"get\",[\"ue\",\"etudiants\"]]],null,0],[\"text\",\"\\n\"]],\"locals\":[\"ue\"]},{\"statements\":[[\"text\",\"\\n      \"],[\"append\",[\"helper\",[\"user-profile\"],null,[[\"user\"],[[\"get\",[\"enseignant\"]]]]],false],[\"text\",\"\\n\\n      \"],[\"comment\",\" Liste d'UEs \"],[\"text\",\"\\n\\n      \"],[\"open-element\",\"div\",[]],[\"static-attr\",\"class\",\"col-lg-8 col-md-8 col-sm-8 col-xs-12\"],[\"flush-element\"],[\"text\",\"\\n        \"],[\"open-element\",\"div\",[]],[\"static-attr\",\"class\",\"panel panel-default\"],[\"flush-element\"],[\"text\",\"\\n          \"],[\"open-element\",\"div\",[]],[\"static-attr\",\"class\",\"panel-heading\"],[\"flush-element\"],[\"text\",\"UEs\"],[\"close-element\"],[\"text\",\"\\n          \"],[\"open-element\",\"div\",[]],[\"static-attr\",\"class\",\"panel-body notes_ue\"],[\"flush-element\"],[\"text\",\"\\n\"],[\"block\",[\"each\"],[[\"get\",[\"enseignant\",\"ues\"]]],null,1],[\"text\",\"          \"],[\"close-element\"],[\"text\",\"\\n        \"],[\"close-element\"],[\"text\",\"\\n      \"],[\"close-element\"],[\"text\",\"\\n\\n\"]],\"locals\":[\"enseignant\"]},{\"statements\":[[\"text\",\"\\n\"],[\"block\",[\"each\"],[[\"get\",[\"model\",\"enseignants\"]]],null,2],[\"text\",\"\\n\"]],\"locals\":[]},{\"statements\":[[\"text\",\"\\n                  \"],[\"append\",[\"helper\",[\"student-note\"],null,[[\"note\",\"title-note\"],[[\"get\",[\"note\",\"cc1\"]],\"Note CC1\"]]],false],[\"text\",\"\\n                  \"],[\"append\",[\"helper\",[\"student-note\"],null,[[\"note\",\"title-note\"],[[\"get\",[\"note\",\"cc2\"]],\"Note CC2\"]]],false],[\"text\",\"\\n                  \"],[\"append\",[\"helper\",[\"student-note\"],null,[[\"note\",\"title-note\"],[[\"get\",[\"note\",\"ccf\"]],\"Note CCF\"]]],false],[\"text\",\"\\n\\n                  \"],[\"append\",[\"helper\",[\"student-average\"],null,[[\"note\"],[[\"get\",[\"note\"]]]]],false],[\"text\",\"\\n\\n\"]],\"locals\":[]},{\"statements\":[[\"block\",[\"if-equal\"],null,[[\"param1\",\"param2\"],[[\"get\",[\"note\",\"ue\",\"id\"]],[\"get\",[\"ue\",\"id\"]]]],4]],\"locals\":[\"note\"]},{\"statements\":[[\"text\",\"\\n              \"],[\"open-element\",\"a\",[]],[\"static-attr\",\"class\",\"ue\"],[\"static-attr\",\"data-toggle\",\"collapse\"],[\"dynamic-attr\",\"data-target\",[\"concat\",[[\"unknown\",[\"ue\",\"id\"]]]]],[\"flush-element\"],[\"text\",\"\\n                \"],[\"open-element\",\"span\",[]],[\"static-attr\",\"class\",\"glyphicon glyphicon-plus-sign\"],[\"static-attr\",\"aria-hidden\",\"true\"],[\"flush-element\"],[\"close-element\"],[\"text\",\" \"],[\"append\",[\"unknown\",[\"ue\",\"nom\"]],false],[\"text\",\"(\\n                \"],[\"open-element\",\"b\",[]],[\"flush-element\"],[\"append\",[\"unknown\",[\"ue\",\"enseignant\",\"nom\"]],false],[\"text\",\" \"],[\"append\",[\"unknown\",[\"ue\",\"enseignant\",\"prenom\"]],false],[\"text\",\" \"],[\"close-element\"],[\"text\",\")\"],[\"close-element\"],[\"text\",\"\\n\\n\"],[\"block\",[\"each\"],[[\"get\",[\"etudiant\",\"notes\"]]],null,5],[\"text\",\"\\n\"]],\"locals\":[\"ue\"]},{\"statements\":[[\"text\",\"\\n      \"],[\"append\",[\"helper\",[\"user-profile\"],null,[[\"user\"],[[\"get\",[\"etudiant\"]]]]],false],[\"text\",\"\\n\\n      \"],[\"open-element\",\"div\",[]],[\"static-attr\",\"class\",\"col-lg-8 col-md-8 col-sm-8 col-xs-12\"],[\"flush-element\"],[\"text\",\"\\n        \"],[\"open-element\",\"div\",[]],[\"static-attr\",\"class\",\"panel panel-default\"],[\"flush-element\"],[\"text\",\"\\n          \"],[\"open-element\",\"div\",[]],[\"static-attr\",\"class\",\"panel-heading\"],[\"flush-element\"],[\"text\",\"Notes\"],[\"close-element\"],[\"text\",\"\\n          \"],[\"open-element\",\"div\",[]],[\"static-attr\",\"class\",\"panel-body notes_ue\"],[\"flush-element\"],[\"text\",\"\\n\"],[\"block\",[\"each\"],[[\"get\",[\"etudiant\",\"ues\"]]],null,6],[\"text\",\"\\n            \"],[\"append\",[\"helper\",[\"moyene-annee\"],null,[[\"param1\"],[[\"get\",[\"etudiant\",\"notes\"]]]]],false],[\"text\",\"\\n\\n          \"],[\"close-element\"],[\"text\",\"\\n        \"],[\"close-element\"],[\"text\",\"\\n      \"],[\"close-element\"],[\"text\",\"\\n\"]],\"locals\":[\"etudiant\"]},{\"statements\":[[\"block\",[\"each\"],[[\"get\",[\"model\",\"etudiants\"]]],null,7],[\"text\",\"\\n\"]],\"locals\":[]}],\"hasPartials\":false}", "meta": { "moduleName": "demonstration/templates/users.hbs" } });
 });
 define("demonstration/templates/users/index", ["exports"], function (exports) {
   exports["default"] = Ember.HTMLBars.template({ "id": "uLrIaaiV", "block": "{\"statements\":[],\"locals\":[],\"named\":[],\"yields\":[],\"blocks\":[],\"hasPartials\":false}", "meta": { "moduleName": "demonstration/templates/users/index.hbs" } });
@@ -868,10 +1047,18 @@ define('demonstration/torii-adapters/application', ['exports', 'ember', 'emberfi
 define('demonstration/torii-providers/firebase', ['exports', 'emberfire/torii-providers/firebase'], function (exports, _emberfireToriiProvidersFirebase) {
   exports['default'] = _emberfireToriiProvidersFirebase['default'];
 });
+/* jshint ignore:start */
 
+
+
+/* jshint ignore:end */
+
+/* jshint ignore:start */
 
 define('demonstration/config/environment', ['ember'], function(Ember) {
   var prefix = 'demonstration';
+/* jshint ignore:start */
+
 try {
   var metaName = prefix + '/config/environment';
   var rawConfig = document.querySelector('meta[name="' + metaName + '"]').getAttribute('content');
@@ -887,9 +1074,17 @@ catch(err) {
   throw new Error('Could not read config from meta tag with name "' + metaName + '".');
 }
 
+/* jshint ignore:end */
+
 });
+
+/* jshint ignore:end */
+
+/* jshint ignore:start */
 
 if (!runningTests) {
   require("demonstration/app")["default"].create({"LOG_RESOLVER":true,"LOG_ACTIVE_GENERATION":true,"LOG_TRANSITIONS":true,"LOG_TRANSITIONS_INTERNAL":true,"LOG_VIEW_LOOKUPS":true,"name":"demonstration","version":"0.0.0+"});
 }
+
+/* jshint ignore:end */
 //# sourceMappingURL=demonstration.map

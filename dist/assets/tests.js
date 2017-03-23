@@ -1489,6 +1489,10 @@ define('demonstration/tests/unit/routes/users/ue-test.jshint.lint-test', ['expor
     assert.ok(true, 'unit/routes/users/ue-test.js should pass jshint.');
   });
 });
+/* jshint ignore:start */
+
 require('demonstration/tests/test-helper');
 EmberENV.TESTS_FILE_LOADED = true;
+
+/* jshint ignore:end */
 //# sourceMappingURL=tests.map
