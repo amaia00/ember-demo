@@ -1,3 +1,9 @@
+{{#if session.isAuthenticated}}
+
+    <button class="btn btn-primary btn-lg btn-block"{{action 'logout'}}>Se deconnecter</button>
+    {{outlet}}
+{{else}}
+    {{outlet}}
+{{/if}}
 
 
-  {{outlet}}

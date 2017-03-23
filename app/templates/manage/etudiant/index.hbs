@@ -1,3 +1,6 @@
+
+{{#if session.isAuthenticated}}
+
 {{#admin-layout}}
   {{#form-user-add class="teacher" title="Nouveau etudiant"}}
     <div class="row">
@@ -38,3 +41,7 @@
   {{/user-list}}
 
 {{/admin-layout}}
+
+{{else}}
+    {{outlet}}
+{{/if}}

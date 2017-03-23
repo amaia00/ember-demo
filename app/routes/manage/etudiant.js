@@ -9,23 +9,24 @@ export default Ember.Route.extend({
   },
 
   variable: {},
-
+    firebaseApp: Ember.inject.service(),
 
   actions: {
 
     saveStudent(identifier, name, lastname, mail) {
 
-      const student = this.store.createRecord('etudiant', {
-        password: 'default',
-        identifiant: identifier,
-        nom: lastname,
-        prenom: name,
-        datedenaissance: null,
-        email: mail
-      });
-
-      student.save();
-
+        const auth = this.get('firebaseApp').auth();
+        auth.createUserWithEmailAndPassword(identifier+'@univ-lyon1.fr', 'default-default').then((userResponse) => {
+            const user = this.store.createRecord('etudiant', {
+                password: 'default',
+                identifiant: identifier,
+                nom: lastname,
+                prenom: name,
+                datedenaissance: null,
+                email: mail
+            });
+            return user.save();
+        });
     },
 
     deleteStudent(student) {

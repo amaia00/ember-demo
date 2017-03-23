@@ -1,5 +1,5 @@
+{{#if session.isAuthenticated}}
 <div class="container">
-  <button class="btn btn-primary btn-lg btn-block"{{action 'logout'}}>Se deconnecter</button>
 
   {{#if isetudiant }}
     {{#each model.etudiants as |etudiant|}}
@@ -70,3 +70,6 @@
   {{/if}}
 </div>
 {{outlet}}
+{{else}}
+<img src="/assets/images/not.jpg"/>
+{{/if}}

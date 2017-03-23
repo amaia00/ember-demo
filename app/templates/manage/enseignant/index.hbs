@@ -1,3 +1,4 @@
+{{#if session.isAuthenticated}}
 {{#admin-layout}}
   {{#form-user-add class="teacher" title="Nouveau enseignant"}}
 
@@ -44,3 +45,7 @@
     {{/each}}
   {{/user-list}}
 {{/admin-layout}}
+{{else}}
+    jjjjjjjjj
+    {{outlet}}
+{{/if}}

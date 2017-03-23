@@ -214,12 +214,28 @@ export default Ember.Controller.extend({
         this.set('emailAddress', '');
 
       } else {
-
+          var self = this;
         if (identifier === 'admin') {
-          this.transitionToRoute('/manage', {queryParams: {id: identifier}});
+
+            this.get('session').open('firebase', {  provider: 'password',
+                email: identifier+'@univ-lyon1.fr',
+                password: password+'-'+password
+            }).then(function(data) {
+                console.log(data.currentUser);
+                self.transitionToRoute('/manage', {queryParams: {id: identifier}});
+            });
+
         } else {
           this.set('responseMessage', 'Bienvenue !! Vous allez être rediriger dans quelque instant!!');
-          this.transitionToRoute('/users/' + identifier);
+            this.get('session').open('firebase', {  provider: 'password',
+                email: identifier+'@univ-lyon1.fr',
+                password: password+'-'+password
+            }).then(function(data) {
+                console.log(data.currentUser);
+                self.transitionToRoute('/users/' + identifier);
+            });
+            console.log(this);
+
         }
 
       }

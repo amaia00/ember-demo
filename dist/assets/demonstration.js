@@ -1,6 +1,10 @@
 "use strict";
 
+/* jshint ignore:start */
 
+
+
+/* jshint ignore:end */
 
 define('demonstration/adapters/application', ['exports', 'emberfire/adapters/firebase'], function (exports, _emberfireAdaptersFirebase) {
   exports['default'] = _emberfireAdaptersFirebase['default'].extend({});
@@ -51,6 +55,9 @@ define('demonstration/components/student-info', ['exports', 'ember'], function (
 define('demonstration/components/student-note', ['exports', 'ember'], function (exports, _ember) {
   exports['default'] = _ember['default'].Component.extend({});
 });
+define('demonstration/components/torii-iframe-placeholder', ['exports', 'torii/components/torii-iframe-placeholder'], function (exports, _toriiComponentsToriiIframePlaceholder) {
+  exports['default'] = _toriiComponentsToriiIframePlaceholder['default'];
+});
 define('demonstration/components/user-list', ['exports', 'ember'], function (exports, _ember) {
   exports['default'] = _ember['default'].Component.extend({});
 });
@@ -64,6 +71,19 @@ define('demonstration/components/welcome-page', ['exports', 'ember-welcome-page/
       return _emberWelcomePageComponentsWelcomePage['default'];
     }
   });
+});
+define('demonstration/controllers/application', ['exports', 'ember'], function (exports, _ember) {
+    exports['default'] = _ember['default'].Controller.extend({
+        beforeModel: function beforeModel() {
+            return this.get('session').fetch()['catch'](function () {});
+        },
+        actions: {
+            logout: function logout() {
+                this.get('session').close();
+                this.transitionToRoute('/');
+            }
+        }
+    });
 });
 define('demonstration/controllers/index', ['exports', 'ember'], function (exports, _ember) {
   exports['default'] = _ember['default'].Controller.extend({});
@@ -250,12 +270,26 @@ define('demonstration/controllers/login', ['exports', 'ember'], function (export
           this.set('responseMessage', 'mot de passe inccorect');
           this.set('emailAddress', '');
         } else {
-
+          var self = this;
           if (identifier === 'admin') {
-            this.transitionToRoute('/manage', { queryParams: { id: identifier } });
+
+            this.get('session').open('firebase', { provider: 'password',
+              email: identifier + '@univ-lyon1.fr',
+              password: password + '-' + password
+            }).then(function (data) {
+              console.log(data.currentUser);
+              self.transitionToRoute('/manage', { queryParams: { id: identifier } });
+            });
           } else {
             this.set('responseMessage', 'Bienvenue !! Vous allez être rediriger dans quelque instant!!');
-            this.transitionToRoute('/users/' + identifier);
+            this.get('session').open('firebase', { provider: 'password',
+              email: identifier + '@univ-lyon1.fr',
+              password: password + '-' + password
+            }).then(function (data) {
+              console.log(data.currentUser);
+              self.transitionToRoute('/users/' + identifier);
+            });
+            console.log(this);
           }
         }
       }
@@ -266,6 +300,7 @@ define('demonstration/controllers/manage', ['exports', 'ember'], function (expor
   exports['default'] = _ember['default'].Controller.extend({
 
     isAdmin: _ember['default'].computed('model', function () {
+
       return this.get('model').admin.content.length !== 0;
     })
   });
@@ -274,6 +309,7 @@ define('demonstration/controllers/users', ['exports', 'ember'], function (export
   exports['default'] = _ember['default'].Controller.extend({
 
     isetudiant: _ember['default'].computed('model', function () {
+
       return this.get('model').etudiants.content.length !== 0;
     }),
 
@@ -515,6 +551,61 @@ define('demonstration/initializers/export-application-global', ['exports', 'embe
     initialize: initialize
   };
 });
+define('demonstration/initializers/initialize-torii-callback', ['exports', 'torii/redirect-handler'], function (exports, _toriiRedirectHandler) {
+  exports['default'] = {
+    name: 'torii-callback',
+    before: 'torii',
+    initialize: function initialize(application) {
+      if (arguments[1]) {
+        // Ember < 2.1
+        application = arguments[1];
+      }
+      application.deferReadiness();
+      _toriiRedirectHandler['default'].handle(window)['catch'](function () {
+        application.advanceReadiness();
+      });
+    }
+  };
+});
+define('demonstration/initializers/initialize-torii-session', ['exports', 'torii/bootstrap/session', 'torii/configuration'], function (exports, _toriiBootstrapSession, _toriiConfiguration) {
+  exports['default'] = {
+    name: 'torii-session',
+    after: 'torii',
+
+    initialize: function initialize(application) {
+      if (arguments[1]) {
+        // Ember < 2.1
+        application = arguments[1];
+      }
+      var configuration = (0, _toriiConfiguration.getConfiguration)();
+      if (!configuration.sessionServiceName) {
+        return;
+      }
+
+      (0, _toriiBootstrapSession['default'])(application, configuration.sessionServiceName);
+
+      var sessionFactoryName = 'service:' + configuration.sessionServiceName;
+      application.inject('adapter', configuration.sessionServiceName, sessionFactoryName);
+    }
+  };
+});
+define('demonstration/initializers/initialize-torii', ['exports', 'torii/bootstrap/torii', 'torii/configuration', 'demonstration/config/environment'], function (exports, _toriiBootstrapTorii, _toriiConfiguration, _demonstrationConfigEnvironment) {
+
+  var initializer = {
+    name: 'torii',
+    initialize: function initialize(application) {
+      if (arguments[1]) {
+        // Ember < 2.1
+        application = arguments[1];
+      }
+      (0, _toriiConfiguration.configure)(_demonstrationConfigEnvironment['default'].torii || {});
+      (0, _toriiBootstrapTorii['default'])(application);
+      application.inject('route', 'torii', 'service:torii');
+    }
+  };
+
+  exports['default'] = initializer;
+});
 define('demonstration/initializers/injectStore', ['exports', 'ember'], function (exports, _ember) {
 
   /*
@@ -564,6 +655,45 @@ define("demonstration/instance-initializers/ember-data", ["exports", "ember-data
   exports["default"] = {
     name: "ember-data",
     initialize: _emberDataPrivateInstanceInitializersInitializeStoreService["default"]
+  };
+});
+define('demonstration/instance-initializers/setup-routes', ['exports', 'torii/bootstrap/routing', 'torii/configuration', 'torii/router-dsl-ext'], function (exports, _toriiBootstrapRouting, _toriiConfiguration, _toriiRouterDslExt) {
+  exports['default'] = {
+    name: 'torii-setup-routes',
+    initialize: function initialize(applicationInstance, registry) {
+      var configuration = (0, _toriiConfiguration.getConfiguration)();
+
+      if (!configuration.sessionServiceName) {
+        return;
+      }
+
+      var router = applicationInstance.get('router');
+      var setupRoutes = function setupRoutes() {
+        var authenticatedRoutes = router.router.authenticatedRoutes;
+        var hasAuthenticatedRoutes = !Ember.isEmpty(authenticatedRoutes);
+        if (hasAuthenticatedRoutes) {
+          (0, _toriiBootstrapRouting['default'])(applicationInstance, authenticatedRoutes);
+        }
+        router.off('willTransition', setupRoutes);
+      };
+      router.on('willTransition', setupRoutes);
+    }
+  };
+});
+define('demonstration/instance-initializers/walk-providers', ['exports', 'torii/lib/container-utils', 'torii/configuration'], function (exports, _toriiLibContainerUtils, _toriiConfiguration) {
+  exports['default'] = {
+    name: 'torii-walk-providers',
+    initialize: function initialize(applicationInstance) {
+      var configuration = (0, _toriiConfiguration.getConfiguration)();
+      // Walk all configured providers and eagerly instantiate
+      // them. This gives providers with initialization side effects
+      // like facebook-connect a chance to load up assets.
+      for (var key in configuration.providers) {
+        if (configuration.providers.hasOwnProperty(key)) {
+          (0, _toriiLibContainerUtils.lookup)(applicationInstance, 'torii-provider:' + key);
+        }
+      }
+    }
   };
 });
 define('demonstration/models/enseignant', ['exports', 'ember-data', 'demonstration/models/user'], function (exports, _emberData, _demonstrationModelsUser) {
@@ -642,6 +772,13 @@ define('demonstration/router', ['exports', 'ember', 'demonstration/config/enviro
 
   exports['default'] = Router;
 });
+define('demonstration/routes/application', ['exports', 'ember'], function (exports, _ember) {
+    exports['default'] = _ember['default'].Route.extend({
+        beforeModel: function beforeModel() {
+            return this.get('session').fetch()['catch'](function () {});
+        }
+    });
+});
 define('demonstration/routes/contact', ['exports', 'ember'], function (exports, _ember) {
   exports['default'] = _ember['default'].Route.extend({});
 });
@@ -681,6 +818,7 @@ define('demonstration/routes/manage', ['exports', 'ember'], function (exports, _
     model: function model(params) {
 
       return _ember['default'].RSVP.hash({
+
         admin: this.store.query('user', {
           equalTo: params.username
         })
@@ -690,28 +828,32 @@ define('demonstration/routes/manage', ['exports', 'ember'], function (exports, _
 });
 define('demonstration/routes/manage/enseignant', ['exports', 'ember'], function (exports, _ember) {
   exports['default'] = _ember['default'].Route.extend({
+
     model: function model() {
       return this.store.query('enseignant', {
         orderBy: 'identifiant'
       });
     },
+    variable: {},
+    firebaseApp: _ember['default'].inject.service(),
 
     actions: {
 
       saveTeacher: function saveTeacher(identifier, name, lastname, mail) {
+        var _this = this;
 
-        var teacher = this.store.createRecord('enseignant', {
-
-          password: 'default',
-          identifiant: identifier,
-          nom: lastname,
-          prenom: name,
-          datedenaissance: null,
-          email: mail
+        var auth = this.get('firebaseApp').auth();
+        auth.createUserWithEmailAndPassword(identifier + '@univ-lyon1.fr', 'default-default').then(function (userResponse) {
+          var user = _this.store.createRecord('enseignant', {
+            password: 'default',
+            identifiant: identifier,
+            nom: lastname,
+            prenom: name,
+            datedenaissance: null,
+            email: mail
+          });
+          return user.save();
         });
-
-        teacher.save();
-        teacher.load();
       },
 
       deleteTeacher: function deleteTeacher(teacher) {
@@ -731,21 +873,25 @@ define('demonstration/routes/manage/etudiant', ['exports', 'ember'], function (e
     },
 
     variable: {},
+    firebaseApp: _ember['default'].inject.service(),
 
     actions: {
 
       saveStudent: function saveStudent(identifier, name, lastname, mail) {
+        var _this = this;
 
-        var student = this.store.createRecord('etudiant', {
-          password: 'default',
-          identifiant: identifier,
-          nom: lastname,
-          prenom: name,
-          datedenaissance: null,
-          email: mail
+        var auth = this.get('firebaseApp').auth();
+        auth.createUserWithEmailAndPassword(identifier + '@univ-lyon1.fr', 'default-default').then(function (userResponse) {
+          var user = _this.store.createRecord('etudiant', {
+            password: 'default',
+            identifiant: identifier,
+            nom: lastname,
+            prenom: name,
+            datedenaissance: null,
+            email: mail
+          });
+          return user.save();
         });
-
-        student.save();
       },
 
       deleteStudent: function deleteStudent(student) {
@@ -799,14 +945,38 @@ define('demonstration/services/firebase-app', ['exports', 'emberfire/services/fi
 define('demonstration/services/firebase', ['exports', 'emberfire/services/firebase'], function (exports, _emberfireServicesFirebase) {
   exports['default'] = _emberfireServicesFirebase['default'];
 });
+define('demonstration/services/popup', ['exports', 'torii/services/popup'], function (exports, _toriiServicesPopup) {
+  Object.defineProperty(exports, 'default', {
+    enumerable: true,
+    get: function get() {
+      return _toriiServicesPopup['default'];
+    }
+  });
+});
+define('demonstration/services/torii-session', ['exports', 'torii/services/session'], function (exports, _toriiServicesSession) {
+  Object.defineProperty(exports, 'default', {
+    enumerable: true,
+    get: function get() {
+      return _toriiServicesSession['default'];
+    }
+  });
+});
+define('demonstration/services/torii', ['exports', 'torii/services/torii'], function (exports, _toriiServicesTorii) {
+  Object.defineProperty(exports, 'default', {
+    enumerable: true,
+    get: function get() {
+      return _toriiServicesTorii['default'];
+    }
+  });
+});
 define("demonstration/templates/application", ["exports"], function (exports) {
-  exports["default"] = Ember.HTMLBars.template({ "id": "zyyX5VGl", "block": "{\"statements\":[[\"text\",\"\\n\\n  \"],[\"append\",[\"unknown\",[\"outlet\"]],false]],\"locals\":[],\"named\":[],\"yields\":[],\"blocks\":[],\"hasPartials\":false}", "meta": { "moduleName": "demonstration/templates/application.hbs" } });
+  exports["default"] = Ember.HTMLBars.template({ "id": "FOJUTNUL", "block": "{\"statements\":[[\"block\",[\"if\"],[[\"get\",[\"session\",\"isAuthenticated\"]]],null,1,0],[\"text\",\"\\n\\n\"]],\"locals\":[],\"named\":[],\"yields\":[],\"blocks\":[{\"statements\":[[\"text\",\"    \"],[\"append\",[\"unknown\",[\"outlet\"]],false],[\"text\",\"\\n\"]],\"locals\":[]},{\"statements\":[[\"text\",\"\\n    \"],[\"open-element\",\"button\",[]],[\"static-attr\",\"class\",\"btn btn-primary btn-lg btn-block\"],[\"modifier\",[\"action\"],[[\"get\",[null]],\"logout\"]],[\"flush-element\"],[\"text\",\"Se deconnecter\"],[\"close-element\"],[\"text\",\"\\n    \"],[\"append\",[\"unknown\",[\"outlet\"]],false],[\"text\",\"\\n\"]],\"locals\":[]}],\"hasPartials\":false}", "meta": { "moduleName": "demonstration/templates/application.hbs" } });
 });
 define("demonstration/templates/components/admin-layout", ["exports"], function (exports) {
-  exports["default"] = Ember.HTMLBars.template({ "id": "sP8AkZiz", "block": "{\"statements\":[[\"open-element\",\"div\",[]],[\"static-attr\",\"class\",\"container\"],[\"flush-element\"],[\"text\",\"\\n  \"],[\"open-element\",\"button\",[]],[\"static-attr\",\"class\",\"btn btn-primary btn-lg btn-block\"],[\"modifier\",[\"action\"],[[\"get\",[null]],\"logout\"]],[\"flush-element\"],[\"text\",\"Se deconnecter\"],[\"close-element\"],[\"text\",\"\\n\\n    \"],[\"comment\",\" Menu \"],[\"text\",\"\\n    \"],[\"open-element\",\"div\",[]],[\"static-attr\",\"class\",\"col-lg-4 col-md-4 col-sm-4 col-xs-12\"],[\"flush-element\"],[\"text\",\"\\n      \"],[\"open-element\",\"div\",[]],[\"static-attr\",\"class\",\"panel panel-default\"],[\"flush-element\"],[\"text\",\"\\n        \"],[\"open-element\",\"div\",[]],[\"static-attr\",\"class\",\"panel-heading\"],[\"flush-element\"],[\"text\",\"Menu\"],[\"close-element\"],[\"text\",\"\\n        \"],[\"open-element\",\"div\",[]],[\"static-attr\",\"class\",\"panel-body\"],[\"flush-element\"],[\"text\",\"\\n          \"],[\"open-element\",\"ul\",[]],[\"flush-element\"],[\"text\",\"\\n            \"],[\"open-element\",\"li\",[]],[\"flush-element\"],[\"block\",[\"link-to\"],[\"manage.etudiant\",[\"helper\",[\"query-params\"],null,[[\"isAdmin\"],[[\"get\",[\"isAdmin\"]]]]]],null,1],[\"text\",\" \"],[\"close-element\"],[\"text\",\"\\n            \"],[\"open-element\",\"li\",[]],[\"flush-element\"],[\"block\",[\"link-to\"],[\"manage.enseignant\",[\"helper\",[\"query-params\"],null,[[\"isAdmin\"],[[\"get\",[\"isAdmin\"]]]]]],null,0],[\"close-element\"],[\"text\",\"\\n          \"],[\"close-element\"],[\"text\",\"\\n        \"],[\"close-element\"],[\"text\",\"\\n      \"],[\"close-element\"],[\"text\",\"\\n    \"],[\"close-element\"],[\"text\",\"\\n\\n    \"],[\"yield\",\"default\"],[\"text\",\"\\n\\n\"],[\"close-element\"]],\"locals\":[],\"named\":[],\"yields\":[\"default\"],\"blocks\":[{\"statements\":[[\"text\",\"Enseignants\"]],\"locals\":[]},{\"statements\":[[\"text\",\"Etudiants\"]],\"locals\":[]}],\"hasPartials\":false}", "meta": { "moduleName": "demonstration/templates/components/admin-layout.hbs" } });
+  exports["default"] = Ember.HTMLBars.template({ "id": "nsizvQel", "block": "{\"statements\":[[\"open-element\",\"div\",[]],[\"static-attr\",\"class\",\"container\"],[\"flush-element\"],[\"text\",\"\\n    \"],[\"comment\",\" Menu \"],[\"text\",\"\\n    \"],[\"open-element\",\"div\",[]],[\"static-attr\",\"class\",\"col-lg-4 col-md-4 col-sm-4 col-xs-12\"],[\"flush-element\"],[\"text\",\"\\n      \"],[\"open-element\",\"div\",[]],[\"static-attr\",\"class\",\"panel panel-default\"],[\"flush-element\"],[\"text\",\"\\n        \"],[\"open-element\",\"div\",[]],[\"static-attr\",\"class\",\"panel-heading\"],[\"flush-element\"],[\"text\",\"Menu\"],[\"close-element\"],[\"text\",\"\\n        \"],[\"open-element\",\"div\",[]],[\"static-attr\",\"class\",\"panel-body\"],[\"flush-element\"],[\"text\",\"\\n          \"],[\"open-element\",\"ul\",[]],[\"flush-element\"],[\"text\",\"\\n            \"],[\"open-element\",\"li\",[]],[\"flush-element\"],[\"block\",[\"link-to\"],[\"manage.etudiant\",[\"helper\",[\"query-params\"],null,[[\"isAdmin\"],[[\"get\",[\"isAdmin\"]]]]]],null,1],[\"text\",\" \"],[\"close-element\"],[\"text\",\"\\n            \"],[\"open-element\",\"li\",[]],[\"flush-element\"],[\"block\",[\"link-to\"],[\"manage.enseignant\",[\"helper\",[\"query-params\"],null,[[\"isAdmin\"],[[\"get\",[\"isAdmin\"]]]]]],null,0],[\"close-element\"],[\"text\",\"\\n          \"],[\"close-element\"],[\"text\",\"\\n        \"],[\"close-element\"],[\"text\",\"\\n      \"],[\"close-element\"],[\"text\",\"\\n    \"],[\"close-element\"],[\"text\",\"\\n\\n    \"],[\"yield\",\"default\"],[\"text\",\"\\n\\n\"],[\"close-element\"]],\"locals\":[],\"named\":[],\"yields\":[\"default\"],\"blocks\":[{\"statements\":[[\"text\",\"Enseignants\"]],\"locals\":[]},{\"statements\":[[\"text\",\"Etudiants\"]],\"locals\":[]}],\"hasPartials\":false}", "meta": { "moduleName": "demonstration/templates/components/admin-layout.hbs" } });
 });
 define("demonstration/templates/components/form-user-add", ["exports"], function (exports) {
-  exports["default"] = Ember.HTMLBars.template({ "id": "km4CiXml", "block": "{\"statements\":[[\"open-element\",\"div\",[]],[\"static-attr\",\"class\",\"col-lg-8 col-md-8 col-sm-8 col-xs-12\"],[\"flush-element\"],[\"text\",\"\\n  \"],[\"open-element\",\"div\",[]],[\"static-attr\",\"class\",\"panel panel-default\"],[\"flush-element\"],[\"text\",\"\\n    \"],[\"open-element\",\"div\",[]],[\"static-attr\",\"class\",\"panel-heading\"],[\"flush-element\"],[\"append\",[\"unknown\",[\"title\"]],false],[\"close-element\"],[\"text\",\"\\n    \"],[\"open-element\",\"div\",[]],[\"static-attr\",\"class\",\"panel-body\"],[\"flush-element\"],[\"text\",\"\\n      \"],[\"open-element\",\"div\",[]],[\"dynamic-attr\",\"class\",[\"concat\",[\"form-\",[\"unknown\",[\"class\"]]]]],[\"flush-element\"],[\"text\",\"\\n        \"],[\"open-element\",\"form\",[]],[\"static-attr\",\"class\",\"form-inline\"],[\"flush-element\"],[\"text\",\"\\n          \"],[\"yield\",\"default\"],[\"text\",\"\\n        \"],[\"close-element\"],[\"text\",\"\\n      \"],[\"close-element\"],[\"text\",\"\\n    \"],[\"close-element\"],[\"text\",\"\\n  \"],[\"close-element\"],[\"text\",\"\\n\"],[\"close-element\"]],\"locals\":[],\"named\":[],\"yields\":[\"default\"],\"blocks\":[],\"hasPartials\":false}", "meta": { "moduleName": "demonstration/templates/components/form-user-add.hbs" } });
+  exports["default"] = Ember.HTMLBars.template({ "id": "E9eGSoy2", "block": "{\"statements\":[[\"open-element\",\"div\",[]],[\"static-attr\",\"class\",\"col-lg-8 col-md-8 col-sm-8 col-xs-12\"],[\"flush-element\"],[\"text\",\"\\n  \"],[\"open-element\",\"div\",[]],[\"static-attr\",\"class\",\"panel panel-default\"],[\"flush-element\"],[\"text\",\"\\n    \"],[\"open-element\",\"div\",[]],[\"static-attr\",\"class\",\"panel-heading\"],[\"flush-element\"],[\"append\",[\"unknown\",[\"title\"]],false],[\"close-element\"],[\"text\",\"\\n    \"],[\"open-element\",\"div\",[]],[\"static-attr\",\"class\",\"panel-body\"],[\"flush-element\"],[\"text\",\"\\n      \"],[\"open-element\",\"div\",[]],[\"dynamic-attr\",\"class\",[\"concat\",[\"form-\",[\"unknown\",[\"class\"]]]]],[\"flush-element\"],[\"text\",\"\\n        \"],[\"open-element\",\"form\",[]],[\"static-attr\",\"class\",\"form-inline\"],[\"flush-element\"],[\"text\",\"\\n          \"],[\"yield\",\"default\"],[\"text\",\"\\n        \"],[\"close-element\"],[\"text\",\"\\n      \"],[\"close-element\"],[\"text\",\"\\n    \"],[\"close-element\"],[\"text\",\"\\n  \"],[\"close-element\"],[\"text\",\"\\n\"],[\"close-element\"],[\"text\",\"\\n\\n\"],[\"open-element\",\"script\",[]],[\"static-attr\",\"type\",\"text/javascript\"],[\"flush-element\"],[\"text\",\"\\n  document.getElementsByClassName(\\\"btn-add-data\\\")[0].addEventListener(\\\"click\\\", cleanInputsFields);\\n\\n  function cleanInputsFields() {\\n\\n      const inputs = document.getElementsByClassName('form-data');\\n    console.log(\\\"DEBUG:::\\\", \\\"Il essaie de nettoyer\\\", inputs);\\n\\n      for (const i in inputs) {\\n        if (inputs.hasOwnProperty(i))\\n          inputs[i].value = '';\\n      }\\n  }\\n\\n\"],[\"close-element\"]],\"locals\":[],\"named\":[],\"yields\":[\"default\"],\"blocks\":[],\"hasPartials\":false}", "meta": { "moduleName": "demonstration/templates/components/form-user-add.hbs" } });
 });
 define("demonstration/templates/components/if-equal", ["exports"], function (exports) {
   exports["default"] = Ember.HTMLBars.template({ "id": "CKpbJn1u", "block": "{\"statements\":[[\"block\",[\"if\"],[[\"get\",[\"isEqual\"]]],null,0]],\"locals\":[],\"named\":[],\"yields\":[\"default\"],\"blocks\":[{\"statements\":[[\"text\",\"  \"],[\"yield\",\"default\"],[\"text\",\"\\n\"]],\"locals\":[]}],\"hasPartials\":false}", "meta": { "moduleName": "demonstration/templates/components/if-equal.hbs" } });
@@ -827,7 +997,7 @@ define("demonstration/templates/components/user-list", ["exports"], function (ex
   exports["default"] = Ember.HTMLBars.template({ "id": "J7Mp2nOH", "block": "{\"statements\":[[\"open-element\",\"div\",[]],[\"static-attr\",\"class\",\"col-lg-12 col-md-12 col-sm-12 col-xs-12\"],[\"flush-element\"],[\"text\",\"\\n  \"],[\"open-element\",\"div\",[]],[\"static-attr\",\"class\",\"panel panel-default\"],[\"flush-element\"],[\"text\",\"\\n    \"],[\"open-element\",\"div\",[]],[\"static-attr\",\"class\",\"panel-body\"],[\"flush-element\"],[\"text\",\"\\n      \"],[\"open-element\",\"table\",[]],[\"static-attr\",\"class\",\"table table-hover\"],[\"flush-element\"],[\"text\",\"\\n        \"],[\"open-element\",\"thead\",[]],[\"flush-element\"],[\"text\",\"\\n        \"],[\"open-element\",\"tr\",[]],[\"flush-element\"],[\"text\",\"\\n          \"],[\"open-element\",\"th\",[]],[\"flush-element\"],[\"text\",\"Identifiant\"],[\"close-element\"],[\"text\",\"\\n          \"],[\"open-element\",\"th\",[]],[\"flush-element\"],[\"text\",\"Prenom\"],[\"close-element\"],[\"text\",\"\\n          \"],[\"open-element\",\"th\",[]],[\"flush-element\"],[\"text\",\"Nom\"],[\"close-element\"],[\"text\",\"\\n          \"],[\"open-element\",\"th\",[]],[\"flush-element\"],[\"text\",\"Email\"],[\"close-element\"],[\"text\",\"\\n          \"],[\"open-element\",\"th\",[]],[\"flush-element\"],[\"close-element\"],[\"text\",\"\\n        \"],[\"close-element\"],[\"text\",\"\\n        \"],[\"close-element\"],[\"text\",\"\\n        \"],[\"open-element\",\"tbody\",[]],[\"flush-element\"],[\"text\",\"\\n        \"],[\"yield\",\"default\"],[\"text\",\"\\n        \"],[\"close-element\"],[\"text\",\"\\n      \"],[\"close-element\"],[\"text\",\"\\n    \"],[\"close-element\"],[\"text\",\"\\n  \"],[\"close-element\"],[\"text\",\"\\n\"],[\"close-element\"]],\"locals\":[],\"named\":[],\"yields\":[\"default\"],\"blocks\":[],\"hasPartials\":false}", "meta": { "moduleName": "demonstration/templates/components/user-list.hbs" } });
 });
 define("demonstration/templates/components/user-profile", ["exports"], function (exports) {
-  exports["default"] = Ember.HTMLBars.template({ "id": "Z8yKH8Pr", "block": "{\"statements\":[[\"comment\",\" Profile \"],[\"text\",\"\\n\"],[\"open-element\",\"div\",[]],[\"static-attr\",\"class\",\"col-lg-4 col-md-4 col-sm-4 col-xs-12\"],[\"flush-element\"],[\"text\",\"\\n  \"],[\"open-element\",\"div\",[]],[\"static-attr\",\"class\",\"panel panel-default\"],[\"flush-element\"],[\"text\",\"\\n    \"],[\"open-element\",\"div\",[]],[\"static-attr\",\"class\",\"panel-heading\"],[\"flush-element\"],[\"text\",\"Profil\"],[\"close-element\"],[\"text\",\"\\n    \"],[\"open-element\",\"div\",[]],[\"static-attr\",\"class\",\"panel-body\"],[\"flush-element\"],[\"text\",\"\\n      \"],[\"open-element\",\"div\",[]],[\"static-attr\",\"class\",\"user-profil\"],[\"flush-element\"],[\"text\",\"\\n        \"],[\"open-element\",\"img\",[]],[\"dynamic-attr\",\"src\",[\"concat\",[\"/assets/images/\",[\"unknown\",[\"user\",\"identifiant\"]],\".png\"]]],[\"static-attr\",\"alt\",\"...\"],[\"static-attr\",\"class\",\"img-thumbnail\"],[\"flush-element\"],[\"close-element\"],[\"text\",\"\\n        \"],[\"open-element\",\"h5\",[]],[\"flush-element\"],[\"open-element\",\"span\",[]],[\"flush-element\"],[\"text\",\"Nom complet \"],[\"close-element\"],[\"append\",[\"unknown\",[\"user\",\"nom\"]],false],[\"text\",\" \"],[\"append\",[\"unknown\",[\"user\",\"prenom\"]],false],[\"close-element\"],[\"text\",\"\\n        \"],[\"open-element\",\"h5\",[]],[\"flush-element\"],[\"open-element\",\"span\",[]],[\"flush-element\"],[\"text\",\"identifiant:\"],[\"close-element\"],[\"text\",\" \"],[\"append\",[\"unknown\",[\"user\",\"identifiant\"]],false],[\"close-element\"],[\"text\",\"\\n        \"],[\"open-element\",\"h5\",[]],[\"flush-element\"],[\"open-element\",\"span\",[]],[\"flush-element\"],[\"text\",\"Date de naissance:\"],[\"close-element\"],[\"text\",\" \"],[\"append\",[\"unknown\",[\"user\",\"datedenaissance\"]],false],[\"close-element\"],[\"text\",\"\\n        \"],[\"open-element\",\"h5\",[]],[\"flush-element\"],[\"open-element\",\"span\",[]],[\"flush-element\"],[\"text\",\"Email:\"],[\"close-element\"],[\"text\",\" \"],[\"append\",[\"unknown\",[\"user\",\"email\"]],false],[\"close-element\"],[\"text\",\"\\n      \"],[\"close-element\"],[\"text\",\"\\n    \"],[\"close-element\"],[\"text\",\"\\n  \"],[\"close-element\"],[\"text\",\"\\n\"],[\"close-element\"],[\"text\",\"\\n\"]],\"locals\":[],\"named\":[],\"yields\":[],\"blocks\":[],\"hasPartials\":false}", "meta": { "moduleName": "demonstration/templates/components/user-profile.hbs" } });
+  exports["default"] = Ember.HTMLBars.template({ "id": "jsGCQrC9", "block": "{\"statements\":[[\"open-element\",\"div\",[]],[\"static-attr\",\"class\",\"col-lg-4 col-md-4 col-sm-4 col-xs-12\"],[\"flush-element\"],[\"text\",\"\\n  \"],[\"open-element\",\"div\",[]],[\"static-attr\",\"class\",\"panel panel-default\"],[\"flush-element\"],[\"text\",\"\\n    \"],[\"open-element\",\"div\",[]],[\"static-attr\",\"class\",\"panel-heading\"],[\"flush-element\"],[\"text\",\"Profil\"],[\"close-element\"],[\"text\",\"\\n    \"],[\"open-element\",\"div\",[]],[\"static-attr\",\"class\",\"panel-body\"],[\"flush-element\"],[\"text\",\"\\n      \"],[\"open-element\",\"div\",[]],[\"static-attr\",\"class\",\"user-profil\"],[\"flush-element\"],[\"text\",\"\\n        \"],[\"open-element\",\"img\",[]],[\"dynamic-attr\",\"src\",[\"concat\",[\"/assets/images/\",[\"unknown\",[\"user\",\"identifiant\"]],\".png\"]]],[\"static-attr\",\"onerror\",\"this.src='/assets/images/default_user.png'\"],[\"static-attr\",\"alt\",\"...\"],[\"static-attr\",\"class\",\"img-thumbnail\"],[\"flush-element\"],[\"close-element\"],[\"text\",\"\\n        \"],[\"open-element\",\"h5\",[]],[\"flush-element\"],[\"open-element\",\"span\",[]],[\"flush-element\"],[\"text\",\"Nom complet \"],[\"close-element\"],[\"append\",[\"unknown\",[\"user\",\"nom\"]],false],[\"text\",\" \"],[\"append\",[\"unknown\",[\"user\",\"prenom\"]],false],[\"close-element\"],[\"text\",\"\\n        \"],[\"open-element\",\"h5\",[]],[\"flush-element\"],[\"open-element\",\"span\",[]],[\"flush-element\"],[\"text\",\"identifiant:\"],[\"close-element\"],[\"text\",\" \"],[\"append\",[\"unknown\",[\"user\",\"identifiant\"]],false],[\"close-element\"],[\"text\",\"\\n        \"],[\"open-element\",\"h5\",[]],[\"flush-element\"],[\"open-element\",\"span\",[]],[\"flush-element\"],[\"text\",\"Date de naissance:\"],[\"close-element\"],[\"text\",\" \"],[\"append\",[\"unknown\",[\"user\",\"datedenaissance\"]],false],[\"close-element\"],[\"text\",\"\\n        \"],[\"open-element\",\"h5\",[]],[\"flush-element\"],[\"open-element\",\"span\",[]],[\"flush-element\"],[\"text\",\"Email:\"],[\"close-element\"],[\"text\",\" \"],[\"append\",[\"unknown\",[\"user\",\"email\"]],false],[\"close-element\"],[\"text\",\"\\n      \"],[\"close-element\"],[\"text\",\"\\n    \"],[\"close-element\"],[\"text\",\"\\n  \"],[\"close-element\"],[\"text\",\"\\n\"],[\"close-element\"],[\"text\",\"\\n\"]],\"locals\":[],\"named\":[],\"yields\":[],\"blocks\":[],\"hasPartials\":false}", "meta": { "moduleName": "demonstration/templates/components/user-profile.hbs" } });
 });
 define("demonstration/templates/contact", ["exports"], function (exports) {
   exports["default"] = Ember.HTMLBars.template({ "id": "btBcsVkq", "block": "{\"statements\":[[\"partial\",\"navbar\"],[\"text\",\"\\n\\n\"],[\"open-element\",\"div\",[]],[\"static-attr\",\"class\",\"contact_page\"],[\"flush-element\"],[\"text\",\"\\n  \"],[\"open-element\",\"h3\",[]],[\"flush-element\"],[\"text\",\"Contact\"],[\"close-element\"],[\"text\",\"\\n  \"],[\"open-element\",\"div\",[]],[\"static-attr\",\"class\",\"form-horizontal form-group form-group-lg row\"],[\"flush-element\"],[\"text\",\"\\n    \"],[\"open-element\",\"div\",[]],[\"static-attr\",\"class\",\"col-xs-10 col-xs-offset-1 col-sm-6 col-sm-offset-1 col-md-6 col-md-offset-1 connect_horizental\"],[\"flush-element\"],[\"text\",\"\\n      \"],[\"append\",[\"helper\",[\"input\"],null,[[\"type\",\"class\",\"value\",\"placeholder\",\"autofocus\"],[\"text\",\"form-control\",[\"get\",[\"nom\"]],\"Entrer votre nom.\",\"autofocus\"]]],false],[\"text\",\"\\n    \"],[\"close-element\"],[\"text\",\"\\n    \"],[\"open-element\",\"div\",[]],[\"static-attr\",\"class\",\"col-xs-10 col-xs-offset-1 col-sm-6 col-sm-offset-1 col-md-6 col-md-offset-1 connect_horizental\"],[\"flush-element\"],[\"text\",\"\\n      \"],[\"append\",[\"helper\",[\"input\"],null,[[\"type\",\"class\",\"value\",\"placeholder\",\"autofocus\"],[\"email\",\"form-control\",[\"get\",[\"email\"]],\"Entrer votre email.\",\"autofocus\"]]],false],[\"text\",\"\\n    \"],[\"close-element\"],[\"text\",\"\\n    \"],[\"open-element\",\"div\",[]],[\"static-attr\",\"class\",\"col-xs-10 col-xs-offset-1 col-sm-10 col-sm-offset-1 col-md-10 col-md-offset-1 connect_horizental\"],[\"flush-element\"],[\"text\",\"\\n      \"],[\"append\",[\"helper\",[\"textarea\"],null,[[\"class\",\"value\",\"placeholder\"],[\"form-control\",[\"get\",[\"message\"]],\"Entrer votre message.\"]]],false],[\"text\",\"\\n    \"],[\"close-element\"],[\"text\",\"\\n\\n    \"],[\"open-element\",\"div\",[]],[\"static-attr\",\"class\",\"col-xs-10 col-xs-offset-1 col-sm-offset-1 col-sm-10 col-md-10 col-md-offset-1 col-lg-10 col-lg-offset-1\"],[\"flush-element\"],[\"text\",\"\\n      \"],[\"open-element\",\"button\",[]],[\"static-attr\",\"class\",\"btn btn-primary btn-lg btn-block\"],[\"dynamic-attr\",\"disabled\",[\"unknown\",[\"isDisabled\"]],null],[\"modifier\",[\"action\"],[[\"get\",[null]],\"verifyMessage\"]],[\"flush-element\"],[\"text\",\"Nous contacter\"],[\"close-element\"],[\"text\",\"\\n    \"],[\"close-element\"],[\"text\",\"\\n  \"],[\"close-element\"],[\"text\",\"\\n\\n\\n\\n\"],[\"block\",[\"if\"],[[\"get\",[\"responseMessage\"]]],null,0],[\"close-element\"],[\"text\",\"\\n\\n\\n\"],[\"append\",[\"unknown\",[\"outlet\"]],false],[\"text\",\"\\n\"]],\"locals\":[],\"named\":[],\"yields\":[],\"blocks\":[{\"statements\":[[\"text\",\"    \"],[\"open-element\",\"div\",[]],[\"static-attr\",\"class\",\"alert alert-danger\"],[\"flush-element\"],[\"append\",[\"unknown\",[\"responseMessage\"]],false],[\"close-element\"],[\"text\",\"\\n\"]],\"locals\":[]}],\"hasPartials\":true}", "meta": { "moduleName": "demonstration/templates/contact.hbs" } });
@@ -839,19 +1009,19 @@ define("demonstration/templates/login", ["exports"], function (exports) {
   exports["default"] = Ember.HTMLBars.template({ "id": "YrDQhKpO", "block": "{\"statements\":[[\"partial\",\"navbar\"],[\"text\",\"\\n\"],[\"open-element\",\"div\",[]],[\"static-attr\",\"class\",\"login_page\"],[\"flush-element\"],[\"text\",\"\\n  \"],[\"open-element\",\"h3\",[]],[\"flush-element\"],[\"text\",\"Service d'Authentification\"],[\"close-element\"],[\"text\",\"\\n  \"],[\"open-element\",\"div\",[]],[\"static-attr\",\"class\",\"form-horizontal form-group form-group-lg row\"],[\"flush-element\"],[\"text\",\"\\n    \"],[\"open-element\",\"div\",[]],[\"static-attr\",\"class\",\"col-xs-10 col-xs-offset-1 col-sm-6 col-sm-offset-3 col-md-6 col-md-offset-3 connect_horizental\"],[\"flush-element\"],[\"text\",\"\\n      \"],[\"append\",[\"helper\",[\"input\"],null,[[\"type\",\"class\",\"value\",\"placeholder\",\"autofocus\"],[\"text\",\"form-control\",[\"get\",[\"identifiant\"]],\"Entrer votre identifiant.\",\"autofocus\"]]],false],[\"text\",\"\\n    \"],[\"close-element\"],[\"text\",\"\\n    \"],[\"open-element\",\"div\",[]],[\"static-attr\",\"class\",\"col-xs-10 col-xs-offset-1 col-sm-6 col-sm-offset-3 col-md-6 col-md-offset-3 connect_horizental\"],[\"flush-element\"],[\"text\",\"\\n      \"],[\"append\",[\"helper\",[\"input\"],null,[[\"type\",\"class\",\"value\",\"placeholder\",\"autofocus\"],[\"password\",\"form-control\",[\"get\",[\"password\"]],\"Entrer votre mot de passe.\",\"autofocus\"]]],false],[\"text\",\"\\n    \"],[\"close-element\"],[\"text\",\"\\n\\n    \"],[\"open-element\",\"div\",[]],[\"static-attr\",\"class\",\"col-xs-10 col-xs-offset-1 col-sm-offset-1 col-sm-10 col-md-10 col-md-offset-1 col-lg-10 col-lg-offset-1\"],[\"flush-element\"],[\"text\",\"\\n      \"],[\"open-element\",\"button\",[]],[\"static-attr\",\"class\",\"btn btn-primary btn-lg btn-block\"],[\"dynamic-attr\",\"disabled\",[\"unknown\",[\"isDisabled\"]],null],[\"modifier\",[\"action\"],[[\"get\",[null]],\"verifyUser\"]],[\"flush-element\"],[\"text\",\"Se connecter\"],[\"close-element\"],[\"text\",\"\\n    \"],[\"close-element\"],[\"text\",\"\\n  \"],[\"close-element\"],[\"text\",\"\\n  \"],[\"open-element\",\"img\",[]],[\"static-attr\",\"src\",\"/assets/images/note.gif\"],[\"static-attr\",\"class\",\"image_login\"],[\"flush-element\"],[\"close-element\"],[\"text\",\"\\n  \"],[\"open-element\",\"p\",[]],[\"static-attr\",\"class\",\"message_login\"],[\"flush-element\"],[\"text\",\"Pour des raisons de sécurité, veuillez vous déconnecter et fermer votre navigateur lorsque vous avez fini d'accéder\\n    aux services authentifiés.\"],[\"close-element\"],[\"text\",\"\\n\\n\\n\"],[\"block\",[\"if\"],[[\"get\",[\"responseMessage\"]]],null,0],[\"close-element\"]],\"locals\":[],\"named\":[],\"yields\":[],\"blocks\":[{\"statements\":[[\"text\",\"    \"],[\"open-element\",\"div\",[]],[\"static-attr\",\"class\",\"alert alert-danger\"],[\"flush-element\"],[\"append\",[\"unknown\",[\"responseMessage\"]],false],[\"close-element\"],[\"text\",\"\\n\"]],\"locals\":[]}],\"hasPartials\":true}", "meta": { "moduleName": "demonstration/templates/login.hbs" } });
 });
 define("demonstration/templates/manage/enseignant/index", ["exports"], function (exports) {
-  exports["default"] = Ember.HTMLBars.template({ "id": "Jmh2WdZu", "block": "{\"statements\":[[\"block\",[\"admin-layout\"],null,null,3]],\"locals\":[],\"named\":[],\"yields\":[],\"blocks\":[{\"statements\":[[\"text\",\"\\n      \"],[\"open-element\",\"tr\",[]],[\"flush-element\"],[\"text\",\"\\n        \"],[\"open-element\",\"td\",[]],[\"flush-element\"],[\"append\",[\"unknown\",[\"teacher\",\"identifiant\"]],false],[\"close-element\"],[\"text\",\"\\n        \"],[\"open-element\",\"td\",[]],[\"flush-element\"],[\"append\",[\"unknown\",[\"teacher\",\"prenom\"]],false],[\"close-element\"],[\"text\",\"\\n        \"],[\"open-element\",\"td\",[]],[\"flush-element\"],[\"append\",[\"unknown\",[\"teacher\",\"nom\"]],false],[\"close-element\"],[\"text\",\"\\n        \"],[\"open-element\",\"td\",[]],[\"flush-element\"],[\"append\",[\"unknown\",[\"teacher\",\"email\"]],false],[\"close-element\"],[\"text\",\"\\n        \"],[\"open-element\",\"td\",[]],[\"flush-element\"],[\"text\",\"\\n          \"],[\"open-element\",\"button\",[]],[\"static-attr\",\"class\",\"btn btn-primary btn-orange btn-sm\"],[\"modifier\",[\"action\"],[[\"get\",[null]],\"deleteTeacher\",[\"get\",[\"teacher\"]]]],[\"flush-element\"],[\"text\",\"Supprimer\"],[\"close-element\"],[\"text\",\"\\n        \"],[\"close-element\"],[\"text\",\"\\n      \"],[\"close-element\"],[\"text\",\"\\n\\n\"]],\"locals\":[\"teacher\"]},{\"statements\":[[\"block\",[\"each\"],[[\"get\",[\"model\"]]],null,0]],\"locals\":[]},{\"statements\":[[\"text\",\"\\n    \"],[\"open-element\",\"div\",[]],[\"static-attr\",\"class\",\"row\"],[\"flush-element\"],[\"text\",\"\\n      \"],[\"open-element\",\"div\",[]],[\"static-attr\",\"class\",\"col-md-6\"],[\"flush-element\"],[\"text\",\"\\n        Identifiant: \"],[\"append\",[\"helper\",[\"input\"],null,[[\"type\",\"value\",\"autofocus\",\"class\",\"placeholder\"],[\"text\",[\"get\",[\"identifier\"]],\"autofocus\",\"form-control input-form\",\"Identifiant\"]]],false],[\"text\",\"\\n      \"],[\"close-element\"],[\"text\",\"\\n\\n      \"],[\"open-element\",\"div\",[]],[\"static-attr\",\"class\",\"col-md-6\"],[\"flush-element\"],[\"text\",\"\\n        Nom: \"],[\"append\",[\"helper\",[\"input\"],null,[[\"type\",\"value\",\"class\",\"placeholder\"],[\"text\",[\"get\",[\"lastname\"]],\"form-control input-form\",\"Nom\"]]],false],[\"text\",\"\\n      \"],[\"close-element\"],[\"text\",\"\\n    \"],[\"close-element\"],[\"text\",\"\\n\\n    \"],[\"open-element\",\"div\",[]],[\"static-attr\",\"class\",\"row\"],[\"flush-element\"],[\"text\",\"\\n      \"],[\"open-element\",\"div\",[]],[\"static-attr\",\"class\",\"col-md-6\"],[\"flush-element\"],[\"text\",\"\\n        Prenom: \"],[\"append\",[\"helper\",[\"input\"],null,[[\"type\",\"value\",\"class\",\"placeholder\"],[\"text\",[\"get\",[\"name\"]],\"form-control input-form\",\"Prenom\"]]],false],[\"text\",\"\\n      \"],[\"close-element\"],[\"text\",\"\\n\\n      \"],[\"open-element\",\"div\",[]],[\"static-attr\",\"class\",\"col-md-6\"],[\"flush-element\"],[\"text\",\"\\n        Email  \"],[\"append\",[\"helper\",[\"input\"],null,[[\"type\",\"value\",\"class\",\"placeholder\"],[\"email\",[\"get\",[\"mail\"]],\"form-control input-form\",\"Email\"]]],false],[\"text\",\"\\n      \"],[\"close-element\"],[\"text\",\"\\n    \"],[\"close-element\"],[\"text\",\"\\n\\n    \"],[\"open-element\",\"button\",[]],[\"static-attr\",\"class\",\"btn btn-primary btn-orange\"],[\"modifier\",[\"action\"],[[\"get\",[null]],\"saveTeacher\",[\"get\",[\"identifier\"]],[\"get\",[\"lastname\"]],[\"get\",[\"name\"]],[\"get\",[\"mail\"]]]],[\"flush-element\"],[\"text\",\"Sauvegarder\\n    \"],[\"close-element\"],[\"text\",\"\\n\\n\"]],\"locals\":[]},{\"statements\":[[\"block\",[\"form-user-add\"],null,[[\"class\",\"title\"],[\"teacher\",\"Nouveau enseignant\"]],2],[\"text\",\"\\n\\n\"],[\"block\",[\"user-list\"],null,null,1]],\"locals\":[]}],\"hasPartials\":false}", "meta": { "moduleName": "demonstration/templates/manage/enseignant/index.hbs" } });
+  exports["default"] = Ember.HTMLBars.template({ "id": "xF6foq+2", "block": "{\"statements\":[[\"block\",[\"if\"],[[\"get\",[\"session\",\"isAuthenticated\"]]],null,5,0]],\"locals\":[],\"named\":[],\"yields\":[],\"blocks\":[{\"statements\":[[\"text\",\"    jjjjjjjjj\\n    \"],[\"append\",[\"unknown\",[\"outlet\"]],false],[\"text\",\"\\n\"]],\"locals\":[]},{\"statements\":[[\"text\",\"\\n      \"],[\"open-element\",\"tr\",[]],[\"flush-element\"],[\"text\",\"\\n        \"],[\"open-element\",\"td\",[]],[\"flush-element\"],[\"append\",[\"unknown\",[\"teacher\",\"identifiant\"]],false],[\"close-element\"],[\"text\",\"\\n        \"],[\"open-element\",\"td\",[]],[\"flush-element\"],[\"append\",[\"unknown\",[\"teacher\",\"prenom\"]],false],[\"close-element\"],[\"text\",\"\\n        \"],[\"open-element\",\"td\",[]],[\"flush-element\"],[\"append\",[\"unknown\",[\"teacher\",\"nom\"]],false],[\"close-element\"],[\"text\",\"\\n        \"],[\"open-element\",\"td\",[]],[\"flush-element\"],[\"append\",[\"unknown\",[\"teacher\",\"email\"]],false],[\"close-element\"],[\"text\",\"\\n        \"],[\"open-element\",\"td\",[]],[\"flush-element\"],[\"text\",\"\\n          \"],[\"open-element\",\"button\",[]],[\"static-attr\",\"class\",\"btn btn-primary btn-orange btn-sm\"],[\"modifier\",[\"action\"],[[\"get\",[null]],\"deleteTeacher\",[\"get\",[\"teacher\"]]]],[\"flush-element\"],[\"text\",\"Supprimer\"],[\"close-element\"],[\"text\",\"\\n        \"],[\"close-element\"],[\"text\",\"\\n      \"],[\"close-element\"],[\"text\",\"\\n\\n\"]],\"locals\":[\"teacher\"]},{\"statements\":[[\"block\",[\"each\"],[[\"get\",[\"model\"]]],null,1]],\"locals\":[]},{\"statements\":[[\"text\",\"\\n    \"],[\"open-element\",\"div\",[]],[\"static-attr\",\"class\",\"row\"],[\"flush-element\"],[\"text\",\"\\n      \"],[\"open-element\",\"div\",[]],[\"static-attr\",\"class\",\"col-md-6\"],[\"flush-element\"],[\"text\",\"\\n        Identifiant: \"],[\"append\",[\"helper\",[\"input\"],null,[[\"type\",\"value\",\"autofocus\",\"class\",\"placeholder\"],[\"text\",[\"get\",[\"identifier\"]],\"autofocus\",\"form-control input-form\",\"Identifiant\"]]],false],[\"text\",\"\\n      \"],[\"close-element\"],[\"text\",\"\\n\\n      \"],[\"open-element\",\"div\",[]],[\"static-attr\",\"class\",\"col-md-6\"],[\"flush-element\"],[\"text\",\"\\n        Nom: \"],[\"append\",[\"helper\",[\"input\"],null,[[\"type\",\"value\",\"class\",\"placeholder\"],[\"text\",[\"get\",[\"lastname\"]],\"form-control input-form\",\"Nom\"]]],false],[\"text\",\"\\n      \"],[\"close-element\"],[\"text\",\"\\n    \"],[\"close-element\"],[\"text\",\"\\n\\n    \"],[\"open-element\",\"div\",[]],[\"static-attr\",\"class\",\"row\"],[\"flush-element\"],[\"text\",\"\\n      \"],[\"open-element\",\"div\",[]],[\"static-attr\",\"class\",\"col-md-6\"],[\"flush-element\"],[\"text\",\"\\n        Prenom: \"],[\"append\",[\"helper\",[\"input\"],null,[[\"type\",\"value\",\"class\",\"placeholder\"],[\"text\",[\"get\",[\"name\"]],\"form-control input-form\",\"Prenom\"]]],false],[\"text\",\"\\n      \"],[\"close-element\"],[\"text\",\"\\n\\n      \"],[\"open-element\",\"div\",[]],[\"static-attr\",\"class\",\"col-md-6\"],[\"flush-element\"],[\"text\",\"\\n        Email  \"],[\"append\",[\"helper\",[\"input\"],null,[[\"type\",\"value\",\"class\",\"placeholder\"],[\"email\",[\"get\",[\"mail\"]],\"form-control input-form\",\"Email\"]]],false],[\"text\",\"\\n      \"],[\"close-element\"],[\"text\",\"\\n    \"],[\"close-element\"],[\"text\",\"\\n\\n    \"],[\"open-element\",\"button\",[]],[\"static-attr\",\"class\",\"btn btn-primary btn-orange btn-add-data\"],[\"modifier\",[\"action\"],[[\"get\",[null]],\"saveTeacher\",[\"get\",[\"identifier\"]],[\"get\",[\"lastname\"]],[\"get\",[\"name\"]],[\"get\",[\"mail\"]]]],[\"flush-element\"],[\"text\",\"Sauvegarder\\n    \"],[\"close-element\"],[\"text\",\"\\n\\n\"]],\"locals\":[]},{\"statements\":[[\"block\",[\"form-user-add\"],null,[[\"class\",\"title\"],[\"teacher\",\"Nouveau enseignant\"]],3],[\"text\",\"\\n\\n\"],[\"block\",[\"user-list\"],null,null,2]],\"locals\":[]},{\"statements\":[[\"block\",[\"admin-layout\"],null,null,4]],\"locals\":[]}],\"hasPartials\":false}", "meta": { "moduleName": "demonstration/templates/manage/enseignant/index.hbs" } });
 });
 define("demonstration/templates/manage/etudiant/index", ["exports"], function (exports) {
-  exports["default"] = Ember.HTMLBars.template({ "id": "EF5TUfRz", "block": "{\"statements\":[[\"block\",[\"admin-layout\"],null,null,3]],\"locals\":[],\"named\":[],\"yields\":[],\"blocks\":[{\"statements\":[[\"text\",\"      \"],[\"open-element\",\"tr\",[]],[\"flush-element\"],[\"text\",\"\\n        \"],[\"open-element\",\"td\",[]],[\"flush-element\"],[\"append\",[\"unknown\",[\"student\",\"identifiant\"]],false],[\"close-element\"],[\"text\",\"\\n        \"],[\"open-element\",\"td\",[]],[\"flush-element\"],[\"append\",[\"unknown\",[\"student\",\"prenom\"]],false],[\"close-element\"],[\"text\",\"\\n        \"],[\"open-element\",\"td\",[]],[\"flush-element\"],[\"append\",[\"unknown\",[\"student\",\"nom\"]],false],[\"close-element\"],[\"text\",\"\\n        \"],[\"open-element\",\"td\",[]],[\"flush-element\"],[\"append\",[\"unknown\",[\"student\",\"email\"]],false],[\"close-element\"],[\"text\",\"\\n        \"],[\"open-element\",\"td\",[]],[\"flush-element\"],[\"text\",\"\\n          \"],[\"open-element\",\"button\",[]],[\"static-attr\",\"class\",\"btn btn-primary btn-orange btn-sm\"],[\"modifier\",[\"action\"],[[\"get\",[null]],\"deleteStudent\",[\"get\",[\"student\"]]]],[\"flush-element\"],[\"text\",\"Supprimer\"],[\"close-element\"],[\"text\",\"\\n        \"],[\"close-element\"],[\"text\",\"\\n        \"],[\"open-element\",\"td\",[]],[\"flush-element\"],[\"close-element\"],[\"text\",\"\\n      \"],[\"close-element\"],[\"text\",\"\\n\"]],\"locals\":[\"student\"]},{\"statements\":[[\"block\",[\"each\"],[[\"get\",[\"model\"]]],null,0]],\"locals\":[]},{\"statements\":[[\"text\",\"    \"],[\"open-element\",\"div\",[]],[\"static-attr\",\"class\",\"row\"],[\"flush-element\"],[\"text\",\"\\n      \"],[\"open-element\",\"div\",[]],[\"static-attr\",\"class\",\"col-md-6\"],[\"flush-element\"],[\"text\",\"\\n        Identifiant: \"],[\"append\",[\"helper\",[\"input\"],null,[[\"type\",\"value\",\"autofocus\",\"class\",\"placeholder\"],[\"text\",[\"helper\",[\"mut\"],[[\"helper\",[\"get\"],[[\"get\",[\"identifier\"]],[\"get\",[\"field\"]]],null]],null],\"autofocus\",\"form-control input-form\",\"Identifiant\"]]],false],[\"text\",\"\\n      \"],[\"close-element\"],[\"text\",\"\\n      \"],[\"open-element\",\"div\",[]],[\"static-attr\",\"class\",\"col-md-6\"],[\"flush-element\"],[\"text\",\"\\n        Nom: \"],[\"append\",[\"helper\",[\"input\"],null,[[\"type\",\"value\",\"class\",\"placeholder\"],[\"text\",[\"helper\",[\"mut\"],[[\"helper\",[\"get\"],[[\"get\",[\"lastname\"]],[\"get\",[\"field\"]]],null]],null],\"form-control input-form\",\"Nom\"]]],false],[\"text\",\"\\n      \"],[\"close-element\"],[\"text\",\"\\n    \"],[\"close-element\"],[\"text\",\"\\n    \"],[\"open-element\",\"div\",[]],[\"static-attr\",\"class\",\"row\"],[\"flush-element\"],[\"text\",\"\\n      \"],[\"open-element\",\"div\",[]],[\"static-attr\",\"class\",\"col-md-6\"],[\"flush-element\"],[\"text\",\"\\n        Prenom: \"],[\"append\",[\"helper\",[\"input\"],null,[[\"type\",\"value\",\"class\",\"placeholder\"],[\"text\",[\"helper\",[\"mut\"],[[\"helper\",[\"get\"],[[\"get\",[\"name\"]],[\"get\",[\"field\"]]],null]],null],\"form-control input-form\",\"Prenom\"]]],false],[\"text\",\"\\n      \"],[\"close-element\"],[\"text\",\"\\n      \"],[\"open-element\",\"div\",[]],[\"static-attr\",\"class\",\"col-md-6\"],[\"flush-element\"],[\"text\",\"\\n        Email  \"],[\"append\",[\"helper\",[\"input\"],null,[[\"type\",\"value\",\"class\",\"placeholder\"],[\"email\",[\"helper\",[\"mut\"],[[\"helper\",[\"get\"],[[\"get\",[\"mail\"]],[\"get\",[\"field\"]]],null]],null],\"form-control input-form\",\"Email\"]]],false],[\"text\",\"\\n      \"],[\"close-element\"],[\"text\",\"\\n    \"],[\"close-element\"],[\"text\",\"\\n    \"],[\"open-element\",\"button\",[]],[\"static-attr\",\"class\",\"btn btn-primary btn-orange\"],[\"modifier\",[\"action\"],[[\"get\",[null]],\"saveStudent\",[\"get\",[\"identifier\"]],[\"get\",[\"lastname\"]],[\"get\",[\"name\"]],[\"get\",[\"mail\"]]]],[\"flush-element\"],[\"text\",\"Sauvegarder\\n    \"],[\"close-element\"],[\"text\",\"\\n\\n\"]],\"locals\":[]},{\"statements\":[[\"block\",[\"form-user-add\"],null,[[\"class\",\"title\"],[\"teacher\",\"Nouveau etudiant\"]],2],[\"text\",\"\\n\"],[\"block\",[\"user-list\"],null,null,1],[\"text\",\"\\n\"]],\"locals\":[]}],\"hasPartials\":false}", "meta": { "moduleName": "demonstration/templates/manage/etudiant/index.hbs" } });
+  exports["default"] = Ember.HTMLBars.template({ "id": "qWe4m/Hb", "block": "{\"statements\":[[\"text\",\"\\n\"],[\"block\",[\"if\"],[[\"get\",[\"session\",\"isAuthenticated\"]]],null,5,0]],\"locals\":[],\"named\":[],\"yields\":[],\"blocks\":[{\"statements\":[[\"text\",\"    \"],[\"append\",[\"unknown\",[\"outlet\"]],false],[\"text\",\"\\n\"]],\"locals\":[]},{\"statements\":[[\"text\",\"      \"],[\"open-element\",\"tr\",[]],[\"flush-element\"],[\"text\",\"\\n        \"],[\"open-element\",\"td\",[]],[\"flush-element\"],[\"append\",[\"unknown\",[\"student\",\"identifiant\"]],false],[\"close-element\"],[\"text\",\"\\n        \"],[\"open-element\",\"td\",[]],[\"flush-element\"],[\"append\",[\"unknown\",[\"student\",\"prenom\"]],false],[\"close-element\"],[\"text\",\"\\n        \"],[\"open-element\",\"td\",[]],[\"flush-element\"],[\"append\",[\"unknown\",[\"student\",\"nom\"]],false],[\"close-element\"],[\"text\",\"\\n        \"],[\"open-element\",\"td\",[]],[\"flush-element\"],[\"append\",[\"unknown\",[\"student\",\"email\"]],false],[\"close-element\"],[\"text\",\"\\n        \"],[\"open-element\",\"td\",[]],[\"flush-element\"],[\"text\",\"\\n          \"],[\"open-element\",\"button\",[]],[\"static-attr\",\"class\",\"btn btn-primary btn-orange btn-sm\"],[\"modifier\",[\"action\"],[[\"get\",[null]],\"deleteStudent\",[\"get\",[\"student\"]]]],[\"flush-element\"],[\"text\",\"Supprimer\"],[\"close-element\"],[\"text\",\"\\n        \"],[\"close-element\"],[\"text\",\"\\n        \"],[\"open-element\",\"td\",[]],[\"flush-element\"],[\"close-element\"],[\"text\",\"\\n      \"],[\"close-element\"],[\"text\",\"\\n\"]],\"locals\":[\"student\"]},{\"statements\":[[\"block\",[\"each\"],[[\"get\",[\"model\"]]],null,1]],\"locals\":[]},{\"statements\":[[\"text\",\"    \"],[\"open-element\",\"div\",[]],[\"static-attr\",\"class\",\"row\"],[\"flush-element\"],[\"text\",\"\\n      \"],[\"open-element\",\"div\",[]],[\"static-attr\",\"class\",\"col-md-6\"],[\"flush-element\"],[\"text\",\"\\n        Identifiant: \"],[\"append\",[\"helper\",[\"input\"],null,[[\"type\",\"value\",\"autofocus\",\"class\",\"placeholder\"],[\"text\",[\"get\",[\"identifier\"]],\"autofocus\",\"form-control input-form \",\"Identifiant\"]]],false],[\"text\",\"\\n      \"],[\"close-element\"],[\"text\",\"\\n      \"],[\"open-element\",\"div\",[]],[\"static-attr\",\"class\",\"col-md-6\"],[\"flush-element\"],[\"text\",\"\\n        Nom: \"],[\"append\",[\"helper\",[\"input\"],null,[[\"type\",\"value\",\"class\",\"placeholder\"],[\"text\",[\"get\",[\"lastname\"]],\"form-control input-form\",\"Nom\"]]],false],[\"text\",\"\\n      \"],[\"close-element\"],[\"text\",\"\\n    \"],[\"close-element\"],[\"text\",\"\\n    \"],[\"open-element\",\"div\",[]],[\"static-attr\",\"class\",\"row\"],[\"flush-element\"],[\"text\",\"\\n      \"],[\"open-element\",\"div\",[]],[\"static-attr\",\"class\",\"col-md-6\"],[\"flush-element\"],[\"text\",\"\\n        Prenom: \"],[\"append\",[\"helper\",[\"input\"],null,[[\"type\",\"value\",\"class\",\"placeholder\"],[\"text\",[\"get\",[\"name\"]],\"form-control input-form\",\"Prenom\"]]],false],[\"text\",\"\\n      \"],[\"close-element\"],[\"text\",\"\\n      \"],[\"open-element\",\"div\",[]],[\"static-attr\",\"class\",\"col-md-6\"],[\"flush-element\"],[\"text\",\"\\n        Email  \"],[\"append\",[\"helper\",[\"input\"],null,[[\"type\",\"value\",\"class\",\"placeholder\"],[\"email\",[\"get\",[\"mail\"]],\"form-control input-form\",\"Email\"]]],false],[\"text\",\"\\n      \"],[\"close-element\"],[\"text\",\"\\n    \"],[\"close-element\"],[\"text\",\"\\n    \"],[\"open-element\",\"button\",[]],[\"static-attr\",\"class\",\"btn btn-primary btn-orange btn-add-data\"],[\"modifier\",[\"action\"],[[\"get\",[null]],\"saveStudent\",[\"get\",[\"identifier\"]],[\"get\",[\"lastname\"]],[\"get\",[\"name\"]],[\"get\",[\"mail\"]]]],[\"flush-element\"],[\"text\",\"Sauvegarder\\n    \"],[\"close-element\"],[\"text\",\"\\n\\n\"]],\"locals\":[]},{\"statements\":[[\"block\",[\"form-user-add\"],null,[[\"class\",\"title\"],[\"teacher\",\"Nouveau etudiant\"]],3],[\"text\",\"\\n\"],[\"block\",[\"user-list\"],null,null,2],[\"text\",\"\\n\"]],\"locals\":[]},{\"statements\":[[\"text\",\"\\n\"],[\"block\",[\"admin-layout\"],null,null,4],[\"text\",\"\\n\"]],\"locals\":[]}],\"hasPartials\":false}", "meta": { "moduleName": "demonstration/templates/manage/etudiant/index.hbs" } });
 });
 define("demonstration/templates/manage/index", ["exports"], function (exports) {
-  exports["default"] = Ember.HTMLBars.template({ "id": "ZkZfnmRO", "block": "{\"statements\":[[\"append\",[\"unknown\",[\"admin-layout\"]],false]],\"locals\":[],\"named\":[],\"yields\":[],\"blocks\":[],\"hasPartials\":false}", "meta": { "moduleName": "demonstration/templates/manage/index.hbs" } });
+  exports["default"] = Ember.HTMLBars.template({ "id": "WwVpW2T0", "block": "{\"statements\":[[\"block\",[\"if\"],[[\"get\",[\"session\",\"isAuthenticated\"]]],null,1,0]],\"locals\":[],\"named\":[],\"yields\":[],\"blocks\":[{\"statements\":[[\"text\",\"    \"],[\"append\",[\"unknown\",[\"outlet\"]],false],[\"text\",\"\\n\"]],\"locals\":[]},{\"statements\":[[\"text\",\"    \"],[\"append\",[\"unknown\",[\"admin-layout\"]],false],[\"text\",\"\\n\"]],\"locals\":[]}],\"hasPartials\":false}", "meta": { "moduleName": "demonstration/templates/manage/index.hbs" } });
 });
 define("demonstration/templates/navbar", ["exports"], function (exports) {
   exports["default"] = Ember.HTMLBars.template({ "id": "E4pRdUck", "block": "{\"statements\":[[\"open-element\",\"nav\",[]],[\"static-attr\",\"class\",\"navbar navbar-inverse\"],[\"flush-element\"],[\"text\",\"\\n  \"],[\"open-element\",\"div\",[]],[\"static-attr\",\"class\",\"container_nav\"],[\"flush-element\"],[\"text\",\"\\n    \"],[\"open-element\",\"div\",[]],[\"static-attr\",\"class\",\"container-fluid\"],[\"flush-element\"],[\"text\",\"\\n      \"],[\"open-element\",\"div\",[]],[\"static-attr\",\"class\",\"collapse navbar-collapse\"],[\"static-attr\",\"id\",\"main-navbar\"],[\"flush-element\"],[\"text\",\"\\n        \"],[\"open-element\",\"ul\",[]],[\"static-attr\",\"class\",\"nav navbar-nav\"],[\"flush-element\"],[\"text\",\"\\n          \"],[\"block\",[\"link-to\"],[\"index\"],[[\"tagName\"],[\"li\"]],2],[\"text\",\"\\n          \"],[\"block\",[\"link-to\"],[\"login\"],[[\"tagName\"],[\"li\"]],1],[\"text\",\"\\n          \"],[\"block\",[\"link-to\"],[\"contact\"],[[\"tagName\"],[\"li\"]],0],[\"text\",\"\\n\\n        \"],[\"close-element\"],[\"text\",\"\\n      \"],[\"close-element\"],[\"comment\",\" /.navbar-collapse \"],[\"text\",\"\\n    \"],[\"close-element\"],[\"comment\",\" /.container-fluid \"],[\"text\",\"\\n  \"],[\"close-element\"],[\"text\",\"\\n\"],[\"close-element\"]],\"locals\":[],\"named\":[],\"yields\":[],\"blocks\":[{\"statements\":[[\"open-element\",\"a\",[]],[\"static-attr\",\"href\",\"\"],[\"flush-element\"],[\"open-element\",\"span\",[]],[\"static-attr\",\"class\",\"glyphicon glyphicon-envelope\"],[\"static-attr\",\"aria-hidden\",\"true\"],[\"flush-element\"],[\"close-element\"],[\"text\",\"Contact\"],[\"close-element\"]],\"locals\":[]},{\"statements\":[[\"open-element\",\"a\",[]],[\"static-attr\",\"href\",\"\"],[\"flush-element\"],[\"open-element\",\"span\",[]],[\"static-attr\",\"class\",\"glyphicon glyphicon-user\"],[\"static-attr\",\"aria-hidden\",\"true\"],[\"flush-element\"],[\"close-element\"],[\"text\",\"Connexion\"],[\"close-element\"]],\"locals\":[]},{\"statements\":[[\"open-element\",\"a\",[]],[\"static-attr\",\"href\",\"\"],[\"flush-element\"],[\"open-element\",\"span\",[]],[\"static-attr\",\"class\",\"glyphicon glyphicon-home\"],[\"static-attr\",\"aria-hidden\",\"true\"],[\"flush-element\"],[\"close-element\"],[\"text\",\"Accueil\"],[\"close-element\"]],\"locals\":[]}],\"hasPartials\":false}", "meta": { "moduleName": "demonstration/templates/navbar.hbs" } });
 });
 define("demonstration/templates/users", ["exports"], function (exports) {
-  exports["default"] = Ember.HTMLBars.template({ "id": "Zcghth3e", "block": "{\"statements\":[[\"open-element\",\"div\",[]],[\"static-attr\",\"class\",\"container\"],[\"flush-element\"],[\"text\",\"\\n  \"],[\"open-element\",\"button\",[]],[\"static-attr\",\"class\",\"btn btn-primary btn-lg btn-block\"],[\"modifier\",[\"action\"],[[\"get\",[null]],\"logout\"]],[\"flush-element\"],[\"text\",\"Se deconnecter\"],[\"close-element\"],[\"text\",\"\\n\\n\"],[\"block\",[\"if\"],[[\"get\",[\"isetudiant\"]]],null,8],[\"block\",[\"if\"],[[\"get\",[\"isenseignant\"]]],null,3],[\"close-element\"],[\"text\",\"\\n\"],[\"append\",[\"unknown\",[\"outlet\"]],false],[\"text\",\"\\n\"]],\"locals\":[],\"named\":[],\"yields\":[],\"blocks\":[{\"statements\":[[\"text\",\"                \"],[\"append\",[\"helper\",[\"student-info\"],null,[[\"etudiant\",\"ue\"],[[\"get\",[\"etudiant\"]],[\"get\",[\"ue\"]]]]],false],[\"text\",\"\\n\"]],\"locals\":[\"etudiant\"]},{\"statements\":[[\"text\",\"\\n              \"],[\"open-element\",\"a\",[]],[\"static-attr\",\"class\",\"ue\"],[\"static-attr\",\"data-toggle\",\"collapse\"],[\"dynamic-attr\",\"data-target\",[\"concat\",[[\"unknown\",[\"ue\",\"id\"]]]]],[\"flush-element\"],[\"text\",\"\\n                \"],[\"open-element\",\"span\",[]],[\"static-attr\",\"class\",\"glyphicon glyphicon-plus-sign\"],[\"static-attr\",\"aria-hidden\",\"true\"],[\"flush-element\"],[\"close-element\"],[\"text\",\" \"],[\"append\",[\"unknown\",[\"ue\",\"nom\"]],false],[\"text\",\"\\n              \"],[\"close-element\"],[\"text\",\"\\n\\n\"],[\"block\",[\"each\"],[[\"get\",[\"ue\",\"etudiants\"]]],null,0],[\"text\",\"\\n\"]],\"locals\":[\"ue\"]},{\"statements\":[[\"text\",\"\\n      \"],[\"append\",[\"helper\",[\"user-profile\"],null,[[\"user\"],[[\"get\",[\"enseignant\"]]]]],false],[\"text\",\"\\n\\n      \"],[\"comment\",\" Liste d'UEs \"],[\"text\",\"\\n\\n      \"],[\"open-element\",\"div\",[]],[\"static-attr\",\"class\",\"col-lg-8 col-md-8 col-sm-8 col-xs-12\"],[\"flush-element\"],[\"text\",\"\\n        \"],[\"open-element\",\"div\",[]],[\"static-attr\",\"class\",\"panel panel-default\"],[\"flush-element\"],[\"text\",\"\\n          \"],[\"open-element\",\"div\",[]],[\"static-attr\",\"class\",\"panel-heading\"],[\"flush-element\"],[\"text\",\"UEs\"],[\"close-element\"],[\"text\",\"\\n          \"],[\"open-element\",\"div\",[]],[\"static-attr\",\"class\",\"panel-body notes_ue\"],[\"flush-element\"],[\"text\",\"\\n\"],[\"block\",[\"each\"],[[\"get\",[\"enseignant\",\"ues\"]]],null,1],[\"text\",\"          \"],[\"close-element\"],[\"text\",\"\\n        \"],[\"close-element\"],[\"text\",\"\\n      \"],[\"close-element\"],[\"text\",\"\\n\\n\"]],\"locals\":[\"enseignant\"]},{\"statements\":[[\"text\",\"\\n\"],[\"block\",[\"each\"],[[\"get\",[\"model\",\"enseignants\"]]],null,2],[\"text\",\"\\n\"]],\"locals\":[]},{\"statements\":[[\"text\",\"\\n                  \"],[\"append\",[\"helper\",[\"student-note\"],null,[[\"note\",\"title-note\"],[[\"get\",[\"note\",\"cc1\"]],\"Note CC1\"]]],false],[\"text\",\"\\n                  \"],[\"append\",[\"helper\",[\"student-note\"],null,[[\"note\",\"title-note\"],[[\"get\",[\"note\",\"cc2\"]],\"Note CC2\"]]],false],[\"text\",\"\\n                  \"],[\"append\",[\"helper\",[\"student-note\"],null,[[\"note\",\"title-note\"],[[\"get\",[\"note\",\"ccf\"]],\"Note CCF\"]]],false],[\"text\",\"\\n\\n                  \"],[\"append\",[\"helper\",[\"student-average\"],null,[[\"note\"],[[\"get\",[\"note\"]]]]],false],[\"text\",\"\\n\\n\"]],\"locals\":[]},{\"statements\":[[\"block\",[\"if-equal\"],null,[[\"param1\",\"param2\"],[[\"get\",[\"note\",\"ue\",\"id\"]],[\"get\",[\"ue\",\"id\"]]]],4]],\"locals\":[\"note\"]},{\"statements\":[[\"text\",\"\\n              \"],[\"open-element\",\"a\",[]],[\"static-attr\",\"class\",\"ue\"],[\"static-attr\",\"data-toggle\",\"collapse\"],[\"dynamic-attr\",\"data-target\",[\"concat\",[[\"unknown\",[\"ue\",\"id\"]]]]],[\"flush-element\"],[\"text\",\"\\n                \"],[\"open-element\",\"span\",[]],[\"static-attr\",\"class\",\"glyphicon glyphicon-plus-sign\"],[\"static-attr\",\"aria-hidden\",\"true\"],[\"flush-element\"],[\"close-element\"],[\"text\",\" \"],[\"append\",[\"unknown\",[\"ue\",\"nom\"]],false],[\"text\",\"(\\n                \"],[\"open-element\",\"b\",[]],[\"flush-element\"],[\"append\",[\"unknown\",[\"ue\",\"enseignant\",\"nom\"]],false],[\"text\",\" \"],[\"append\",[\"unknown\",[\"ue\",\"enseignant\",\"prenom\"]],false],[\"text\",\" \"],[\"close-element\"],[\"text\",\")\"],[\"close-element\"],[\"text\",\"\\n\\n\"],[\"block\",[\"each\"],[[\"get\",[\"etudiant\",\"notes\"]]],null,5],[\"text\",\"\\n\"]],\"locals\":[\"ue\"]},{\"statements\":[[\"text\",\"\\n      \"],[\"append\",[\"helper\",[\"user-profile\"],null,[[\"user\"],[[\"get\",[\"etudiant\"]]]]],false],[\"text\",\"\\n\\n      \"],[\"open-element\",\"div\",[]],[\"static-attr\",\"class\",\"col-lg-8 col-md-8 col-sm-8 col-xs-12\"],[\"flush-element\"],[\"text\",\"\\n        \"],[\"open-element\",\"div\",[]],[\"static-attr\",\"class\",\"panel panel-default\"],[\"flush-element\"],[\"text\",\"\\n          \"],[\"open-element\",\"div\",[]],[\"static-attr\",\"class\",\"panel-heading\"],[\"flush-element\"],[\"text\",\"Notes\"],[\"close-element\"],[\"text\",\"\\n          \"],[\"open-element\",\"div\",[]],[\"static-attr\",\"class\",\"panel-body notes_ue\"],[\"flush-element\"],[\"text\",\"\\n\"],[\"block\",[\"each\"],[[\"get\",[\"etudiant\",\"ues\"]]],null,6],[\"text\",\"\\n            \"],[\"append\",[\"helper\",[\"moyene-annee\"],null,[[\"param1\"],[[\"get\",[\"etudiant\",\"notes\"]]]]],false],[\"text\",\"\\n\\n          \"],[\"close-element\"],[\"text\",\"\\n        \"],[\"close-element\"],[\"text\",\"\\n      \"],[\"close-element\"],[\"text\",\"\\n\"]],\"locals\":[\"etudiant\"]},{\"statements\":[[\"block\",[\"each\"],[[\"get\",[\"model\",\"etudiants\"]]],null,7],[\"text\",\"\\n\"]],\"locals\":[]}],\"hasPartials\":false}", "meta": { "moduleName": "demonstration/templates/users.hbs" } });
+  exports["default"] = Ember.HTMLBars.template({ "id": "00HqHJsE", "block": "{\"statements\":[[\"block\",[\"if\"],[[\"get\",[\"session\",\"isAuthenticated\"]]],null,10,0]],\"locals\":[],\"named\":[],\"yields\":[],\"blocks\":[{\"statements\":[[\"open-element\",\"img\",[]],[\"static-attr\",\"src\",\"/assets/images/not.jpg\"],[\"flush-element\"],[\"close-element\"],[\"text\",\"\\n\"]],\"locals\":[]},{\"statements\":[[\"text\",\"                \"],[\"append\",[\"helper\",[\"student-info\"],null,[[\"etudiant\",\"ue\"],[[\"get\",[\"etudiant\"]],[\"get\",[\"ue\"]]]]],false],[\"text\",\"\\n\"]],\"locals\":[\"etudiant\"]},{\"statements\":[[\"text\",\"\\n              \"],[\"open-element\",\"a\",[]],[\"static-attr\",\"class\",\"ue\"],[\"static-attr\",\"data-toggle\",\"collapse\"],[\"dynamic-attr\",\"data-target\",[\"concat\",[[\"unknown\",[\"ue\",\"id\"]]]]],[\"flush-element\"],[\"text\",\"\\n                \"],[\"open-element\",\"span\",[]],[\"static-attr\",\"class\",\"glyphicon glyphicon-plus-sign\"],[\"static-attr\",\"aria-hidden\",\"true\"],[\"flush-element\"],[\"close-element\"],[\"text\",\" \"],[\"append\",[\"unknown\",[\"ue\",\"nom\"]],false],[\"text\",\"\\n              \"],[\"close-element\"],[\"text\",\"\\n\\n\"],[\"block\",[\"each\"],[[\"get\",[\"ue\",\"etudiants\"]]],null,1],[\"text\",\"\\n\"]],\"locals\":[\"ue\"]},{\"statements\":[[\"text\",\"\\n      \"],[\"append\",[\"helper\",[\"user-profile\"],null,[[\"user\"],[[\"get\",[\"enseignant\"]]]]],false],[\"text\",\"\\n\\n      \"],[\"comment\",\" Liste d'UEs \"],[\"text\",\"\\n\\n      \"],[\"open-element\",\"div\",[]],[\"static-attr\",\"class\",\"col-lg-8 col-md-8 col-sm-8 col-xs-12\"],[\"flush-element\"],[\"text\",\"\\n        \"],[\"open-element\",\"div\",[]],[\"static-attr\",\"class\",\"panel panel-default\"],[\"flush-element\"],[\"text\",\"\\n          \"],[\"open-element\",\"div\",[]],[\"static-attr\",\"class\",\"panel-heading\"],[\"flush-element\"],[\"text\",\"UEs\"],[\"close-element\"],[\"text\",\"\\n          \"],[\"open-element\",\"div\",[]],[\"static-attr\",\"class\",\"panel-body notes_ue\"],[\"flush-element\"],[\"text\",\"\\n\"],[\"block\",[\"each\"],[[\"get\",[\"enseignant\",\"ues\"]]],null,2],[\"text\",\"          \"],[\"close-element\"],[\"text\",\"\\n        \"],[\"close-element\"],[\"text\",\"\\n      \"],[\"close-element\"],[\"text\",\"\\n\\n\"]],\"locals\":[\"enseignant\"]},{\"statements\":[[\"text\",\"\\n\"],[\"block\",[\"each\"],[[\"get\",[\"model\",\"enseignants\"]]],null,3],[\"text\",\"\\n\"]],\"locals\":[]},{\"statements\":[[\"text\",\"\\n                  \"],[\"append\",[\"helper\",[\"student-note\"],null,[[\"note\",\"title-note\"],[[\"get\",[\"note\",\"cc1\"]],\"Note CC1\"]]],false],[\"text\",\"\\n                  \"],[\"append\",[\"helper\",[\"student-note\"],null,[[\"note\",\"title-note\"],[[\"get\",[\"note\",\"cc2\"]],\"Note CC2\"]]],false],[\"text\",\"\\n                  \"],[\"append\",[\"helper\",[\"student-note\"],null,[[\"note\",\"title-note\"],[[\"get\",[\"note\",\"ccf\"]],\"Note CCF\"]]],false],[\"text\",\"\\n\\n                  \"],[\"append\",[\"helper\",[\"student-average\"],null,[[\"note\"],[[\"get\",[\"note\"]]]]],false],[\"text\",\"\\n\\n\"]],\"locals\":[]},{\"statements\":[[\"block\",[\"if-equal\"],null,[[\"param1\",\"param2\"],[[\"get\",[\"note\",\"ue\",\"id\"]],[\"get\",[\"ue\",\"id\"]]]],5]],\"locals\":[\"note\"]},{\"statements\":[[\"text\",\"\\n              \"],[\"open-element\",\"a\",[]],[\"static-attr\",\"class\",\"ue\"],[\"static-attr\",\"data-toggle\",\"collapse\"],[\"dynamic-attr\",\"data-target\",[\"concat\",[[\"unknown\",[\"ue\",\"id\"]]]]],[\"flush-element\"],[\"text\",\"\\n                \"],[\"open-element\",\"span\",[]],[\"static-attr\",\"class\",\"glyphicon glyphicon-plus-sign\"],[\"static-attr\",\"aria-hidden\",\"true\"],[\"flush-element\"],[\"close-element\"],[\"text\",\" \"],[\"append\",[\"unknown\",[\"ue\",\"nom\"]],false],[\"text\",\"(\\n                \"],[\"open-element\",\"b\",[]],[\"flush-element\"],[\"append\",[\"unknown\",[\"ue\",\"enseignant\",\"nom\"]],false],[\"text\",\" \"],[\"append\",[\"unknown\",[\"ue\",\"enseignant\",\"prenom\"]],false],[\"text\",\" \"],[\"close-element\"],[\"text\",\")\"],[\"close-element\"],[\"text\",\"\\n\\n\"],[\"block\",[\"each\"],[[\"get\",[\"etudiant\",\"notes\"]]],null,6],[\"text\",\"\\n\"]],\"locals\":[\"ue\"]},{\"statements\":[[\"text\",\"\\n      \"],[\"append\",[\"helper\",[\"user-profile\"],null,[[\"user\"],[[\"get\",[\"etudiant\"]]]]],false],[\"text\",\"\\n\\n      \"],[\"open-element\",\"div\",[]],[\"static-attr\",\"class\",\"col-lg-8 col-md-8 col-sm-8 col-xs-12\"],[\"flush-element\"],[\"text\",\"\\n        \"],[\"open-element\",\"div\",[]],[\"static-attr\",\"class\",\"panel panel-default\"],[\"flush-element\"],[\"text\",\"\\n          \"],[\"open-element\",\"div\",[]],[\"static-attr\",\"class\",\"panel-heading\"],[\"flush-element\"],[\"text\",\"Notes\"],[\"close-element\"],[\"text\",\"\\n          \"],[\"open-element\",\"div\",[]],[\"static-attr\",\"class\",\"panel-body notes_ue\"],[\"flush-element\"],[\"text\",\"\\n\"],[\"block\",[\"each\"],[[\"get\",[\"etudiant\",\"ues\"]]],null,7],[\"text\",\"\\n            \"],[\"append\",[\"helper\",[\"moyene-annee\"],null,[[\"param1\"],[[\"get\",[\"etudiant\",\"notes\"]]]]],false],[\"text\",\"\\n\\n          \"],[\"close-element\"],[\"text\",\"\\n        \"],[\"close-element\"],[\"text\",\"\\n      \"],[\"close-element\"],[\"text\",\"\\n\"]],\"locals\":[\"etudiant\"]},{\"statements\":[[\"block\",[\"each\"],[[\"get\",[\"model\",\"etudiants\"]]],null,8],[\"text\",\"\\n\"]],\"locals\":[]},{\"statements\":[[\"open-element\",\"div\",[]],[\"static-attr\",\"class\",\"container\"],[\"flush-element\"],[\"text\",\"\\n\\n\"],[\"block\",[\"if\"],[[\"get\",[\"isetudiant\"]]],null,9],[\"block\",[\"if\"],[[\"get\",[\"isenseignant\"]]],null,4],[\"close-element\"],[\"text\",\"\\n\"],[\"append\",[\"unknown\",[\"outlet\"]],false],[\"text\",\"\\n\"]],\"locals\":[]}],\"hasPartials\":false}", "meta": { "moduleName": "demonstration/templates/users.hbs" } });
 });
 define("demonstration/templates/users/index", ["exports"], function (exports) {
   exports["default"] = Ember.HTMLBars.template({ "id": "uLrIaaiV", "block": "{\"statements\":[],\"locals\":[],\"named\":[],\"yields\":[],\"blocks\":[],\"hasPartials\":false}", "meta": { "moduleName": "demonstration/templates/users/index.hbs" } });
@@ -859,19 +1029,27 @@ define("demonstration/templates/users/index", ["exports"], function (exports) {
 define("demonstration/templates/users/profil", ["exports"], function (exports) {
   exports["default"] = Ember.HTMLBars.template({ "id": "6l7AAMnr", "block": "{\"statements\":[[\"append\",[\"unknown\",[\"outlet\"]],false],[\"text\",\"\\n\"]],\"locals\":[],\"named\":[],\"yields\":[],\"blocks\":[],\"hasPartials\":false}", "meta": { "moduleName": "demonstration/templates/users/profil.hbs" } });
 });
-define('demonstration/torii-adapters/application', ['exports', 'ember', 'emberfire/torii-adapters/firebase'], function (exports, _ember, _emberfireToriiAdaptersFirebase) {
-  exports['default'] = _emberfireToriiAdaptersFirebase['default'].extend({
-    firebase: _ember['default'].inject.service()
-  });
+define('demonstration/torii-adapters/application', ['exports', 'emberfire/torii-adapters/firebase'], function (exports, _emberfireToriiAdaptersFirebase) {
+    exports['default'] = _emberfireToriiAdaptersFirebase['default'].extend({
+        firebaseApp: Ember.inject.service()
+    });
 });
 // app/torii-adapters/application.js
 define('demonstration/torii-providers/firebase', ['exports', 'emberfire/torii-providers/firebase'], function (exports, _emberfireToriiProvidersFirebase) {
   exports['default'] = _emberfireToriiProvidersFirebase['default'];
 });
+/* jshint ignore:start */
 
+
+
+/* jshint ignore:end */
+
+/* jshint ignore:start */
 
 define('demonstration/config/environment', ['ember'], function(Ember) {
   var prefix = 'demonstration';
+/* jshint ignore:start */
+
 try {
   var metaName = prefix + '/config/environment';
   var rawConfig = document.querySelector('meta[name="' + metaName + '"]').getAttribute('content');
@@ -887,9 +1065,17 @@ catch(err) {
   throw new Error('Could not read config from meta tag with name "' + metaName + '".');
 }
 
+/* jshint ignore:end */
+
 });
+
+/* jshint ignore:end */
+
+/* jshint ignore:start */
 
 if (!runningTests) {
   require("demonstration/app")["default"].create({"LOG_RESOLVER":true,"LOG_ACTIVE_GENERATION":true,"LOG_TRANSITIONS":true,"LOG_TRANSITIONS_INTERNAL":true,"LOG_VIEW_LOOKUPS":true,"name":"demonstration","version":"0.0.0+"});
 }
+
+/* jshint ignore:end */
 //# sourceMappingURL=demonstration.map
