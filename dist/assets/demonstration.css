@@ -5923,12 +5923,13 @@ h5 span {
   background: transparent; }
 
 .container_nav {
-  float: right;
+  /*float: right;*/
   background: #57585a; }
 
 .navbar-inverse .navbar-nav > .active > a, .navbar-inverse .navbar-nav > .active > a:hover, .navbar-inverse .navbar-nav > .active > a:focus {
   color: #fff;
-  background-color: #f27e16; }
+  background-color: #f27e16;
+  /*margin-left: 550px;*/ }
 
 .navbar-inverse .navbar-nav > li > a {
   padding: 20px 15px;
